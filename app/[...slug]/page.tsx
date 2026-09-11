@@ -25,7 +25,8 @@ export default async function StorefrontRoute({ params }: PageProps) {
   if (section === 'w' && value) { const experience = commerce.useCases.bySlug(value); if (experience) return <ExperiencePage name={experience.name} description={experience.description} /> }
   if (section === 'account') return <AccountPage />
   if (section === 'wishlist') return <WishlistPage />
-  if (section === 'orders') return <OrderPage />
+  if (section === 'orders' || section === 'track-order') return <OrderPage />
+  if (section === 'brands' && !value) return <CatalogPage products={commerce.products.list()} title="Shop by brand" description="Explore cameras, lenses, audio and creator gear from the brands Shams trusts." />
   if (section === 'p') {
     const product = commerce.products.bySlug(value ?? '')
     if (!product) notFound()
