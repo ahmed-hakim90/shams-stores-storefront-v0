@@ -4,6 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { usePathname } from 'next/navigation'
 import { Check, Info, X, AlertTriangle, Home, Grid2X2, Search, Heart, User, ShoppingBag } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { GlobalSearchOverlay } from './global-search-overlay'
 
 type Notice = { id: number; message: string; tone: 'success' | 'error' | 'warning' | 'info' }
 type InteractionContextValue = {
@@ -13,10 +14,13 @@ type InteractionContextValue = {
   compareItems: string[]
   wishlistOpen: boolean
   cartOpen: boolean
+  searchOpen: boolean
   openWishlist: () => void
   closeWishlist: () => void
   openCart: () => void
   closeCart: () => void
+  openSearch: () => void
+  closeSearch: () => void
   addToCart: (name?: string) => void
   toggleWishlist: (name: string) => void
   isWishlisted: (name: string) => boolean
@@ -50,6 +54,7 @@ export function InteractionProvider({ children }: { children: React.ReactNode })
   const [compareItems, setCompareItems] = useState<string[]>([])
   const [wishlistOpen, setWishlistOpen] = useState(false)
   const [cartOpen, setCartOpen] = useState(false)
+  const [searchOpen, setSearchOpen] = useState(false)
   const [notices, setNotices] = useState<Notice[]>([])
   const [stickyPurchaseVisible, setStickyPurchaseVisible] = useState(false)
   const hydrated = useRef(false)
@@ -72,27 +77,27 @@ export function InteractionProvider({ children }: { children: React.ReactNode })
     return () => { document.documentElement.style.removeProperty('--sticky-purchase-offset'); document.documentElement.style.removeProperty('--compare-tray-offset') }
   }, [stickyPurchaseVisible, compareItems.length, wishlistOpen, cartOpen])
   useEffect(() => {
-    const locked = wishlistOpen || cartOpen
+    const locked = wishlistOpen || cartOpen || searchOpen
     document.body.style.overflow = locked ? 'hidden' : ''
-    const onKeyDown = (event: KeyboardEvent) => { if (event.key === 'Escape') { setWishlistOpen(false); setCartOpen(false) } }
+    const onKeyDown = (event: KeyboardEvent) => { if (event.key === 'Escape') { setWishlistOpen(false); setCartOpen(false); setSearchOpen(false) } }
     if (locked) document.addEventListener('keydown', onKeyDown)
     return () => { document.body.style.overflow = ''; document.removeEventListener('keydown', onKeyDown) }
-  }, [wishlistOpen, cartOpen])
+  }, [wishlistOpen, cartOpen, searchOpen])
   const notify = useCallback((message: string, tone: Notice['tone'] = 'success') => { const id = Date.now(); setNotices((current) => { const existing = current.find((item) => item.message === message && item.tone === tone); if (existing) return current.map((item) => item.id === existing.id ? { ...item, id } : item); return [...current.slice(-1), { id, message, tone }] }); window.setTimeout(() => setNotices((current) => current.filter((item) => item.id !== id)), 3200) }, [])
   const addToCart = useCallback((name = 'Product') => { setCartCount((count) => count + 1); notify(`${name} added to cart`) }, [notify])
   const toggleWishlist = useCallback((name: string) => { setWishlistItems((items) => { const exists = items.includes(name); notify(exists ? 'Removed from wishlist' : 'Added to wishlist', exists ? 'info' : 'success'); return exists ? items.filter((item) => item !== name) : [...items, name] }) }, [notify])
   const isWishlisted = useCallback((name: string) => wishlistItems.includes(name), [wishlistItems])
   const toggleCompare = useCallback((name: string) => { setCompareItems((items) => { const exists = items.includes(name); if (exists) { notify('Removed from comparison', 'info'); return items.filter((item) => item !== name) }; if (items.length >= 4) { notify('Compare up to 4 products', 'warning'); return items }; notify('Added to comparison'); return [...items, name] }) }, [notify])
-  const value = useMemo(() => ({ cartCount, wishlistCount: wishlistItems.length, wishlistItems, compareItems, wishlistOpen, cartOpen, stickyPurchaseVisible, setStickyPurchaseVisible, openWishlist: () => setWishlistOpen(true), closeWishlist: () => setWishlistOpen(false), openCart: () => setCartOpen(true), closeCart: () => setCartOpen(false), addToCart, toggleWishlist, isWishlisted, toggleCompare, notify }), [cartCount, wishlistItems, compareItems, wishlistOpen, cartOpen, stickyPurchaseVisible, addToCart, toggleWishlist, isWishlisted, toggleCompare, notify])
+  const value = useMemo(() => ({ cartCount, wishlistCount: wishlistItems.length, wishlistItems, compareItems, wishlistOpen, cartOpen, searchOpen, stickyPurchaseVisible, setStickyPurchaseVisible, openWishlist: () => setWishlistOpen(true), closeWishlist: () => setWishlistOpen(false), openCart: () => setCartOpen(true), closeCart: () => setCartOpen(false), openSearch: () => { setSearchOpen(true); setWishlistOpen(false); setCartOpen(false) }, closeSearch: () => setSearchOpen(false), addToCart, toggleWishlist, isWishlisted, toggleCompare, notify }), [cartCount, wishlistItems, compareItems, wishlistOpen, cartOpen, searchOpen, stickyPurchaseVisible, addToCart, toggleWishlist, isWishlisted, toggleCompare, notify])
   return <InteractionContext.Provider value={value}>{children}<ToastStack notices={notices} dismiss={(id) => setNotices((current) => current.filter((item) => item.id !== id))} /></InteractionContext.Provider>
 }
 
 export function MobileBottomNav() {
-  const { openWishlist, openCart, cartCount, wishlistCount } = useInteractions()
+  const { openWishlist, openCart, openSearch, cartCount, wishlistCount, searchOpen } = useInteractions()
   const pathname = usePathname()
   const itemClass = 'relative flex min-h-11 flex-col items-center justify-center gap-0.5 text-[0.65rem] text-muted-foreground transition-[color,background-color,transform] duration-150 hover:text-brand active:scale-[0.98] active:bg-muted'
   const activeClass = 'text-brand after:absolute after:top-0 after:h-0.5 after:w-8 after:rounded-full after:bg-brand'
-  return <nav className="fixed inset-x-0 bottom-0 z-[55] border-t border-border bg-background/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden" aria-label="Mobile shopping navigation"><div className="grid h-16 grid-cols-5"><a href="/" aria-current={pathname === '/' ? 'page' : undefined} className={cn(itemClass, pathname === '/' && activeClass)}><Home className="size-4" />Home</a><a href="/c/cameras" aria-current={pathname.startsWith('/c/') ? 'page' : undefined} className={cn(itemClass, pathname.startsWith('/c/') && activeClass)}><Grid2X2 className="size-4" />Categories</a><a href="/search" aria-current={pathname.startsWith('/search') ? 'page' : undefined} className={cn(itemClass, pathname.startsWith('/search') && activeClass)}><Search className="size-4" />Search</a><button type="button" onClick={openWishlist} className={cn(itemClass, pathname.startsWith('/wishlist') && activeClass)}><Heart className="size-4" />Wishlist{wishlistCount > 0 && <span className="absolute right-5 top-2 min-w-4 rounded-full bg-brand px-1 text-center text-[0.6rem] text-brand-foreground">{wishlistCount}</span>}</button><button type="button" onClick={openCart} className={cn(itemClass, pathname.startsWith('/cart') && activeClass)}><ShoppingBag className="size-4" />Cart{cartCount > 0 && <span className="absolute right-5 top-2 min-w-4 rounded-full bg-brand px-1 text-center text-[0.6rem] text-brand-foreground">{cartCount}</span>}</button></div></nav>
+  return <nav className="fixed inset-x-0 bottom-0 z-[55] border-t border-border bg-background/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden" aria-label="Mobile shopping navigation"><div className="grid h-16 grid-cols-5"><a href="/" aria-current={pathname === '/' ? 'page' : undefined} className={cn(itemClass, pathname === '/' && activeClass)}><Home className="size-4" />Home</a><a href="/c/cameras" aria-current={pathname.startsWith('/c/') ? 'page' : undefined} className={cn(itemClass, pathname.startsWith('/c/') && activeClass)}><Grid2X2 className="size-4" />Categories</a><button type="button" onClick={openSearch} aria-current={searchOpen || pathname.startsWith('/search') ? 'page' : undefined} className={cn(itemClass, (searchOpen || pathname.startsWith('/search')) && activeClass)}><Search className="size-4" />Search</button><button type="button" onClick={openWishlist} className={cn(itemClass, pathname.startsWith('/wishlist') && activeClass)}><Heart className="size-4" />Wishlist{wishlistCount > 0 && <span className="absolute right-5 top-2 min-w-4 rounded-full bg-brand px-1 text-center text-[0.6rem] text-brand-foreground">{wishlistCount}</span>}</button><button type="button" onClick={openCart} className={cn(itemClass, pathname.startsWith('/cart') && activeClass)}><ShoppingBag className="size-4" />Cart{cartCount > 0 && <span className="absolute right-5 top-2 min-w-4 rounded-full bg-brand px-1 text-center text-[0.6rem] text-brand-foreground">{cartCount}</span>}</button></div></nav>
 }
 
 export function WishlistDrawer() {
@@ -119,7 +124,7 @@ export function RouteProgress() {
   return loading ? <div className="fixed inset-x-0 top-0 z-[120] h-0.5 overflow-hidden bg-brand-muted" role="progressbar" aria-label="Loading page"><div className="h-full w-1/3 animate-pulse bg-brand" /></div> : null
 }
 
-export function InteractionOverlays() { const { cartOpen } = useInteractions(); return <><RouteProgress /><WishlistDrawer /><CompareTray />{!cartOpen && <MobileBottomNav />}</> }
+export function InteractionOverlays() { const { cartOpen } = useInteractions(); return <><RouteProgress /><GlobalSearchOverlay /><WishlistDrawer /><CompareTray />{!cartOpen && <MobileBottomNav />}</> }
 
 export function InteractionShell({ children }: { children: React.ReactNode }) { return <InteractionProvider><div className="pb-[calc(var(--mobile-bottom-nav-height)+var(--safe-area-bottom))] md:pb-0">{children}</div><InteractionOverlays /></InteractionProvider> }
 

@@ -12,7 +12,7 @@ import {
   User,
 } from 'lucide-react'
 import { ShamsLogo } from './logo'
-import { SearchBar } from './search-bar'
+import { SearchTrigger } from './global-search-overlay'
 import { MegaMenu } from './mega-menu'
 import { MobileMenu } from './mobile-menu'
 import { CartDrawer } from './cart-drawer'
@@ -86,7 +86,7 @@ export function Header() {
             </Link>
           </div>
 
-          <SearchBar className="hidden flex-1 md:block" />
+          <SearchTrigger className="hidden flex-1 md:flex" placeholder="Search by model, brand, category or SKU…" />
 
           <div className="ml-auto flex items-center gap-0.5 sm:gap-1">
             <IconAction href="/account" label="Account" icon={User} />
@@ -98,7 +98,7 @@ export function Header() {
 
         {/* Mobile search */}
         <div className="px-4 pb-3 md:hidden">
-          <SearchBar />
+          <SearchTrigger placeholder="Search cameras, lenses, audio and creator gear…" />
         </div>
       </div>
 
