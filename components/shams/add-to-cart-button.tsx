@@ -38,7 +38,7 @@ export function AddToCartButton({
       }}
       aria-label={`${label}: ${productName}`}
       className={cn(
-        'inline-flex h-9 flex-1 items-center justify-center gap-1.5 rounded-lg text-sm font-medium transition-colors',
+        'inline-flex h-9 min-w-0 flex-1 items-center justify-center gap-2 whitespace-nowrap px-3 text-sm font-medium transition-colors',
         outOfStock
           ? 'border border-border bg-background text-foreground hover:border-brand hover:text-brand'
           : 'bg-brand text-brand-foreground hover:bg-brand/90',
