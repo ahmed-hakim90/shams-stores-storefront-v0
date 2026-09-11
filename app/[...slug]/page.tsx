@@ -35,8 +35,11 @@ export default async function StorefrontRoute({ params }: PageProps) {
   const category = section === 'c' ? commerce.categories.bySlug(value ?? '') : undefined
   const useCase = section === 'w' ? commerce.useCases.bySlug(value ?? '') : undefined
   const brand = section === 'brands' || section === 'b' ? commerce.brands.bySlug(value ?? '') : undefined
-  const products = isSearch ? commerce.search(value ?? '') : section === 'deals' ? commerce.products.deals() : section === 'new' ? commerce.products.featured() : category ? commerce.products.byCategory(category.slug) : useCase ? commerce.products.byUseCase(useCase.slug) : brand ? commerce.products.list().filter((product) => product.brand.toLowerCase() === brand.name.toLowerCase()) : section === 'bundles' ? commerce.products.trending() : []
-  const title = isSearch ? `Search results` : category?.name ?? useCase?.name ?? brand?.name ?? (section === 'deals' ? 'Deals worth catching' : section === 'new' ? 'New arrivals' : 'Featured gear')
+  const isCollection = section === 'deals' || section === 'new' || section === 'trending'
+  const hasValidRoute = isSearch || isCollection || Boolean(category || useCase || brand)
+  if (!hasValidRoute) notFound()
+  const products = isSearch ? commerce.search(value ?? '') : section === 'deals' ? commerce.products.deals() : section === 'new' ? commerce.products.featured() : section === 'trending' ? commerce.products.trending() : category ? commerce.products.byCategory(category.slug) : useCase ? commerce.products.byUseCase(useCase.slug) : brand ? commerce.products.list().filter((product) => product.brand.toLowerCase() === brand.name.toLowerCase()) : []
+  const title = isSearch ? `Search results` : category?.name ?? useCase?.name ?? brand?.name ?? (section === 'deals' ? 'Deals worth catching' : section === 'new' ? 'New arrivals' : 'Trending gear')
   const description = isSearch ? `Explore products, brands and categories related to “${value ?? ''}”.` : category?.tagline ?? useCase?.description ?? brand?.tagline ?? 'Expertly selected photography, cinema and creator gear, ready to ship across Egypt.'
   return <CatalogPage category={category} products={products} title={title} description={description} query={isSearch ? value : undefined} />
 }
