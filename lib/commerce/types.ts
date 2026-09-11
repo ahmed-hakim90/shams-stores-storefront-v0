@@ -37,6 +37,8 @@ export interface Product {
   slug: string
   name: string
   brand: string
+  description?: string
+  sku?: string
   /** Short configuration line, e.g. "Body only" or "with 24-70mm". */
   configuration?: string
   category: CategorySlug
