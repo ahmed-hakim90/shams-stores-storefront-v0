@@ -22,6 +22,8 @@ type InteractionContextValue = {
   isWishlisted: (name: string) => boolean
   toggleCompare: (name: string) => void
   notify: (message: string, tone?: Notice['tone']) => void
+  stickyPurchaseVisible: boolean
+  setStickyPurchaseVisible: (visible: boolean) => void
 }
 
 const InteractionContext = createContext<InteractionContextValue | null>(null)
@@ -34,8 +36,8 @@ export function useInteractions() {
 
 function ToastStack({ notices, dismiss }: { notices: Notice[]; dismiss: (id: number) => void }) {
   const icons = { success: Check, error: X, warning: AlertTriangle, info: Info }
-  return <div className="fixed inset-x-4 bottom-[calc(var(--fixed-stack-bottom)+var(--sticky-purchase-height)+var(--compare-tray-height))] z-[90] flex flex-col items-end gap-2 sm:inset-x-auto sm:right-5 sm:w-80" aria-live="polite">
-    {notices.map((notice) => { const Icon = icons[notice.tone]; return <div key={notice.id} role="status" className="flex w-full items-center gap-3 rounded-lg border border-border bg-surface px-3 py-3 text-sm shadow-lg">
+  return <div className="fixed inset-x-4 bottom-[calc(var(--fixed-stack-bottom)+var(--sticky-purchase-offset)+var(--compare-tray-offset)+0.75rem)] z-[110] flex flex-col items-end gap-2 sm:inset-x-auto sm:right-5 sm:w-80" aria-live="polite">
+    {notices.map((notice) => { const Icon = icons[notice.tone]; return <div key={notice.id} role="status" className="flex w-full items-center gap-3 rounded-lg border border-border bg-card px-3 py-3 text-sm shadow-md">
       <span className={cn('flex size-7 shrink-0 items-center justify-center rounded-full', notice.tone === 'success' && 'bg-success-muted text-success', notice.tone === 'error' && 'bg-danger-muted text-danger', notice.tone === 'warning' && 'bg-warning-muted text-warning', notice.tone === 'info' && 'bg-brand-muted text-brand')}><Icon className="size-4" /></span>
       <span className="flex-1 text-foreground">{notice.message}</span><button type="button" onClick={() => dismiss(notice.id)} className="inline-flex size-8 items-center justify-center rounded-md text-muted-foreground hover:bg-muted" aria-label="Dismiss notification"><X className="size-4" /></button>
     </div> })}
@@ -49,6 +51,7 @@ export function InteractionProvider({ children }: { children: React.ReactNode })
   const [wishlistOpen, setWishlistOpen] = useState(false)
   const [cartOpen, setCartOpen] = useState(false)
   const [notices, setNotices] = useState<Notice[]>([])
+  const [stickyPurchaseVisible, setStickyPurchaseVisible] = useState(false)
   const hydrated = useRef(false)
   useEffect(() => {
     try {
@@ -64,18 +67,23 @@ export function InteractionProvider({ children }: { children: React.ReactNode })
   useEffect(() => { if (hydrated.current) window.localStorage.setItem('shams-compare-ids', JSON.stringify(compareItems)) }, [compareItems])
   useEffect(() => { if (hydrated.current) window.localStorage.setItem('shams-cart-count', String(cartCount)) }, [cartCount])
   useEffect(() => {
+    document.documentElement.style.setProperty('--sticky-purchase-offset', stickyPurchaseVisible ? 'var(--sticky-purchase-height)' : '0px')
+    document.documentElement.style.setProperty('--compare-tray-offset', compareItems.length && !wishlistOpen && !cartOpen ? 'var(--compare-tray-height)' : '0px')
+    return () => { document.documentElement.style.removeProperty('--sticky-purchase-offset'); document.documentElement.style.removeProperty('--compare-tray-offset') }
+  }, [stickyPurchaseVisible, compareItems.length, wishlistOpen, cartOpen])
+  useEffect(() => {
     const locked = wishlistOpen || cartOpen
     document.body.style.overflow = locked ? 'hidden' : ''
     const onKeyDown = (event: KeyboardEvent) => { if (event.key === 'Escape') { setWishlistOpen(false); setCartOpen(false) } }
     if (locked) document.addEventListener('keydown', onKeyDown)
     return () => { document.body.style.overflow = ''; document.removeEventListener('keydown', onKeyDown) }
   }, [wishlistOpen, cartOpen])
-  const notify = useCallback((message: string, tone: Notice['tone'] = 'success') => { const id = Date.now(); setNotices((current) => [...current.slice(-2), { id, message, tone }]); window.setTimeout(() => setNotices((current) => current.filter((item) => item.id !== id)), 3200) }, [])
+  const notify = useCallback((message: string, tone: Notice['tone'] = 'success') => { const id = Date.now(); setNotices((current) => { const existing = current.find((item) => item.message === message && item.tone === tone); if (existing) return current.map((item) => item.id === existing.id ? { ...item, id } : item); return [...current.slice(-1), { id, message, tone }] }); window.setTimeout(() => setNotices((current) => current.filter((item) => item.id !== id)), 3200) }, [])
   const addToCart = useCallback((name = 'Product') => { setCartCount((count) => count + 1); notify(`${name} added to cart`) }, [notify])
   const toggleWishlist = useCallback((name: string) => { setWishlistItems((items) => { const exists = items.includes(name); notify(exists ? 'Removed from wishlist' : 'Added to wishlist', exists ? 'info' : 'success'); return exists ? items.filter((item) => item !== name) : [...items, name] }) }, [notify])
   const isWishlisted = useCallback((name: string) => wishlistItems.includes(name), [wishlistItems])
   const toggleCompare = useCallback((name: string) => { setCompareItems((items) => { const exists = items.includes(name); if (exists) { notify('Removed from comparison', 'info'); return items.filter((item) => item !== name) }; if (items.length >= 4) { notify('Compare up to 4 products', 'warning'); return items }; notify('Added to comparison'); return [...items, name] }) }, [notify])
-  const value = useMemo(() => ({ cartCount, wishlistCount: wishlistItems.length, wishlistItems, compareItems, wishlistOpen, cartOpen, openWishlist: () => setWishlistOpen(true), closeWishlist: () => setWishlistOpen(false), openCart: () => setCartOpen(true), closeCart: () => setCartOpen(false), addToCart, toggleWishlist, isWishlisted, toggleCompare, notify }), [cartCount, wishlistItems, compareItems, wishlistOpen, cartOpen, addToCart, toggleWishlist, isWishlisted, toggleCompare, notify])
+  const value = useMemo(() => ({ cartCount, wishlistCount: wishlistItems.length, wishlistItems, compareItems, wishlistOpen, cartOpen, stickyPurchaseVisible, setStickyPurchaseVisible, openWishlist: () => setWishlistOpen(true), closeWishlist: () => setWishlistOpen(false), openCart: () => setCartOpen(true), closeCart: () => setCartOpen(false), addToCart, toggleWishlist, isWishlisted, toggleCompare, notify }), [cartCount, wishlistItems, compareItems, wishlistOpen, cartOpen, stickyPurchaseVisible, addToCart, toggleWishlist, isWishlisted, toggleCompare, notify])
   return <InteractionContext.Provider value={value}>{children}<ToastStack notices={notices} dismiss={(id) => setNotices((current) => current.filter((item) => item.id !== id))} /></InteractionContext.Provider>
 }
 
@@ -94,9 +102,9 @@ export function WishlistDrawer() {
 }
 
 export function CompareTray() {
-  const { compareItems, toggleCompare } = useInteractions()
-  if (!compareItems.length) return null
-  return <div className="fixed inset-x-3 bottom-[calc(var(--fixed-stack-bottom)+var(--sticky-purchase-height))] z-[70] mx-auto flex max-w-lg items-center gap-3 rounded-lg border border-border bg-background px-3 py-3 shadow-lg"><div className="min-w-0 flex-1"><p className="text-sm font-semibold">{compareItems.length} selected</p><p className="truncate text-xs text-muted-foreground">{compareItems.join(' · ')}</p></div><button type="button" onClick={() => window.location.assign('/compare')} className="min-h-10 shrink-0 rounded-md bg-brand px-3 text-sm font-medium text-brand-foreground">Compare now</button><button type="button" onClick={() => toggleCompare(compareItems[compareItems.length - 1])} className="inline-flex size-10 shrink-0 items-center justify-center rounded-md border border-border" aria-label="Remove last compared product"><X className="size-4" /></button></div>
+  const { compareItems, toggleCompare, stickyPurchaseVisible, cartOpen, wishlistOpen } = useInteractions()
+  if (!compareItems.length || cartOpen || wishlistOpen) return null
+  return <div className={cn('fixed inset-x-3 z-[70] mx-auto flex max-w-lg items-center gap-3 rounded-lg border border-border bg-background px-3 py-3 shadow-lg transition-[bottom] duration-200 motion-reduce:transition-none', stickyPurchaseVisible ? 'bottom-[calc(var(--fixed-stack-bottom)+var(--sticky-purchase-height))]' : 'bottom-[var(--fixed-stack-bottom)]')}><div className="min-w-0 flex-1"><p className="text-sm font-semibold">{compareItems.length} selected</p><p className="truncate text-xs text-muted-foreground">{compareItems.join(' · ')}</p></div><button type="button" onClick={() => window.location.assign('/compare')} className="min-h-10 shrink-0 rounded-md bg-brand px-3 text-sm font-medium text-brand-foreground">Compare now</button><button type="button" onClick={() => toggleCompare(compareItems[compareItems.length - 1])} className="inline-flex size-10 shrink-0 items-center justify-center rounded-md border border-border" aria-label="Remove last compared product"><X className="size-4" /></button></div>
 }
 
 export function RouteProgress() {

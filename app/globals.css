@@ -103,6 +103,8 @@
   --compare-tray-height: 4.75rem;
   --safe-area-bottom: env(safe-area-inset-bottom, 0px);
   --fixed-stack-bottom: calc(var(--mobile-bottom-nav-height) + var(--safe-area-bottom));
+  --sticky-purchase-offset: 0px;
+  --compare-tray-offset: 0px;
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
