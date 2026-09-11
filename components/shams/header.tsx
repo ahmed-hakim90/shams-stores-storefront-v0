@@ -13,6 +13,7 @@ import { ShamsLogo } from './logo'
 import { SearchBar } from './search-bar'
 import { MegaMenu } from './mega-menu'
 import { MobileMenu } from './mobile-menu'
+import { CartDrawer } from './cart-drawer'
 
 function IconAction({
   href,
@@ -87,7 +88,7 @@ export function Header() {
             <IconAction href="/account" label="Account" icon={User} />
             <IconAction href="/compare" label="Compare" icon={Scale} count={2} />
             <IconAction href="/wishlist" label="Wishlist" icon={Heart} count={5} />
-            <IconAction href="/cart" label="Cart" icon={ShoppingCart} count={3} />
+            <CartDrawer />
           </div>
         </div>
 
