@@ -24,7 +24,7 @@ export function ProductCard({
   return (
     <article
       className={cn(
-        cn('group overflow-hidden rounded-xl border border-border bg-card transition-[border-color,box-shadow,transform] duration-180 hover:border-brand/40 hover:shadow-[0_1px_0_rgba(0,0,0,0.02),0_12px_30px_-18px_rgba(21,63,112,0.35)] sm:min-w-0', view === 'list' ? 'flex min-h-[188px] flex-row sm:flex-col' : 'flex flex-col'),
+        cn('group rounded-xl border border-border bg-card transition-[border-color,box-shadow,transform] duration-180 hover:border-brand/40 hover:shadow-[0_1px_0_rgba(0,0,0,0.02),0_12px_30px_-18px_rgba(21,63,112,0.35)] sm:min-w-0', view === 'list' ? 'flex min-h-[188px] flex-row sm:flex-col' : 'flex flex-col'),
         className,
       )}
     >
@@ -36,11 +36,13 @@ export function ProductCard({
             ))}
           </div>
         )}
-        <div className="absolute right-3 top-3 z-10 flex flex-col gap-1.5 opacity-100 transition-opacity md:opacity-0 md:group-hover:opacity-100 md:focus-within:opacity-100">
-          <WishlistAction productName={product.name} />
-          <CompareAction productName={product.name} />
-        </div>
-        <Link href={`/p/${product.slug}`} className="block h-full">
+        {view === 'grid' && (
+          <div className="absolute right-3 top-3 z-10 flex flex-col gap-1.5 opacity-100 transition-opacity md:opacity-0 md:group-hover:opacity-100 md:focus-within:opacity-100">
+            <WishlistAction productName={product.name} />
+            <CompareAction productName={product.name} />
+          </div>
+        )}
+        <Link href={`/p/${product.slug}`} className="block h-full overflow-hidden">
           <Image
             src={product.image || '/placeholder.svg'}
             alt={product.name}
@@ -55,12 +57,25 @@ export function ProductCard({
       </div>
 
       <div className={cn('flex min-w-0 flex-1 flex-col gap-2.5 p-3 sm:p-4', view === 'grid' && 'border-t border-border')}>
-        <div className="flex items-center justify-between gap-2">
-          <span className="text-xs font-semibold uppercase tracking-wide text-brand">
+        <div className="flex min-w-0 items-start justify-between gap-2">
+          <span className="min-w-0 pt-1 text-xs font-semibold uppercase tracking-wide text-brand">
             {product.brand}
           </span>
-          <span className={cn(view === 'grid' && 'hidden sm:inline')}><RatingStars rating={product.rating} reviewCount={product.reviewCount} /></span>
+          <div className="flex shrink-0 items-center gap-1.5">
+            {view === 'list' && (
+              <>
+                <WishlistAction productName={product.name} />
+                <CompareAction productName={product.name} />
+              </>
+            )}
+            {view === 'grid' && <RatingStars rating={product.rating} reviewCount={product.reviewCount} />}
+          </div>
         </div>
+        {view === 'list' && (
+          <div className="min-w-0">
+            <RatingStars rating={product.rating} reviewCount={product.reviewCount} />
+          </div>
+        )}
 
         <div className="min-h-10">
           <Link
