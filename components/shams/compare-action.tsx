@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
 import { Scale } from 'lucide-react'
+import { useInteractions } from './interaction-provider'
 import { cn } from '@/lib/utils'
 
 export function CompareAction({
@@ -11,11 +11,12 @@ export function CompareAction({
   productName: string
   className?: string
 }) {
-  const [active, setActive] = useState(false)
+  const { compareItems, toggleCompare } = useInteractions()
+  const active = compareItems.includes(productName)
   return (
     <button
       type="button"
-      onClick={() => setActive((s) => !s)}
+      onClick={() => toggleCompare(productName)}
       aria-pressed={active}
       aria-label={active ? `Remove ${productName} from compare` : `Add ${productName} to compare`}
       className={cn(
