@@ -56,7 +56,7 @@ export function MobileMenu() {
             className="absolute inset-0 bg-foreground/40 backdrop-blur-sm"
             onClick={() => setOpen(false)}
           />
-          <div className="absolute inset-y-0 left-0 flex w-[88%] max-w-sm flex-col bg-background shadow-2xl">
+          <div className="absolute inset-y-0 left-0 flex h-dvh w-[88%] max-w-sm flex-col bg-background shadow-2xl" role="dialog" aria-modal="true" aria-label="Mobile navigation">
             <div className="flex items-center justify-between border-b border-border px-4 py-3">
               <ShamsLogo />
               <button

@@ -22,11 +22,11 @@ export function ProductCard({
   return (
     <article
       className={cn(
-        'group flex flex-col overflow-hidden rounded-xl border border-border bg-card transition-all hover:border-brand/40 hover:shadow-[0_1px_0_rgba(0,0,0,0.02),0_12px_30px_-18px_rgba(21,63,112,0.35)]',
+        'group flex flex-col overflow-hidden rounded-xl border border-border bg-card transition-all hover:border-brand/40 hover:shadow-[0_1px_0_rgba(0,0,0,0.02),0_12px_30px_-18px_rgba(21,63,112,0.35)] sm:min-w-0',
         className,
       )}
     >
-      <div className="relative aspect-square bg-white p-5">
+      <div className="relative aspect-[1.15/1] bg-white p-5 sm:aspect-square">
         {product.badges.length > 0 && (
           <div className="absolute left-3 top-3 z-10 flex flex-col items-start gap-1">
             {product.badges.map((b) => (
@@ -43,7 +43,7 @@ export function ProductCard({
             src={product.image || '/placeholder.svg'}
             alt={product.name}
             fill
-            sizes="(max-width: 768px) 50vw, 280px"
+            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 280px"
             className={cn(
               'object-contain p-2 transition-transform duration-300 group-hover:scale-[1.04]',
               dimmed && 'opacity-70 grayscale',
