@@ -106,7 +106,7 @@ export function Footer() {
 
       <div className="border-t border-border">
         <div className="mx-auto flex max-w-[1400px] flex-col items-center justify-between gap-3 px-4 py-5 text-xs text-muted-foreground sm:flex-row sm:px-6">
-          <p>© {new Date().getFullYear()} Shams Stores. All rights reserved.</p>
+          <p>© 2026 Shams Stores. All rights reserved.</p>
           <div className="flex items-center gap-4">
             <span>Prices in EGP · Egypt</span>
             <div className="flex items-center gap-1.5">
