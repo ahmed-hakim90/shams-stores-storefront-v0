@@ -1,7 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { Bell, Check, ShoppingCart } from 'lucide-react'
+import { Bell, Check, LoaderCircle, ShoppingCart } from 'lucide-react'
+import { useInteractions } from './interaction-provider'
 import { cn } from '@/lib/utils'
 import type { StockStatus } from '@/lib/commerce'
 
@@ -15,6 +16,8 @@ export function AddToCartButton({
   className?: string
 }) {
   const [added, setAdded] = useState(false)
+  const [pending, setPending] = useState(false)
+  const { addToCart } = useInteractions()
   const outOfStock = stock === 'out_of_stock'
   const preorder = stock === 'preorder'
 
@@ -26,15 +29,18 @@ export function AddToCartButton({
         ? 'Added'
         : 'Add to cart'
 
-  const Icon = outOfStock ? Bell : added ? Check : ShoppingCart
+  const Icon = pending ? LoaderCircle : outOfStock ? Bell : added ? Check : ShoppingCart
 
   return (
     <button
       type="button"
+      disabled={outOfStock || pending}
       onClick={() => {
-        if (outOfStock) return
+        if (outOfStock || pending) return
+        setPending(true)
+        addToCart(productName)
         setAdded(true)
-        window.setTimeout(() => setAdded(false), 1600)
+        window.setTimeout(() => { setPending(false); setAdded(false) }, 1600)
       }}
       aria-label={`${label}: ${productName}`}
       className={cn(
@@ -46,7 +52,7 @@ export function AddToCartButton({
         className,
       )}
     >
-      <Icon className="size-4" />
+      <Icon className={cn('size-4', pending && 'animate-spin')} />
       {label}
     </button>
   )
