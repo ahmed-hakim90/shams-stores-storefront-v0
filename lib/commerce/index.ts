@@ -6,7 +6,7 @@ import {
   products,
   useCases,
 } from './data'
-import type { Bundle, Money, Product, StockStatus, UseCaseSlug } from './types'
+import type { Bundle, CatalogPage, CatalogQuery, Money, Product, StockStatus, UseCaseSlug } from './types'
 
 export * from './types'
 
@@ -18,6 +18,18 @@ export * from './types'
 export const commerce = {
   products: {
     list: () => products,
+    page: (params: CatalogQuery = {}): CatalogPage => {
+      const pageSize = Math.min(Math.max(params.pageSize ?? 20, 1), 40)
+      const offset = Number(params.cursor ?? 0)
+      const query = params.query?.trim().toLowerCase()
+      let result = products.filter((product) => (!params.category || product.category === params.category) && (!params.brand || product.brand.toLowerCase() === params.brand.toLowerCase()) && (!query || [product.name, product.brand, product.category, product.configuration ?? '', product.sku ?? ''].join(' ').toLowerCase().includes(query)))
+      if (params.sort === 'price-asc') result = result.sort((a, b) => a.price.amount - b.price.amount)
+      if (params.sort === 'price-desc') result = result.sort((a, b) => b.price.amount - a.price.amount)
+      if (params.sort === 'rating') result = result.sort((a, b) => b.rating - a.rating)
+      const items = result.slice(offset, offset + pageSize)
+      const next = offset + pageSize < result.length ? String(offset + pageSize) : undefined
+      return { items, nextCursor: next, hasNextPage: Boolean(next), total: result.length }
+    },
     byId: (id: string) => products.find((p) => p.id === id),
     bySlug: (slug: string) => products.find((p) => p.slug === slug),
     getBySlug: (slug: string) => products.find((p) => p.slug === slug),

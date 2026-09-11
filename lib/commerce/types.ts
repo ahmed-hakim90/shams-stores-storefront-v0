@@ -111,3 +111,35 @@ export interface Collection {
   name: string
   productIds: string[]
 }
+
+export interface ProductSummary {
+  id: string
+  slug: string
+  name: string
+  brand: string
+  primaryImage: string
+  price: Money
+  regularPrice?: Money
+  stock: StockStatus
+  rating?: number
+  reviewCount?: number
+  badge?: ProductBadge
+  shortVariantLabel?: string
+  installmentSummary?: string
+}
+
+export interface CatalogQuery {
+  category?: string
+  brand?: string
+  query?: string
+  sort?: 'featured' | 'price-asc' | 'price-desc' | 'rating'
+  cursor?: string
+  pageSize?: number
+}
+
+export interface CatalogPage {
+  items: Product[]
+  nextCursor?: string
+  hasNextPage: boolean
+  total: number
+}

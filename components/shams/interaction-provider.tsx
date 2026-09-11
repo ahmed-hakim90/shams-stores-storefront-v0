@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { Check, Info, X, AlertTriangle, Home, Grid2X2, Search, Heart, User, ShoppingBag } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -48,6 +48,20 @@ export function InteractionProvider({ children }: { children: React.ReactNode })
   const [wishlistOpen, setWishlistOpen] = useState(false)
   const [cartOpen, setCartOpen] = useState(false)
   const [notices, setNotices] = useState<Notice[]>([])
+  const hydrated = useRef(false)
+  useEffect(() => {
+    try {
+      const savedWishlist = window.localStorage.getItem('shams-wishlist-ids')
+      const savedCompare = window.localStorage.getItem('shams-compare-ids')
+      const savedCart = window.localStorage.getItem('shams-cart-count')
+      if (savedWishlist) setWishlistItems(JSON.parse(savedWishlist))
+      if (savedCompare) setCompareItems(JSON.parse(savedCompare))
+      if (savedCart) setCartCount(Number(savedCart) || 0)
+    } catch { /* Mock persistence is best-effort. */ } finally { hydrated.current = true }
+  }, [])
+  useEffect(() => { if (hydrated.current) window.localStorage.setItem('shams-wishlist-ids', JSON.stringify(wishlistItems)) }, [wishlistItems])
+  useEffect(() => { if (hydrated.current) window.localStorage.setItem('shams-compare-ids', JSON.stringify(compareItems)) }, [compareItems])
+  useEffect(() => { if (hydrated.current) window.localStorage.setItem('shams-cart-count', String(cartCount)) }, [cartCount])
   useEffect(() => {
     const locked = wishlistOpen || cartOpen
     document.body.style.overflow = locked ? 'hidden' : ''
