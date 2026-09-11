@@ -13,20 +13,22 @@ import { AddToCartButton } from './add-to-cart-button'
 export function ProductCard({
   product,
   className,
+  view = 'grid',
 }: {
   product: Product
   className?: string
+  view?: 'list' | 'grid'
 }) {
   const dimmed = product.stock === 'out_of_stock'
 
   return (
     <article
       className={cn(
-        'group flex flex-col overflow-hidden rounded-xl border border-border bg-card transition-all hover:border-brand/40 hover:shadow-[0_1px_0_rgba(0,0,0,0.02),0_12px_30px_-18px_rgba(21,63,112,0.35)] sm:min-w-0',
+        cn('group overflow-hidden rounded-xl border border-border bg-card transition-[border-color,box-shadow,transform] duration-180 hover:border-brand/40 hover:shadow-[0_1px_0_rgba(0,0,0,0.02),0_12px_30px_-18px_rgba(21,63,112,0.35)] sm:min-w-0', view === 'list' ? 'flex min-h-[188px] flex-row sm:flex-col' : 'flex flex-col'),
         className,
       )}
     >
-      <div className="relative aspect-[1.15/1] bg-white p-5 sm:aspect-square">
+      <div className={cn('relative shrink-0 bg-white p-3 sm:p-5', view === 'list' ? 'aspect-square w-[38%] sm:aspect-[1.15/1] sm:w-auto' : 'aspect-[1.15/1] sm:aspect-square')}>
         {product.badges.length > 0 && (
           <div className="absolute left-3 top-3 z-10 flex flex-col items-start gap-1">
             {product.badges.map((b) => (
@@ -52,12 +54,12 @@ export function ProductCard({
         </Link>
       </div>
 
-      <div className="flex flex-1 flex-col gap-2.5 border-t border-border p-4">
+      <div className={cn('flex min-w-0 flex-1 flex-col gap-2.5 p-3 sm:p-4', view === 'grid' && 'border-t border-border')}>
         <div className="flex items-center justify-between gap-2">
           <span className="text-xs font-semibold uppercase tracking-wide text-brand">
             {product.brand}
           </span>
-          <RatingStars rating={product.rating} reviewCount={product.reviewCount} />
+          <span className={cn(view === 'grid' && 'hidden sm:inline')}><RatingStars rating={product.rating} reviewCount={product.reviewCount} /></span>
         </div>
 
         <div className="min-h-10">

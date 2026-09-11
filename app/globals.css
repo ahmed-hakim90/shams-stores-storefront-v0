@@ -98,6 +98,11 @@
   --info: #4f6578;
   --info-muted: #eef2f5;
   --surface-dark: #171717;
+  --mobile-bottom-nav-height: 4rem;
+  --sticky-purchase-height: 4.5rem;
+  --compare-tray-height: 4.75rem;
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --fixed-stack-bottom: calc(var(--mobile-bottom-nav-height) + var(--safe-area-bottom));
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
@@ -190,10 +195,17 @@
   * {
     @apply border-border outline-ring/50;
   }
-  body {
-    @apply bg-background text-foreground;
-    font-feature-settings: "cv11", "ss01";
-  }
+body {
+  @apply bg-background text-foreground;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  button, a, [role='button'], input, select, textarea { transition-duration: 180ms; transition-timing-function: ease-out; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}
   h1,
   h2,
   h3 {
