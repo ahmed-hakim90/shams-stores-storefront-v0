@@ -1,6 +1,7 @@
 'use client'
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { usePathname } from 'next/navigation'
 import { Check, Info, X, AlertTriangle, Home, Grid2X2, Search, Heart, User, ShoppingBag } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -80,8 +81,10 @@ export function InteractionProvider({ children }: { children: React.ReactNode })
 
 export function MobileBottomNav() {
   const { openWishlist, openCart, cartCount, wishlistCount } = useInteractions()
-  const itemClass = 'relative flex min-h-11 flex-col items-center justify-center gap-0.5 text-[0.65rem] text-muted-foreground transition-colors duration-180 hover:text-brand active:scale-[0.98] active:bg-muted'
-  return <nav className="fixed inset-x-0 bottom-0 z-[55] border-t border-border bg-background/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden" aria-label="Mobile shopping navigation"><div className="grid h-16 grid-cols-5"><a href="/" className={itemClass}><Home className="size-4" />Home</a><a href="/c/cameras" className={itemClass}><Grid2X2 className="size-4" />Categories</a><a href="/search" className={itemClass}><Search className="size-4" />Search</a><button type="button" onClick={openWishlist} className={itemClass}><Heart className="size-4" />Wishlist{wishlistCount > 0 && <span className="absolute right-5 top-2 min-w-4 rounded-full bg-brand px-1 text-center text-[0.6rem] text-brand-foreground">{wishlistCount}</span>}</button><button type="button" onClick={openCart} className={itemClass}><ShoppingBag className="size-4" />Cart{cartCount > 0 && <span className="absolute right-5 top-2 min-w-4 rounded-full bg-brand px-1 text-center text-[0.6rem] text-brand-foreground">{cartCount}</span>}</button></div></nav>
+  const pathname = usePathname()
+  const itemClass = 'relative flex min-h-11 flex-col items-center justify-center gap-0.5 text-[0.65rem] text-muted-foreground transition-[color,background-color,transform] duration-150 hover:text-brand active:scale-[0.98] active:bg-muted'
+  const activeClass = 'text-brand after:absolute after:top-0 after:h-0.5 after:w-8 after:rounded-full after:bg-brand'
+  return <nav className="fixed inset-x-0 bottom-0 z-[55] border-t border-border bg-background/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden" aria-label="Mobile shopping navigation"><div className="grid h-16 grid-cols-5"><a href="/" aria-current={pathname === '/' ? 'page' : undefined} className={cn(itemClass, pathname === '/' && activeClass)}><Home className="size-4" />Home</a><a href="/c/cameras" aria-current={pathname.startsWith('/c/') ? 'page' : undefined} className={cn(itemClass, pathname.startsWith('/c/') && activeClass)}><Grid2X2 className="size-4" />Categories</a><a href="/search" aria-current={pathname.startsWith('/search') ? 'page' : undefined} className={cn(itemClass, pathname.startsWith('/search') && activeClass)}><Search className="size-4" />Search</a><button type="button" onClick={openWishlist} className={cn(itemClass, pathname.startsWith('/wishlist') && activeClass)}><Heart className="size-4" />Wishlist{wishlistCount > 0 && <span className="absolute right-5 top-2 min-w-4 rounded-full bg-brand px-1 text-center text-[0.6rem] text-brand-foreground">{wishlistCount}</span>}</button><button type="button" onClick={openCart} className={cn(itemClass, pathname.startsWith('/cart') && activeClass)}><ShoppingBag className="size-4" />Cart{cartCount > 0 && <span className="absolute right-5 top-2 min-w-4 rounded-full bg-brand px-1 text-center text-[0.6rem] text-brand-foreground">{cartCount}</span>}</button></div></nav>
 }
 
 export function WishlistDrawer() {
@@ -96,7 +99,19 @@ export function CompareTray() {
   return <div className="fixed inset-x-3 bottom-[calc(var(--fixed-stack-bottom)+var(--sticky-purchase-height))] z-[70] mx-auto flex max-w-lg items-center gap-3 rounded-lg border border-border bg-background px-3 py-3 shadow-lg"><div className="min-w-0 flex-1"><p className="text-sm font-semibold">{compareItems.length} selected</p><p className="truncate text-xs text-muted-foreground">{compareItems.join(' · ')}</p></div><button type="button" onClick={() => window.location.assign('/compare')} className="min-h-10 shrink-0 rounded-md bg-brand px-3 text-sm font-medium text-brand-foreground">Compare now</button><button type="button" onClick={() => toggleCompare(compareItems[compareItems.length - 1])} className="inline-flex size-10 shrink-0 items-center justify-center rounded-md border border-border" aria-label="Remove last compared product"><X className="size-4" /></button></div>
 }
 
-export function InteractionOverlays() { return <><WishlistDrawer /><CompareTray /><MobileBottomNav /></> }
+export function RouteProgress() {
+  const pathname = usePathname()
+  const [loading, setLoading] = useState(false)
+  useEffect(() => {
+    const onClick = (event: MouseEvent) => { const anchor = (event.target as HTMLElement).closest('a'); if (anchor?.href && anchor.origin === window.location.origin && anchor.pathname !== pathname) setLoading(true) }
+    document.addEventListener('click', onClick, true)
+    return () => document.removeEventListener('click', onClick, true)
+  }, [pathname])
+  useEffect(() => { setLoading(false) }, [pathname])
+  return loading ? <div className="fixed inset-x-0 top-0 z-[120] h-0.5 overflow-hidden bg-brand-muted" role="progressbar" aria-label="Loading page"><div className="h-full w-1/3 animate-pulse bg-brand" /></div> : null
+}
+
+export function InteractionOverlays() { const { cartOpen } = useInteractions(); return <><RouteProgress /><WishlistDrawer /><CompareTray />{!cartOpen && <MobileBottomNav />}</> }
 
 export function InteractionShell({ children }: { children: React.ReactNode }) { return <InteractionProvider><div className="pb-[calc(var(--mobile-bottom-nav-height)+var(--safe-area-bottom))] md:pb-0">{children}</div><InteractionOverlays /></InteractionProvider> }
 

@@ -63,20 +63,65 @@ export interface CategoryColumn {
 }
 
 export interface Category {
+  id?: string
   slug: CategorySlug
   name: string
   tagline: string
+  description?: string
+  image?: string
+  mobileImage?: string
+  heroImage?: string
+  parentId?: string
+  children?: string[]
+  featured?: boolean
   itemCount: number
+  productCount?: number
+  relatedBrandIds?: string[]
+  relatedAccessoryGroupIds?: string[]
   /** Structured mega-menu content. */
   columns: CategoryColumn[]
   featuredProductId?: string
 }
 
 export interface Brand {
+  id?: string
   slug: string
   name: string
   tagline: string
+  description?: string
+  logo?: string
+  image?: string
+  heroImage?: string
+  featured?: boolean
   productCount: number
+  associatedCategoryIds?: string[]
+  associatedSystemIds?: string[]
+}
+
+export interface ProductSystem {
+  id: string
+  slug: string
+  name: string
+  brandId?: string
+  categoryIds: string[]
+}
+
+export type ProductRelationshipType = 'compatible_with' | 'accessory_for' | 'lens_for' | 'battery_for' | 'memory_for' | 'cage_for' | 'gimbal_for' | 'microphone_for' | 'flash_for' | 'monitor_for' | 'replacement_for' | 'alternative_to' | 'frequently_bought_with' | 'bundle_with'
+
+export interface ProductRelationship {
+  sourceProductId: string
+  targetProductId: string
+  type: ProductRelationshipType
+  status: 'compatible' | 'recommended' | 'alternative'
+  priority: number
+  notes?: string
+}
+
+export interface AccessoryGroup {
+  id: string
+  slug: string
+  name: string
+  categoryIds: string[]
 }
 
 export interface UseCase {

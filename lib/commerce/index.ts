@@ -1,12 +1,15 @@
 import {
   brands,
   bundles,
+  productRelationships,
+  productSystems,
   categories,
   collections,
   products,
+  accessoryGroups,
   useCases,
 } from './data'
-import type { Bundle, CatalogPage, CatalogQuery, Money, Product, StockStatus, UseCaseSlug } from './types'
+import type { Bundle, CatalogPage, CatalogQuery, Money, Product, ProductRelationshipType, StockStatus, UseCaseSlug } from './types'
 
 export * from './types'
 
@@ -51,11 +54,50 @@ export const commerce = {
   categories: {
     list: () => categories,
     bySlug: (slug: string) => categories.find((c) => c.slug === slug),
+    getChildren: (id: string) => categories.filter((c) => c.parentId === id),
+    getBrands: (id: string) => brands.filter((b) => categories.find((c) => c.id === id || c.slug === id)?.relatedBrandIds?.includes(b.id ?? b.slug)),
+    getProducts: (id: string, params: CatalogQuery = {}) => commerce.products.page({ ...params, category: id }),
+    getAccessoryGroups: (id: string) => accessoryGroups.filter((group) => group.categoryIds.includes(id)),
+    getChildren: (id: string) => categories.filter((category) => category.parentId === id),
+    getBrands: (id: string) => {
+      const category = categories.find((item) => item.id === id || item.slug === id)
+      const ids = category?.relatedBrandIds ?? []
+      if (ids.length) return brands.filter((brand) => ids.includes(brand.id ?? brand.slug))
+      const names = new Set(products.filter((product) => product.category === category?.slug).map((product) => product.brand))
+      return brands.filter((brand) => names.has(brand.name))
+    },
+    getAccessoryGroups: (id: string) => accessoryGroups.filter((group) => group.categoryIds.includes(id)),
+    getProducts: (id: string, params: Omit<CatalogQuery, 'category'> = {}) => commerce.products.page({ ...params, category: id }),
   },
   brands: {
     list: () => brands,
     bySlug: (slug: string) => brands.find((b) => b.slug === slug),
+    getCategories: (id: string) => categories.filter((c) => c.relatedBrandIds?.includes(id)),
+    getProducts: (id: string, params: CatalogQuery = {}) => { const brand = brands.find((b) => b.id === id || b.slug === id); return commerce.products.page({ ...params, brand: brand?.name }) },
+    getCategories: (id: string) => {
+      const brand = brands.find((item) => item.id === id || item.slug === id)
+      const ids = brand?.associatedCategoryIds ?? []
+      if (ids.length) return categories.filter((category) => ids.includes(category.id ?? category.slug))
+      const categorySlugs = new Set(products.filter((product) => product.brand === brand?.name).map((product) => product.category))
+      return categories.filter((category) => categorySlugs.has(category.slug))
+    },
+    getProducts: (id: string, params: Omit<CatalogQuery, 'brand'> = {}) => {
+      const brand = brands.find((item) => item.id === id || item.slug === id)
+      return commerce.products.page({ ...params, brand: brand?.name ?? id })
+    },
   },
+  systems: {
+    list: (params?: { brandId?: string; categoryId?: string }) => productSystems.filter((system) => (!params?.brandId || system.brandId === params.brandId) && (!params?.categoryId || system.categoryIds.includes(params.categoryId))),
+    bySlug: (slug: string) => productSystems.find((system) => system.slug === slug),
+    getProducts: (id: string) => products.filter((product) => productSystems.find((system) => system.id === id)?.categoryIds.includes(product.category)),
+  },
+  relationships: {
+    getForProduct: (productId: string, type?: ProductRelationshipType) => productRelationships.filter((relationship) => relationship.sourceProductId === productId && (!type || relationship.type === type)).sort((a, b) => a.priority - b.priority),
+    summaries: (productId: string, type?: ProductRelationshipType, limit = 8) => commerce.products.byIds(commerce.relationships.getForProduct(productId, type).slice(0, limit).map((relationship) => relationship.targetProductId)),
+    getProducts: (productId: string, type?: ProductRelationshipType, limit = 8) => commerce.products.byIds(commerce.relationships.getForProduct(productId, type).slice(0, limit).map((relationship) => relationship.targetProductId)),
+  },
+  systems: { list: (params: { category?: string; brandId?: string } = {}) => productSystems.filter((system) => (!params.category || system.categoryIds.includes(params.category)) && (!params.brandId || system.brandId === params.brandId)), bySlug: (slug: string) => productSystems.find((system) => system.slug === slug), getProducts: (id: string, params: CatalogQuery = {}) => commerce.products.page(params) },
+  relationships: { getForProduct: (productId: string, type?: ProductRelationshipType) => productRelationships.filter((relation) => relation.sourceProductId === productId && (!type || relation.type === type)).sort((a, b) => a.priority - b.priority), getProducts: (productId: string, type?: ProductRelationshipType, limit = 8) => commerce.products.byIds(productRelationships.filter((relation) => relation.sourceProductId === productId && (!type || relation.type === type)).sort((a, b) => a.priority - b.priority).slice(0, limit).map((relation) => relation.targetProductId)) },
   useCases: {
     list: () => useCases,
     bySlug: (slug: string) => useCases.find((u) => u.slug === slug),
