@@ -13,7 +13,7 @@ const steps = [
 ]
 
 export function ExperiencePage({ name, description }: { name: string; description: string }) {
-  const products = commerce.products.byUseCase(name.toLowerCase()).slice(0, 6)
+  const products = commerce.products.byUseCase(name.toLowerCase() as Parameters<typeof commerce.products.byUseCase>[0]).slice(0, 6)
   const fallback = commerce.products.trending()
   return (
     <main className="mx-auto max-w-[1400px] px-4 py-8 sm:px-6 sm:py-12">
