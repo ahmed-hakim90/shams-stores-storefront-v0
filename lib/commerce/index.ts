@@ -20,6 +20,9 @@ export const commerce = {
     list: () => products,
     byId: (id: string) => products.find((p) => p.id === id),
     bySlug: (slug: string) => products.find((p) => p.slug === slug),
+    getBySlug: (slug: string) => products.find((p) => p.slug === slug),
+    related: (product: Product) => products.filter((p) => p.id !== product.id && (p.category === product.category || p.useCases.some((useCase) => product.useCases.includes(useCase)))).slice(0, 4),
+    recommendations: (product: Product) => products.filter((p) => p.id !== product.id && p.useCases.some((useCase) => product.useCases.includes(useCase))).slice(0, 4),
     byIds: (ids: string[]) =>
       ids
         .map((id) => products.find((p) => p.id === id))

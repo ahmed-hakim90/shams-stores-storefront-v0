@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import { CatalogPage } from '@/components/shams/catalog-page'
 import { ProductDetail } from '@/components/shams/product-detail'
+import { ExperiencePage, BundlePage } from '@/components/shams/curated-pages'
 import { AccountPage, CartPage, CheckoutPage, OrderPage, WishlistPage } from '@/components/shams/commerce-pages'
 import { commerce } from '@/lib/commerce'
 
@@ -20,6 +21,8 @@ export default async function StorefrontRoute({ params }: PageProps) {
   if (!section) notFound()
   if (section === 'cart') return <CartPage />
   if (section === 'checkout') return <CheckoutPage />
+  if (section === 'bundles') return <BundlePage />
+  if (section === 'w' && value) { const experience = commerce.useCases.bySlug(value); if (experience) return <ExperiencePage name={experience.name} description={experience.description} /> }
   if (section === 'account') return <AccountPage />
   if (section === 'wishlist') return <WishlistPage />
   if (section === 'orders') return <OrderPage />
