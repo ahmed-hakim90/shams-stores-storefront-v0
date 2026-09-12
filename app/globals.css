@@ -233,6 +233,12 @@ body {
     background: linear-gradient(180deg, color-mix(in srgb, var(--brand-muted) 22%, var(--background)) 0%, var(--background) 20rem);
   }
 
+  .mobile-storefront-page,
+  .mobile-store-section {
+    min-width: 0;
+    overflow-x: clip;
+  }
+
   .mobile-storefront-page {
     background: linear-gradient(180deg, color-mix(in srgb, var(--brand-muted) 28%, var(--background)) 0%, var(--background) 18rem);
   }
@@ -290,5 +296,38 @@ body {
 
   .mobile-storefront-page h2 {
     line-height: 1.15;
+  }
+
+  .mobile-store-section > div {
+    border-radius: var(--mobile-section-radius);
+    padding: 1.25rem;
+  }
+
+  .mobile-store-section h2 {
+    font-size: clamp(1.65rem, 7.5vw, 2.1rem);
+    line-height: 1.12;
+  }
+
+  .mobile-store-section li {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .mobile-store-section li > span:last-child {
+    flex-basis: calc(100% - 3rem);
+    margin-left: 3rem;
+  }
+
+  .mobile-store-section li > span:last-child {
+    min-width: 0;
+  }
+
+  .mobile-store-section a {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .mobile-store-section .space-y-3 > p {
+    margin-top: 0.5rem;
   }
 }

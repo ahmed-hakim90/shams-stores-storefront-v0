@@ -20,7 +20,7 @@ export function BranchAvailability({ className }: { className?: string }) {
       {branches.map((b) => (
         <li
           key={b.name}
-          className="flex items-center gap-3 rounded-xl border border-border bg-card p-3.5"
+          className="flex min-w-0 items-center gap-3 rounded-xl border border-border bg-card p-3.5"
         >
           <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-lg bg-brand-muted text-brand">
             <MapPin className="size-4.5" />
@@ -33,7 +33,7 @@ export function BranchAvailability({ className }: { className?: string }) {
           </div>
           <span
             className={cn(
-              'inline-flex items-center gap-1.5 whitespace-nowrap text-xs font-medium',
+              'inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap text-xs font-medium sm:text-sm',
               b.status === 'available' ? 'text-success' : 'text-warning',
             )}
           >
