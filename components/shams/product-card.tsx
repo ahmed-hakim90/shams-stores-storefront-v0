@@ -17,7 +17,7 @@ export function ProductCard({
 }: {
   product: Product
   className?: string
-  view?: 'list' | 'grid'
+  view?: 'list' | 'grid' | 'rail'
 }) {
   const dimmed = product.stock === 'out_of_stock'
 
@@ -28,7 +28,7 @@ export function ProductCard({
         className,
       )}
     >
-      <div className={cn('relative shrink-0 bg-white p-3 sm:p-5', view === 'list' ? 'aspect-square w-[38%] sm:aspect-[1.15/1] sm:w-auto' : 'aspect-[4/3] sm:aspect-[1.15/1]')}>
+      <div className={cn('relative shrink-0 bg-white p-3 sm:p-5', view === 'list' ? 'aspect-square w-[38%] sm:aspect-[1.15/1] sm:w-auto' : view === 'rail' ? 'h-[200px] sm:h-[214px]' : 'aspect-[4/3] sm:aspect-[1.15/1]')}>
         {product.badges.length > 0 && (
           <div className="absolute left-3 top-3 z-10 flex flex-col items-start gap-1">
             {product.badges.map((b) => (
@@ -36,7 +36,7 @@ export function ProductCard({
             ))}
           </div>
         )}
-        {view === 'grid' && (
+        {view !== 'list' && (
           <div className="absolute right-3 top-3 z-10 flex flex-col gap-1.5 opacity-100 transition-opacity md:opacity-0 md:group-hover:opacity-100 md:focus-within:opacity-100">
             <WishlistAction productName={product.name} />
             <CompareAction productName={product.name} />
@@ -68,7 +68,7 @@ export function ProductCard({
                 <CompareAction productName={product.name} />
               </>
             )}
-            {view === 'grid' && <RatingStars rating={product.rating} reviewCount={product.reviewCount} />}
+            {view !== 'list' && <RatingStars rating={product.rating} reviewCount={product.reviewCount} />}
           </div>
         </div>
         {view === 'list' && (
@@ -80,7 +80,7 @@ export function ProductCard({
         <div className="min-h-10">
           <Link
             href={`/p/${product.slug}`}
-            className="line-clamp-1 font-medium text-foreground transition-colors hover:text-brand"
+            className={cn('line-clamp-2 font-medium text-foreground transition-colors hover:text-brand', view === 'rail' && 'line-clamp-2')}
           >
             {product.name}
           </Link>

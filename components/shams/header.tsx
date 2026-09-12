@@ -32,7 +32,7 @@ function IconAction({
   return (
     <Link
       href={href}
-      className="group relative flex flex-col items-center gap-0.5 rounded-lg px-2.5 py-1.5 text-foreground/80 transition-colors hover:text-brand"
+      className="group relative flex size-11 shrink-0 items-center justify-center rounded-lg text-foreground/80 transition-colors hover:text-brand"
     >
       <span className="relative">
         <Icon className="size-5.5" />
@@ -79,9 +79,9 @@ export function Header() {
       {/* Main row */}
       <div className="border-b border-border">
         <div className="mx-auto flex max-w-[1400px] items-center gap-3 px-4 py-3 sm:gap-5 sm:px-6">
-          <div className="flex items-center gap-1">
+          <div className="flex h-11 items-center gap-1">
             <MobileMenu />
-            <Link href="/" aria-label="Shams Stores home">
+            <Link href="/" aria-label="Shams Stores home" className="flex h-11 items-center">
               <ShamsLogo />
             </Link>
           </div>

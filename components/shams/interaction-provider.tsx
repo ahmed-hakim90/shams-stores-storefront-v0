@@ -7,8 +7,24 @@ import { cn } from '@/lib/utils'
 import { GlobalSearchOverlay } from './global-search-overlay'
 
 type Notice = { id: number; message: string; tone: 'success' | 'error' | 'warning' | 'info' }
+export type CartLine = {
+  id: string
+  productId: string
+  productName: string
+  productImage?: string
+  quantity: number
+  price: number
+  bundleId?: string
+  bundleGroupId?: string
+  bundleName?: string
+  bundleItemRole?: string
+  bundlePricingMetadata?: { regularTotal: number; bundleTotal: number; savingsAmount: number; currency: 'EGP' }
+}
 type InteractionContextValue = {
   cartCount: number
+  cartLines: CartLine[]
+  addBundleToCart: (bundle: { id: string; name: string; bundlePrice: { amount: number }; originalPrice: { amount: number }; items: { productId: string; role: string; required?: boolean }[]; products: { id: string; name: string; image: string; price: { amount: number }; stock: string }[] }) => boolean
+  removeBundleFromCart: (bundleGroupId: string) => void
   wishlistCount: number
   wishlistItems: string[]
   compareItems: string[]
@@ -49,7 +65,8 @@ function ToastStack({ notices, dismiss }: { notices: Notice[]; dismiss: (id: num
 }
 
 export function InteractionProvider({ children }: { children: React.ReactNode }) {
-  const [cartCount, setCartCount] = useState(0)
+  const [cartLines, setCartLines] = useState<CartLine[]>([])
+  const cartCount = cartLines.reduce((total, line) => total + line.quantity, 0)
   const [wishlistItems, setWishlistItems] = useState<string[]>([])
   const [compareItems, setCompareItems] = useState<string[]>([])
   const [wishlistOpen, setWishlistOpen] = useState(false)
@@ -62,15 +79,15 @@ export function InteractionProvider({ children }: { children: React.ReactNode })
     try {
       const savedWishlist = window.localStorage.getItem('shams-wishlist-ids')
       const savedCompare = window.localStorage.getItem('shams-compare-ids')
-      const savedCart = window.localStorage.getItem('shams-cart-count')
+      const savedCart = window.localStorage.getItem('shams-cart-lines')
       if (savedWishlist) setWishlistItems(JSON.parse(savedWishlist))
       if (savedCompare) setCompareItems(JSON.parse(savedCompare))
-      if (savedCart) setCartCount(Number(savedCart) || 0)
+      if (savedCart) setCartLines(JSON.parse(savedCart))
     } catch { /* Mock persistence is best-effort. */ } finally { hydrated.current = true }
   }, [])
   useEffect(() => { if (hydrated.current) window.localStorage.setItem('shams-wishlist-ids', JSON.stringify(wishlistItems)) }, [wishlistItems])
   useEffect(() => { if (hydrated.current) window.localStorage.setItem('shams-compare-ids', JSON.stringify(compareItems)) }, [compareItems])
-  useEffect(() => { if (hydrated.current) window.localStorage.setItem('shams-cart-count', String(cartCount)) }, [cartCount])
+  useEffect(() => { if (hydrated.current) window.localStorage.setItem('shams-cart-lines', JSON.stringify(cartLines)) }, [cartLines])
   useEffect(() => {
     document.documentElement.style.setProperty('--sticky-purchase-offset', stickyPurchaseVisible ? 'var(--sticky-purchase-height)' : '0px')
     document.documentElement.style.setProperty('--compare-tray-offset', compareItems.length && !wishlistOpen && !cartOpen ? 'var(--compare-tray-height)' : '0px')
@@ -84,11 +101,27 @@ export function InteractionProvider({ children }: { children: React.ReactNode })
     return () => { document.body.style.overflow = ''; document.removeEventListener('keydown', onKeyDown) }
   }, [wishlistOpen, cartOpen, searchOpen])
   const notify = useCallback((message: string, tone: Notice['tone'] = 'success') => { const id = Date.now(); setNotices((current) => { const existing = current.find((item) => item.message === message && item.tone === tone); if (existing) return current.map((item) => item.id === existing.id ? { ...item, id } : item); return [...current.slice(-1), { id, message, tone }] }); window.setTimeout(() => setNotices((current) => current.filter((item) => item.id !== id)), 3200) }, [])
-  const addToCart = useCallback((name = 'Product', quantity = 1) => { setCartCount((count) => count + Math.max(1, quantity)); notify(`${name} added to cart`) }, [notify])
+  const addToCart = useCallback((name = 'Product', quantity = 1) => {
+    setCartLines((lines) => [...lines, { id: `line-${Date.now()}`, productId: name, productName: name, quantity: Math.max(1, quantity), price: 0 }])
+    notify(`${name} added to cart`)
+  }, [notify])
+  const addBundleToCart = useCallback((bundle: Parameters<InteractionContextValue['addBundleToCart']>[0]) => {
+    const requiredItems = bundle.items.filter((item) => item.required !== false)
+    const products = requiredItems.map((item) => bundle.products.find((product) => product.id === item.productId))
+    const unavailable = products.find((product) => !product || product.stock === 'out_of_stock')
+    if (unavailable) { notify('This setup cannot be added because one required item is unavailable', 'warning'); return false }
+    const bundleGroupId = `bundle-${Date.now()}`
+    const savingsAmount = bundle.originalPrice.amount - bundle.bundlePrice.amount
+    const metadata = { regularTotal: bundle.originalPrice.amount, bundleTotal: bundle.bundlePrice.amount, savingsAmount, currency: 'EGP' as const }
+    setCartLines((lines) => [...lines, ...requiredItems.map((item) => { const product = bundle.products.find((candidate) => candidate.id === item.productId)!; return { id: `${bundleGroupId}-${product.id}`, productId: product.id, productName: product.name, productImage: product.image, quantity: 1, price: product.price.amount, bundleId: bundle.id, bundleGroupId, bundleName: bundle.name, bundleItemRole: item.role, bundlePricingMetadata: metadata } })])
+    notify(`${bundle.name} added to cart`)
+    return true
+  }, [notify])
+  const removeBundleFromCart = useCallback((bundleGroupId: string) => setCartLines((lines) => lines.filter((line) => line.bundleGroupId !== bundleGroupId)), [])
   const toggleWishlist = useCallback((name: string) => { setWishlistItems((items) => { const exists = items.includes(name); notify(exists ? 'Removed from wishlist' : 'Added to wishlist', exists ? 'info' : 'success'); return exists ? items.filter((item) => item !== name) : [...items, name] }) }, [notify])
   const isWishlisted = useCallback((name: string) => wishlistItems.includes(name), [wishlistItems])
   const toggleCompare = useCallback((name: string) => { setCompareItems((items) => { const exists = items.includes(name); if (exists) { notify('Removed from comparison', 'info'); return items.filter((item) => item !== name) }; if (items.length >= 4) { notify('Compare up to 4 products', 'warning'); return items }; notify('Added to comparison'); return [...items, name] }) }, [notify])
-  const value = useMemo(() => ({ cartCount, wishlistCount: wishlistItems.length, wishlistItems, compareItems, wishlistOpen, cartOpen, searchOpen, stickyPurchaseVisible, setStickyPurchaseVisible, openWishlist: () => setWishlistOpen(true), closeWishlist: () => setWishlistOpen(false), openCart: () => setCartOpen(true), closeCart: () => setCartOpen(false), openSearch: () => { setSearchOpen(true); setWishlistOpen(false); setCartOpen(false) }, closeSearch: () => setSearchOpen(false), addToCart, toggleWishlist, isWishlisted, toggleCompare, notify }), [cartCount, wishlistItems, compareItems, wishlistOpen, cartOpen, searchOpen, stickyPurchaseVisible, addToCart, toggleWishlist, isWishlisted, toggleCompare, notify])
+  const value = useMemo(() => ({ cartCount, cartLines, addBundleToCart, removeBundleFromCart, wishlistCount: wishlistItems.length, wishlistItems, compareItems, wishlistOpen, cartOpen, searchOpen, stickyPurchaseVisible, setStickyPurchaseVisible, openWishlist: () => setWishlistOpen(true), closeWishlist: () => setWishlistOpen(false), openCart: () => setCartOpen(true), closeCart: () => setCartOpen(false), openSearch: () => { setSearchOpen(true); setWishlistOpen(false); setCartOpen(false) }, closeSearch: () => setSearchOpen(false), addToCart, toggleWishlist, isWishlisted, toggleCompare, notify }), [cartLines, addBundleToCart, removeBundleFromCart, wishlistItems, compareItems, wishlistOpen, cartOpen, searchOpen, stickyPurchaseVisible, addToCart, toggleWishlist, isWishlisted, toggleCompare, notify])
   return <InteractionContext.Provider value={value}>{children}<ToastStack notices={notices} dismiss={(id) => setNotices((current) => current.filter((item) => item.id !== id))} /></InteractionContext.Provider>
 }
 
