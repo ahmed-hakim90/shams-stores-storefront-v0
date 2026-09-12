@@ -6,17 +6,17 @@ import { useInteractions } from './interaction-provider'
 import { ShoppingCart, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
-export function CartDrawer() {
+export function CartDrawer({ showTrigger = true }: { showTrigger?: boolean }) {
   const { cartOpen: open, openCart, closeCart, cartCount, cartLines, removeBundleFromCart, notify } = useInteractions()
   const bundleGroups = Array.from(new Map(cartLines.filter((line) => line.bundleGroupId).map((line) => [line.bundleGroupId!, line])).values())
   const standaloneLines = cartLines.filter((line) => !line.bundleGroupId)
 
   return (
     <>
-      <button type="button" onClick={openCart} aria-label="Open cart" className="group relative flex size-10 shrink-0 items-center justify-center rounded-lg text-foreground/80 transition-colors hover:text-brand xl:size-11">
+      {showTrigger && <button type="button" onClick={openCart} aria-label="Open cart" className="group relative flex size-10 shrink-0 items-center justify-center rounded-lg text-foreground/80 transition-colors hover:text-brand xl:size-11">
         <span className="relative"><ShoppingCart className="size-5.5" />{cartCount > 0 && <span className="absolute -right-2 -top-2 inline-flex min-w-4.5 items-center justify-center rounded-full bg-brand px-1 text-[0.6rem] font-semibold leading-4.5 text-brand-foreground">{cartCount}</span>}</span>
         <span className="sr-only">Cart</span>
-      </button>
+      </button>}
       {open && <div className="fixed inset-0 z-[100] bg-foreground/55 backdrop-blur-[2px]" onClick={closeCart} aria-hidden="true" />}
       <aside className={`fixed inset-y-0 right-0 z-[101] flex h-dvh w-full max-w-md flex-col overflow-hidden bg-background shadow-2xl transition-transform duration-200 ${open ? 'translate-x-0' : 'pointer-events-none translate-x-full'}`} role="dialog" aria-modal="true" aria-label="Shopping cart" aria-hidden={!open}>
         <header className="shrink-0 border-b border-border bg-background px-5 py-4"><div className="flex items-center justify-between"><div><p className="text-xs font-semibold uppercase tracking-widest text-brand">Your cart</p><h2 className="mt-1 text-lg font-semibold">{cartCount} {cartCount === 1 ? 'item' : 'items'}</h2></div><button type="button" onClick={closeCart} className="flex size-11 items-center justify-center rounded-lg border border-border" aria-label="Close cart"><X /></button></div></header>
