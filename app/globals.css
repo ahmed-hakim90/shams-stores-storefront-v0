@@ -262,6 +262,53 @@ body {
     box-shadow: 0 8px 24px -20px rgba(17, 17, 17, 0.35);
   }
 
+  .mobile-product-results {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .mobile-view-toggle {
+    display: none;
+  }
+
+  .mobile-product-card-grid {
+    display: flex;
+    min-height: 188px;
+    flex-direction: row;
+    border-radius: var(--mobile-section-radius);
+  }
+
+  .mobile-product-card-grid > div:first-child {
+    display: flex;
+    width: 38%;
+    flex-direction: column;
+    aspect-ratio: auto;
+    background: linear-gradient(145deg, #ffffff 0%, color-mix(in srgb, var(--brand-muted) 40%, #ffffff) 100%);
+  }
+
+  .mobile-product-card-grid > div:first-child > div:first-child {
+    display: block;
+    min-height: 0;
+    flex: 1;
+  }
+
+  .mobile-product-card-grid > div:first-child > div:first-child > a {
+    aspect-ratio: 1 / 1;
+  }
+
+  .mobile-product-card-grid > div:first-child > div:first-child > div {
+    display: flex;
+  }
+
+  .mobile-product-card-grid > div:first-child > div:last-child {
+    display: flex;
+  }
+
+  .mobile-product-card-grid > div:last-child {
+    min-width: 0;
+    flex: 1;
+    border-top: 0;
+  }
+
   .mobile-product-card > div:first-child {
     background: linear-gradient(145deg, #ffffff 0%, color-mix(in srgb, var(--brand-muted) 40%, #ffffff) 100%);
   }
