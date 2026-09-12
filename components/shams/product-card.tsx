@@ -24,7 +24,7 @@ export function ProductCard({
   return (
     <article
       className={cn(
-        cn('group rounded-xl border border-border bg-card transition-[border-color,box-shadow,transform] duration-180 hover:border-brand/40 hover:shadow-[0_1px_0_rgba(0,0,0,0.02),0_12px_30px_-18px_rgba(21,63,112,0.35)] sm:min-w-0', view === 'list' ? 'flex min-h-[188px] flex-row sm:flex-col' : 'flex flex-col'),
+        cn('group border border-border bg-card transition-[border-color,box-shadow,transform] duration-180 hover:border-brand/40 hover:shadow-[0_1px_0_rgba(0,0,0,0.02),0_12px_30px_-18px_rgba(21,63,112,0.35)] sm:min-w-0', view === 'list' ? 'relative flex min-h-[188px] flex-row rounded-none' : 'flex flex-col rounded-xl'),
         className,
       )}
     >
@@ -56,18 +56,19 @@ export function ProductCard({
         </Link>
       </div>
 
+      {view === 'list' && (
+        <div className="absolute bottom-0 left-0 z-10 flex w-[38%] justify-center gap-2 pb-3 sm:static sm:order-3 sm:w-auto sm:justify-end sm:px-4 sm:pb-4">
+          <WishlistAction productName={product.name} className="rounded-none" />
+          <CompareAction productName={product.name} className="rounded-none" />
+        </div>
+      )}
+
       <div className={cn('flex min-w-0 flex-1 flex-col gap-2.5 p-3 sm:p-4', view === 'grid' && 'border-t border-border')}>
         <div className="flex min-w-0 items-start justify-between gap-2">
           <span className="min-w-0 pt-1 text-xs font-semibold uppercase tracking-wide text-brand">
             {product.brand}
           </span>
           <div className="flex shrink-0 items-center gap-1.5">
-            {view === 'list' && (
-              <>
-                <WishlistAction productName={product.name} />
-                <CompareAction productName={product.name} />
-              </>
-            )}
             {view !== 'list' && <RatingStars rating={product.rating} reviewCount={product.reviewCount} />}
           </div>
         </div>
