@@ -11,7 +11,7 @@ import { useInteractions } from './interaction-provider'
 
 const popularSearches = ['Sony A7 IV', 'Canon RF', 'DJI Mic', 'Mirrorless Cameras']
 const popularCategories = [{ label: 'Cameras', href: '/c/cameras' }, { label: 'Lenses', href: '/c/lenses' }, { label: 'Audio', href: '/c/audio' }, { label: 'Drones', href: '/c/drones' }]
-const popularBrands = [{ label: 'Sony', href: '/brands/sony' }, { label: 'Canon', href: '/brands/canon' }]
+const popularBrands = [{ label: 'Sonar', href: '/b/sonar' }, { label: 'Canonet', href: '/b/canonet' }, { label: 'DJX', href: '/b/djx' }]
 
 export function GlobalSearchOverlay() {
   const { searchOpen, closeSearch } = useInteractions()
