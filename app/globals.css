@@ -103,6 +103,8 @@
   --compare-tray-height: 4.75rem;
   --safe-area-bottom: env(safe-area-inset-bottom, 0px);
   --fixed-stack-bottom: calc(var(--mobile-bottom-nav-height) + var(--safe-area-bottom));
+  --mobile-page-gutter: 1rem;
+  --mobile-section-radius: 1.25rem;
   --sticky-purchase-offset: 0px;
   --compare-tray-offset: 0px;
   --chart-1: oklch(0.87 0 0);
@@ -224,4 +226,69 @@ body {
 }
 .shams-scrollbar-none::-webkit-scrollbar {
   display: none;
+}
+
+@media (max-width: 767px) {
+  body {
+    background: linear-gradient(180deg, color-mix(in srgb, var(--brand-muted) 22%, var(--background)) 0%, var(--background) 20rem);
+  }
+
+  .mobile-storefront-page {
+    background: linear-gradient(180deg, color-mix(in srgb, var(--brand-muted) 28%, var(--background)) 0%, var(--background) 18rem);
+  }
+
+  .mobile-section-header {
+    border-radius: var(--mobile-section-radius);
+    border: 1px solid color-mix(in srgb, var(--brand) 14%, var(--border));
+    background: color-mix(in srgb, var(--card) 92%, var(--brand-muted));
+    padding: 1.125rem;
+    box-shadow: 0 8px 24px -20px color-mix(in srgb, var(--brand) 55%, transparent);
+  }
+
+  .mobile-storefront-page .mobile-section-header h1 {
+    font-size: clamp(1.7rem, 8vw, 2.15rem);
+    line-height: 1.08;
+  }
+
+  .mobile-product-card {
+    overflow: hidden;
+    border-radius: var(--mobile-section-radius);
+    box-shadow: 0 8px 24px -20px rgba(17, 17, 17, 0.35);
+  }
+
+  .mobile-product-card > div:first-child {
+    background: linear-gradient(145deg, #ffffff 0%, color-mix(in srgb, var(--brand-muted) 40%, #ffffff) 100%);
+  }
+
+  .mobile-product-card > div:last-child {
+    gap: 0.7rem;
+    padding: 0.875rem;
+  }
+
+  .mobile-product-card a {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mobile-storefront-page input,
+  .mobile-storefront-page select,
+  .mobile-storefront-page textarea {
+    border-radius: 0.875rem;
+  }
+
+  .mobile-storefront-page section.rounded-2xl,
+  .mobile-storefront-page aside.rounded-2xl,
+  .mobile-storefront-page section.rounded-xl,
+  .mobile-storefront-page aside.rounded-xl {
+    border-color: color-mix(in srgb, var(--brand) 12%, var(--border));
+    box-shadow: 0 8px 28px -24px rgba(17, 17, 17, 0.45);
+  }
+
+  .mobile-storefront-page h1 {
+    font-size: clamp(1.85rem, 9vw, 2.6rem);
+    line-height: 1.08;
+  }
+
+  .mobile-storefront-page h2 {
+    line-height: 1.15;
+  }
 }

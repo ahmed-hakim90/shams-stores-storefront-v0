@@ -27,7 +27,7 @@ export function MobileListingHeader({
         <span className="mx-2">/</span>
         <span className="text-foreground">{title}</span>
       </nav>
-      <header className="flex flex-col gap-2 border-b border-border pb-4 sm:gap-3 sm:pb-6">
+      <header className="mobile-section-header flex flex-col gap-2 border-b border-border pb-4 sm:gap-3 sm:pb-6">
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand">Shams Stores</p>
         <h1 className="text-3xl font-semibold tracking-tight sm:text-5xl">
           {query ? <>Results for <span className="text-brand">“{query}”</span></> : title}

@@ -24,7 +24,7 @@ export function ProductCard({
   return (
     <article
       className={cn(
-        cn('group border border-border bg-card transition-[border-color,box-shadow,transform] duration-180 hover:border-brand/40 hover:shadow-[0_1px_0_rgba(0,0,0,0.02),0_12px_30px_-18px_rgba(21,63,112,0.35)] sm:min-w-0', view === 'list' ? 'relative flex min-h-[188px] flex-row rounded-none' : 'flex flex-col rounded-xl'),
+        cn('group mobile-product-card border border-border bg-card transition-[border-color,box-shadow,transform] duration-180 hover:border-brand/40 hover:shadow-[0_1px_0_rgba(0,0,0,0.02),0_12px_30px_-18px_rgba(21,63,112,0.35)] sm:min-w-0', view === 'list' ? 'relative flex min-h-[188px] flex-row rounded-none' : 'flex flex-col rounded-xl'),
         className,
       )}
     >
