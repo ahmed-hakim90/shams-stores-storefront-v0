@@ -279,7 +279,7 @@ body {
 
   .mobile-product-card-grid > div:first-child {
     display: flex;
-    width: 38%;
+    width: 42%;
     flex-direction: column;
     aspect-ratio: auto;
     background: linear-gradient(145deg, #ffffff 0%, color-mix(in srgb, var(--brand-muted) 40%, #ffffff) 100%);
@@ -315,7 +315,7 @@ body {
 
   .mobile-product-card > div:last-child {
     gap: 0.7rem;
-    padding: 0.875rem;
+    padding: 0.75rem 0.7rem;
   }
 
   .mobile-product-card a {
