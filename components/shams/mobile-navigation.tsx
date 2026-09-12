@@ -5,6 +5,7 @@ import { Grid2X2, Heart, Home, Menu, Search, ShoppingBag, Tag, User } from 'luci
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { GlassSurface } from './glass-surface'
+import { CartDrawer } from './cart-drawer'
 import { MobileMenu } from './mobile-menu'
 import { ShamsLogo } from './logo'
 import { useInteractions } from './interaction-provider'
@@ -28,6 +29,7 @@ export function MobileHeader() {
           <button type="button" onClick={openCart} aria-label="Open cart" className="relative flex size-11 items-center justify-center rounded-full border border-white/45 bg-white/20 text-foreground/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.65)] transition-colors hover:bg-white/40 hover:text-brand"><ShoppingBag className="size-5" /><CountBadge count={cartCount} /></button>
         </div>
       </div>
+      <CartDrawer />
     </header>
   )
 }
