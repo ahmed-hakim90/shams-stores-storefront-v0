@@ -37,13 +37,13 @@ export function ProductCard({
           </div>
         )}
         {view !== 'list' ? (
-          <div className={cn('grid h-full min-h-0 grid-cols-[minmax(0,1fr)_44px] gap-2', view === 'grid' && '-my-3 -mr-3 sm:-my-5 sm:-mr-5')}>
+          <div className={cn('grid h-full min-h-0 grid-cols-[minmax(0,1fr)_44px] gap-2 sm:gap-3', view === 'grid' && '-my-3 -mr-3 sm:-my-5 sm:-mr-5')}>
             <Link href={`/p/${product.slug}`} className="relative block min-h-0 overflow-hidden">
               <Image
                 src={product.image || '/placeholder.svg'}
                 alt={product.name}
                 fill
-                sizes="(max-width: 640px) calc(100vw - 76px), (max-width: 768px) calc(50vw - 60px), 220px"
+                sizes="(max-width: 640px) calc(100vw - 76px), (max-width: 768px) calc(50vw - 60px), (max-width: 1280px) 190px, 220px"
                 className={cn(
                   'object-contain p-2 transition-transform duration-300 group-hover:scale-[1.04]',
                   dimmed && 'opacity-70 grayscale',
