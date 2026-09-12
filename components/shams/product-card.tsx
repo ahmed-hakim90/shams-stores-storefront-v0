@@ -28,7 +28,7 @@ export function ProductCard({
         className,
       )}
     >
-      <div className={cn('relative shrink-0 bg-white p-3 sm:p-5', view === 'list' ? 'aspect-square w-[38%] sm:aspect-[1.15/1] sm:w-auto' : view === 'rail' ? 'h-[200px] sm:h-[214px]' : 'aspect-[4/3] sm:aspect-[1.15/1]')}>
+      <div className={cn('relative shrink-0 bg-white p-3 sm:p-5', view === 'list' ? 'flex w-[38%] flex-col sm:w-[42%]' : view === 'rail' ? 'h-[200px] sm:h-[214px]' : 'aspect-[4/3] sm:aspect-[1.15/1]')}>
         {product.badges.length > 0 && (
           <div className="absolute left-3 top-3 z-10 flex flex-col items-start gap-1">
             {product.badges.map((b) => (
@@ -42,7 +42,7 @@ export function ProductCard({
             <CompareAction productName={product.name} />
           </div>
         )}
-        <Link href={`/p/${product.slug}`} className="block h-full overflow-hidden">
+        <Link href={`/p/${product.slug}`} className={cn('relative block overflow-hidden', view === 'list' && 'aspect-square shrink-0')}>
           <Image
             src={product.image || '/placeholder.svg'}
             alt={product.name}
@@ -54,14 +54,13 @@ export function ProductCard({
             )}
           />
         </Link>
+        {view === 'list' && (
+          <div className="relative z-20 flex shrink-0 justify-center gap-2 pt-2 sm:pt-3">
+            <WishlistAction productName={product.name} className="rounded-none" />
+            <CompareAction productName={product.name} className="rounded-none" />
+          </div>
+        )}
       </div>
-
-      {view === 'list' && (
-        <div className="absolute bottom-0 left-0 z-10 flex w-[38%] justify-center gap-2 pb-3 sm:static sm:order-3 sm:w-auto sm:justify-end sm:px-4 sm:pb-4">
-          <WishlistAction productName={product.name} className="rounded-none" />
-          <CompareAction productName={product.name} className="rounded-none" />
-        </div>
-      )}
 
       <div className={cn('flex min-w-0 flex-1 flex-col gap-2.5 p-3 sm:p-4', view === 'grid' && 'border-t border-border')}>
         <div className="flex min-w-0 items-start justify-between gap-2">
