@@ -36,24 +36,39 @@ export function ProductCard({
             ))}
           </div>
         )}
-        {view !== 'list' && (
-          <div className="absolute right-3 top-3 z-10 flex flex-col gap-1.5 opacity-100 transition-opacity md:opacity-0 md:group-hover:opacity-100 md:focus-within:opacity-100">
-            <WishlistAction productName={product.name} />
-            <CompareAction productName={product.name} />
+        {view !== 'list' ? (
+          <div className="grid h-full min-h-0 grid-cols-[minmax(0,1fr)_44px] gap-2">
+            <Link href={`/p/${product.slug}`} className="relative block min-h-0 overflow-hidden">
+              <Image
+                src={product.image || '/placeholder.svg'}
+                alt={product.name}
+                fill
+                sizes="(max-width: 640px) calc(100vw - 76px), (max-width: 768px) calc(50vw - 60px), 220px"
+                className={cn(
+                  'object-contain p-2 transition-transform duration-300 group-hover:scale-[1.04]',
+                  dimmed && 'opacity-70 grayscale',
+                )}
+              />
+            </Link>
+            <div className="flex flex-col gap-1.5 pt-0.5 opacity-100 transition-opacity md:opacity-0 md:group-hover:opacity-100 md:focus-within:opacity-100">
+              <WishlistAction productName={product.name} />
+              <CompareAction productName={product.name} />
+            </div>
           </div>
+        ) : (
+          <Link href={`/p/${product.slug}`} className="relative block aspect-square shrink-0 overflow-hidden">
+            <Image
+              src={product.image || '/placeholder.svg'}
+              alt={product.name}
+              fill
+              sizes="38vw"
+              className={cn(
+                'object-contain p-2 transition-transform duration-300 group-hover:scale-[1.04]',
+                dimmed && 'opacity-70 grayscale',
+              )}
+            />
+          </Link>
         )}
-        <Link href={`/p/${product.slug}`} className={cn('relative block overflow-hidden', view === 'list' && 'aspect-square shrink-0')}>
-          <Image
-            src={product.image || '/placeholder.svg'}
-            alt={product.name}
-            fill
-            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 280px"
-            className={cn(
-              'object-contain p-2 transition-transform duration-300 group-hover:scale-[1.04]',
-              dimmed && 'opacity-70 grayscale',
-            )}
-          />
-        </Link>
         {view === 'list' && (
           <div className="relative z-20 flex shrink-0 justify-center gap-2 pt-2 sm:pt-3">
             <WishlistAction productName={product.name} className="rounded-none" />
