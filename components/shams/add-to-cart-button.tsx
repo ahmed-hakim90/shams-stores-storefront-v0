@@ -25,8 +25,10 @@ export function AddToCartButton({
     ? 'Notify me'
     : preorder
       ? 'Pre-order'
-      : added
-        ? 'Added'
+        : pending
+        ? 'Adding…'
+        : added
+        ? 'Added ✓'
         : 'Add to cart'
 
   const Icon = pending ? LoaderCircle : outOfStock ? Bell : added ? Check : ShoppingCart

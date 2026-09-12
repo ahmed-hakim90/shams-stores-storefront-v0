@@ -91,7 +91,7 @@ export function Header() {
           <div className="ml-auto flex items-center gap-0.5 sm:gap-1">
             <IconAction href="/account" label="Account" icon={User} />
             <IconAction href="/compare" label="Compare" icon={Scale} count={2} />
-            <button type="button" onClick={openWishlist} aria-label="Open wishlist" className="group relative flex min-h-11 flex-col items-center gap-0.5 rounded-lg px-2.5 py-1.5 text-foreground/80 transition-colors hover:text-brand"><span className="relative"><Heart className="size-5.5" /><span className="absolute -right-2 -top-2 inline-flex min-w-4.5 items-center justify-center rounded-full bg-brand px-1 text-[0.6rem] font-semibold leading-4.5 text-brand-foreground">5</span></span><span className="hidden text-[0.65rem] font-medium xl:block">Wishlist</span></button>
+            <button type="button" onClick={openWishlist} aria-label="Open wishlist" className="group relative flex size-11 shrink-0 items-center justify-center rounded-lg text-foreground/80 transition-colors hover:text-brand"><span className="relative"><Heart className="size-5.5" /><span className="absolute -right-2 -top-2 inline-flex min-w-4.5 items-center justify-center rounded-full bg-brand px-1 text-[0.6rem] font-semibold leading-4.5 text-brand-foreground">5</span></span><span className="hidden text-[0.65rem] font-medium xl:block">Wishlist</span></button>
             <CartDrawer />
           </div>
         </div>
