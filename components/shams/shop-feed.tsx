@@ -1,7 +1,6 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { ProductViewToggle, type ProductView } from './product-view-toggle'
 import { LoaderCircle, RefreshCw } from 'lucide-react'
 import type { CatalogPage, CatalogQuery, Product } from '@/lib/commerce'
 import { ProductCard } from './product-card'
@@ -15,16 +14,8 @@ export function ShopFeed({ initialProducts, initialCursor, initialHasNext, total
   const [hasNext, setHasNext] = useState(initialHasNext)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(false)
-  const [view, setView] = useState<ProductView>('grid')
   const inFlight = useRef(false)
   const sentinel = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const saved = window.localStorage.getItem('shams-product-view')
-    if (saved === 'grid' || saved === 'list') { setView(saved); return }
-    setView(window.matchMedia('(max-width: 639px)').matches ? 'list' : 'grid')
-  }, [])
-  useEffect(() => { window.localStorage.setItem('shams-product-view', view) }, [view])
 
   const loadMore = useCallback(async () => {
     if (inFlight.current || !hasNext) return
@@ -52,8 +43,8 @@ export function ShopFeed({ initialProducts, initialCursor, initialHasNext, total
   }, [loadMore, error])
 
   return <section aria-label="Shop products">
-    <div className="mb-5 flex items-center justify-between gap-3 text-sm text-muted-foreground"><div><span>{total} products</span><span className="ml-2 text-xs">{items.length} loaded</span></div><ProductViewToggle value={view} onChange={setView} /></div>
-    <div className={view === 'list' ? 'grid grid-cols-1 gap-3' : 'grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-6 xl:grid-cols-4'}>{items.map((product) => <ProductCard key={product.id} product={product} view={view} />)}</div>
+    <div className="mb-5 text-sm text-muted-foreground"><span>{total} products</span><span className="ml-2 text-xs">{items.length} loaded</span></div>
+    <div className="grid grid-cols-1 gap-4">{items.map((product) => <ProductCard key={product.id} product={product} view="list" />)}</div>
     <div ref={sentinel} className="flex min-h-24 items-center justify-center py-6">{loading && <LoaderCircle className="size-5 animate-spin text-brand" aria-label="Loading more products" />}{error && <div className="flex items-center gap-3 text-sm text-muted-foreground"><span>Could not load more products.</span><Button variant="outline" className="min-h-10 gap-2" onClick={loadMore}><RefreshCw className="size-4" />Retry</Button></div>}{!loading && !error && !hasNext && items.length > 0 && <p className="text-sm text-muted-foreground">You&apos;ve reached the end.</p>}</div>
   </section>
 }

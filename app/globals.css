@@ -199,9 +199,14 @@
   * {
     @apply border-border outline-ring/50;
   }
-body {
-  @apply bg-background text-foreground;
-}
+  html,
+  body {
+    overflow-x: clip;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
 
 @media (prefers-reduced-motion: no-preference) {
   button, a, [role='button'], input, select, textarea { transition-duration: 180ms; transition-timing-function: ease-out; }
@@ -270,52 +275,12 @@ body {
     display: none;
   }
 
-  .mobile-product-card-grid {
-    display: flex;
-    min-height: 188px;
-    flex-direction: row;
-    border-radius: var(--mobile-section-radius);
-  }
-
-  .mobile-product-card-grid > div:first-child {
-    display: flex;
-    width: 42%;
-    flex-direction: column;
-    aspect-ratio: auto;
-    background: linear-gradient(145deg, #ffffff 0%, color-mix(in srgb, var(--brand-muted) 40%, #ffffff) 100%);
-  }
-
-  .mobile-product-card-grid > div:first-child > div:first-child {
-    display: block;
-    min-height: 0;
-    flex: 1;
-  }
-
-  .mobile-product-card-grid > div:first-child > div:first-child > a {
-    aspect-ratio: 1 / 1;
-  }
-
-  .mobile-product-card-grid > div:first-child > div:first-child > div {
-    display: flex;
-  }
-
-  .mobile-product-card-grid > div:first-child > div:last-child {
-    display: flex;
-  }
-
-  .mobile-product-card-grid > div:last-child {
-    min-width: 0;
-    flex: 1;
-    border-top: 0;
-  }
-
   .mobile-product-card > div:first-child {
     background: linear-gradient(145deg, #ffffff 0%, color-mix(in srgb, var(--brand-muted) 40%, #ffffff) 100%);
   }
 
   .mobile-product-card > div:last-child {
-    gap: 0.7rem;
-    padding: 0.75rem 0.7rem;
+    min-width: 0;
   }
 
   .mobile-product-card a {

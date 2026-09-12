@@ -8,8 +8,6 @@ import { commerce } from '@/lib/commerce'
 import { cn } from '@/lib/utils'
 import { GlobalSearchOverlay } from './global-search-overlay'
 import { MobileBottomNav as GlassMobileBottomNav } from './mobile-navigation'
-import Link from 'next/link'
-import { CartDrawer } from './cart-drawer'
 import { Header } from './header'
 
 type Notice = { id: number; message: string; tone: 'success' | 'error' | 'warning' | 'info' }
@@ -170,27 +168,13 @@ export function RouteProgress() {
 
 export function InteractionOverlays() { const { cartOpen } = useInteractions(); return <><RouteProgress /><GlobalSearchOverlay /><WishlistDrawer /><CompareTray />{!cartOpen && <GlassMobileBottomNav />}</> }
 
-function ConnectedHeader() {
-  return <header className="border-b border-border bg-background">
-    <div className="mx-auto flex max-w-[1400px] flex-wrap items-center gap-4 px-4 py-4 sm:px-6">
-      <Link href="/shop" className="text-lg font-bold text-brand">Shams Stores</Link>
-      <form action="/shop" className="order-last flex min-w-0 flex-1 basis-full gap-2 sm:order-none sm:basis-auto">
-        <input name="q" aria-label="Search products" placeholder="Search products…" className="min-h-11 w-full rounded-lg border border-border bg-background px-3" />
-        <button className="rounded-lg bg-brand px-4 text-sm font-semibold text-brand-foreground">Search</button>
-      </form>
-      <CartDrawer />
-    </div>
-  </header>
-}
-
 export function InteractionShell({ children, liveMode = false }: { children: React.ReactNode; liveMode?: boolean }) {
   return <InteractionProvider liveMode={liveMode}>
-    {liveMode ? <ConnectedHeader /> : <Header />}
-    <div className={liveMode ? '' : 'pb-[calc(var(--mobile-bottom-nav-height)+var(--safe-area-bottom))] md:pb-0'}>{children}</div>
-    {liveMode ? <RouteProgress /> : <InteractionOverlays />}
+    <Header />
+    <div className="pb-[calc(var(--mobile-bottom-nav-height)+var(--safe-area-bottom))] md:pb-0">{children}</div>
+    <InteractionOverlays />
   </InteractionProvider>
 }
 
 export function InteractionButton({ label, onClick, className }: { label: string; onClick?: () => void; className?: string }) { const [pending, setPending] = useState(false); return <button type="button" disabled={pending} onClick={() => { setPending(true); onClick?.(); window.setTimeout(() => setPending(false), 600) }} className={cn('transition-[background-color,opacity,transform] active:scale-[0.98] disabled:cursor-wait disabled:opacity-70', className)}>{pending ? 'Loading…' : label}</button> }
-
 
