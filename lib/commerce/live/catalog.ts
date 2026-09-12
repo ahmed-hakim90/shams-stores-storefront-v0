@@ -212,6 +212,9 @@ export const listProducts = cache(
             return []
           }
         })
+        const normalized=(value:string)=>value.toLowerCase().replace(/[^\p{L}\p{N}]/gu,'')
+        const needle=normalized(q.query)
+        promoted=promoted.filter(product=>normalized(product.sku??'')===needle||normalized(product.name).includes(needle))
         promotedIds = promoted.map((p) => p.id)
       }
     }

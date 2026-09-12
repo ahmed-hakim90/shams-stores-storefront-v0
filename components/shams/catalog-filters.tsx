@@ -174,7 +174,7 @@ export function MobileFilterDrawer({
     queryKey: ['filter-preview', preview],
     queryFn: ({ signal }) =>
       commerceFetch<{ total: number }>(
-        `/api/commerce/products?${preview}&pageSize=1`,
+        `/api/commerce/products?${preview}&pageSize=24`,
         { signal },
       ),
     enabled: open,
