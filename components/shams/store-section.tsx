@@ -10,7 +10,7 @@ const perks = [
 
 export function StoreSection() {
   return (
-    <section className="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 sm:py-16">
+    <section className="mobile-store-section mx-auto max-w-[1400px] px-4 py-12 sm:px-6 sm:py-16">
       <div className="grid gap-8 overflow-hidden rounded-3xl border border-border bg-card p-6 sm:p-10 lg:grid-cols-2 lg:items-center">
         <div className="space-y-6">
           <div className="space-y-3">
@@ -38,7 +38,7 @@ export function StoreSection() {
             ))}
           </ul>
 
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <Link
               href="/branches"
               className="inline-flex h-11 items-center gap-2 rounded-xl bg-brand px-5 text-sm font-semibold text-brand-foreground transition-transform hover:-translate-y-0.5"

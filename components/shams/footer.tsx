@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Instagram, Facebook, Youtube, MapPin, Phone, Mail } from 'lucide-react'
+import { Camera, MapPin, Phone, Mail } from 'lucide-react'
 import { ShamsLogo } from './logo'
 
 const columns = [
@@ -70,14 +70,15 @@ export function Footer() {
               </p>
             </div>
             <div className="flex gap-2 pt-1">
-              {[Instagram, Facebook, Youtube].map((Icon, i) => (
+              {["Instagram", "Facebook", "YouTube"].map((channel) => (
                 <Link
-                  key={i}
+                  key={channel}
                   href="#"
-                  aria-label="Shams social channel"
+                  aria-label={`Shams ${channel}`}
                   className="inline-flex size-9 items-center justify-center rounded-lg border border-border text-foreground/70 transition-colors hover:border-brand hover:text-brand"
                 >
-                  <Icon className="size-4.5" />
+                  <Camera aria-hidden="true" className="size-4.5" />
+                  <span className="sr-only">{channel}</span>
                 </Link>
               ))}
             </div>
@@ -105,7 +106,7 @@ export function Footer() {
 
       <div className="border-t border-border">
         <div className="mx-auto flex max-w-[1400px] flex-col items-center justify-between gap-3 px-4 py-5 text-xs text-muted-foreground sm:flex-row sm:px-6">
-          <p>© {new Date().getFullYear()} Shams Stores. All rights reserved.</p>
+          <p>© 2026 Shams Stores. All rights reserved.</p>
           <div className="flex items-center gap-4">
             <span>Prices in EGP · Egypt</span>
             <div className="flex items-center gap-1.5">

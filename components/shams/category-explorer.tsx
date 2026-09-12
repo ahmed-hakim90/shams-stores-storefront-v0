@@ -13,6 +13,7 @@ import {
 import { commerce } from '@/lib/commerce'
 import type { CategorySlug } from '@/lib/commerce'
 import { SectionHeading } from './section-heading'
+import Image from 'next/image'
 
 const icons: Record<CategorySlug, LucideIcon> = {
   cameras: Camera,
@@ -46,9 +47,7 @@ export function CategoryExplorer() {
               href={`/c/${cat.slug}`}
               className="group relative flex flex-col gap-3 overflow-hidden rounded-2xl border border-border bg-card p-5 transition-all hover:border-brand/40 hover:shadow-[0_12px_30px_-20px_rgba(21,63,112,0.4)]"
             >
-              <span className="inline-flex size-11 items-center justify-center rounded-xl bg-brand-muted text-brand transition-colors group-hover:bg-brand group-hover:text-brand-foreground">
-                <Icon className="size-5.5" />
-              </span>
+              <div className="relative aspect-[1.45/1] overflow-hidden rounded-xl bg-surface-subtle"><Image src={cat.image ?? '/images/hero-mirrorless.png'} alt="" fill sizes="(max-width: 640px) 45vw, 240px" className="object-cover transition-transform duration-200 group-hover:scale-[1.03]" /><span className="absolute inset-0 bg-gradient-to-t from-foreground/55 to-transparent" /><span className="absolute bottom-3 left-3 text-xs font-semibold uppercase tracking-widest text-white">{cat.name}</span></div>
               <div className="mt-1">
                 <p className="font-semibold tracking-tight text-foreground">{cat.name}</p>
                 <p className="mt-0.5 line-clamp-1 text-xs text-muted-foreground">

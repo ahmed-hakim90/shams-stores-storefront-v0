@@ -44,13 +44,14 @@ export function ProductRail({
 
       <div
         ref={scroller}
-        className="shams-scrollbar-none -mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-px-4 px-4 pb-1 sm:mx-0 sm:px-0 sm:scroll-px-0"
+        className="shams-scrollbar-none -mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain scroll-px-4 px-4 pb-1 sm:mx-0 sm:gap-4 sm:px-0 sm:scroll-px-0"
       >
         {products.map((product) => (
           <ProductCard
             key={product.id}
             product={product}
-            className="w-[75vw] shrink-0 snap-start sm:w-64"
+            view="rail"
+            className="w-[min(78vw,292px)] shrink-0 snap-start sm:w-64"
           />
         ))}
       </div>

@@ -4,6 +4,9 @@ import type {
   Category,
   Collection,
   Product,
+  ProductRelationship,
+  ProductSystem,
+  AccessoryGroup,
   UseCase,
 } from './types'
 
@@ -610,4 +613,27 @@ export const collections: Collection[] = [
     name: 'Deals worth the shot',
     productIds: ['p-mirrorless-a', 'p-lens-zoom', 'p-mic', 'p-tripod'],
   },
+]
+
+export const productSystems: ProductSystem[] = [
+  { id: 'system-sonar-e', slug: 'sonar-e', name: 'Sonar E', brandId: 'sonar', categoryIds: ['cameras', 'lenses'] },
+  { id: 'system-fujin-x', slug: 'fujin-x', name: 'Fujin X', brandId: 'fujin', categoryIds: ['cameras', 'lenses'] },
+  { id: 'system-rf', slug: 'rf-mount', name: 'RF Mount', brandId: 'canonet', categoryIds: ['cameras', 'lenses'] },
+]
+
+export const accessoryGroups: AccessoryGroup[] = [
+  { id: 'power', slug: 'batteries-power', name: 'Batteries & Power', categoryIds: ['cameras', 'video'] },
+  { id: 'storage', slug: 'memory-storage', name: 'Memory & Storage', categoryIds: ['cameras', 'video'] },
+  { id: 'support', slug: 'tripods-support', name: 'Tripods & Support', categoryIds: ['cameras', 'video', 'creator-gear'] },
+  { id: 'audio', slug: 'microphones', name: 'Microphones', categoryIds: ['cameras', 'video', 'audio'] },
+]
+
+export const productRelationships: ProductRelationship[] = [
+  { sourceProductId: 'p-mirrorless-a', targetProductId: 'p-lens-zoom', type: 'lens_for', status: 'compatible', priority: 1 },
+  { sourceProductId: 'p-mirrorless-a', targetProductId: 'p-lens-prime', type: 'lens_for', status: 'compatible', priority: 2 },
+  { sourceProductId: 'p-mirrorless-a', targetProductId: 'p-mic', type: 'microphone_for', status: 'recommended', priority: 3 },
+  { sourceProductId: 'p-mirrorless-a', targetProductId: 'p-gimbal', type: 'gimbal_for', status: 'compatible', priority: 4 },
+  { sourceProductId: 'p-mirrorless-a', targetProductId: 'p-tripod', type: 'frequently_bought_with', status: 'recommended', priority: 5 },
+  { sourceProductId: 'p-cinema', targetProductId: 'p-lens-prime', type: 'lens_for', status: 'compatible', priority: 1 },
+  { sourceProductId: 'p-mic', targetProductId: 'p-light', type: 'frequently_bought_with', status: 'recommended', priority: 1 },
 ]

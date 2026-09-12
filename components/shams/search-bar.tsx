@@ -30,7 +30,7 @@ export function SearchBar({ className }: { className?: string }) {
   }
 
   return (
-    <div className={cn('relative', className)}>
+    <div className={cn('relative min-w-0', className)}>
       <form
         role="search"
         onSubmit={(e) => {

@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
 import { Heart } from 'lucide-react'
+import { useInteractions } from './interaction-provider'
 import { cn } from '@/lib/utils'
 
 export function WishlistAction({
@@ -11,15 +11,16 @@ export function WishlistAction({
   productName: string
   className?: string
 }) {
-  const [saved, setSaved] = useState(false)
+  const { isWishlisted, toggleWishlist } = useInteractions()
+  const saved = isWishlisted(productName)
   return (
     <button
       type="button"
-      onClick={() => setSaved((s) => !s)}
+      onClick={() => toggleWishlist(productName)}
       aria-pressed={saved}
       aria-label={saved ? `Remove ${productName} from wishlist` : `Save ${productName} to wishlist`}
       className={cn(
-        'inline-flex size-8 items-center justify-center rounded-full border border-border bg-background/90 backdrop-blur transition-colors hover:border-brand hover:text-brand',
+        'inline-flex size-11 items-center justify-center rounded-full border border-border bg-background/95 transition-colors hover:border-brand hover:text-brand sm:size-8',
         saved && 'border-brand text-brand',
         className,
       )}

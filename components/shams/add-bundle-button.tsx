@@ -3,19 +3,27 @@
 import { useState } from 'react'
 import { Check, ShoppingCart } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import type { Bundle, Product } from '@/lib/commerce'
+import { useInteractions } from './interaction-provider'
 
 export function AddBundleButton({
   bundleName,
+  bundle,
   className,
 }: {
   bundleName: string
+  bundle?: Bundle & { products?: Product[] }
   className?: string
 }) {
   const [added, setAdded] = useState(false)
+  const { addBundleToCart, notify } = useInteractions()
   return (
     <button
       type="button"
       onClick={() => {
+        if (!bundle?.products) { notify('This setup is still loading', 'info'); return }
+        const addedToCart = addBundleToCart({ ...bundle, products: bundle.products })
+        if (!addedToCart) return
         setAdded(true)
         window.setTimeout(() => setAdded(false), 1600)
       }}

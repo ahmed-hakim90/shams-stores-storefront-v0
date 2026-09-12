@@ -1,7 +1,7 @@
 import { commerce } from '@/lib/commerce'
-import { Header } from '@/components/shams/header'
 import { Hero } from '@/components/shams/hero'
 import { CategoryExplorer } from '@/components/shams/category-explorer'
+import { CatalogDiscovery } from '@/components/shams/catalog-discovery'
 import { ProductRailSection } from '@/components/shams/product-rail-section'
 import { WorkflowExplorer } from '@/components/shams/workflow-explorer'
 import { BundleSection } from '@/components/shams/bundle-section'
@@ -18,11 +18,11 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
       <main>
         <Hero />
 
         <CategoryExplorer />
+        <CatalogDiscovery compact />
 
         <ProductRailSection
           eyebrow="Popular right now"

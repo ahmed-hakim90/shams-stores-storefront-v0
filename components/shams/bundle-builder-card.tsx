@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import { Plus } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { commerce, formatMoney, formatEgp } from '@/lib/commerce'
@@ -24,7 +25,7 @@ export function BundleBuilderCard({
     >
       <div className="flex items-center justify-between gap-2 border-b border-border px-5 py-3">
         <div>
-          <p className="font-semibold tracking-tight text-foreground">{bundle.name}</p>
+          <Link href={`/bundles/${bundle.slug}`} className="font-semibold tracking-tight text-foreground hover:text-brand">{bundle.name}</Link>
           <p className="text-xs text-muted-foreground">
             {commerce.useCases.bySlug(bundle.useCase)?.name} setup ·{' '}
             {bundle.products.length} items
@@ -76,7 +77,7 @@ export function BundleBuilderCard({
             {formatMoney(bundle.bundlePrice)}
           </p>
         </div>
-        <AddBundleButton bundleName={bundle.name} />
+        <div className="flex flex-wrap items-center gap-2"><Link href={`/bundles/${bundle.slug}`} className="inline-flex min-h-11 items-center justify-center rounded-xl border border-border px-4 text-sm font-semibold hover:border-brand hover:text-brand">View bundle</Link><AddBundleButton bundleName={bundle.name} bundle={bundle} /></div>
       </div>
     </article>
   )
