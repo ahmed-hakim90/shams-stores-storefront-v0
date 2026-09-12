@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import { ArrowRight, Check, Scale } from 'lucide-react'
 import { commerce, formatMoney } from '@/lib/commerce'
-import { Header } from '@/components/shams/header'
 import { Footer } from '@/components/shams/footer'
 
 export const metadata = { title: 'Compare gear | Shams Stores', description: 'Compare photography and creator gear side by side.' }
@@ -10,7 +9,6 @@ export default function ComparePage() {
   const products = commerce.products.list().slice(0, 3)
   return (
     <div className="min-h-screen bg-background">
-      <Header />
       <main className="mx-auto max-w-[1400px] px-4 py-8 sm:px-6 sm:py-12">
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand">Shortlist</p>
         <div className="mt-2 flex flex-wrap items-end justify-between gap-4">

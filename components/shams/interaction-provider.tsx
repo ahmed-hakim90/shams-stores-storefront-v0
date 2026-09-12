@@ -2,9 +2,11 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { usePathname } from 'next/navigation'
-import { Check, Info, X, AlertTriangle, Home, Grid2X2, Search, Heart, User, ShoppingBag } from 'lucide-react'
+import { Check, Info, X, AlertTriangle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { GlobalSearchOverlay } from './global-search-overlay'
+import { MobileBottomNav as GlassMobileBottomNav } from './mobile-navigation'
+import { Header } from './header'
 
 type Notice = { id: number; message: string; tone: 'success' | 'error' | 'warning' | 'info' }
 export type CartLine = {
@@ -125,14 +127,6 @@ export function InteractionProvider({ children }: { children: React.ReactNode })
   return <InteractionContext.Provider value={value}>{children}<ToastStack notices={notices} dismiss={(id) => setNotices((current) => current.filter((item) => item.id !== id))} /></InteractionContext.Provider>
 }
 
-export function MobileBottomNav() {
-  const { openWishlist, openCart, openSearch, cartCount, wishlistCount, searchOpen } = useInteractions()
-  const pathname = usePathname()
-  const itemClass = 'relative flex min-h-11 flex-col items-center justify-center gap-0.5 text-[0.65rem] text-muted-foreground transition-[color,background-color,transform] duration-150 hover:text-brand active:scale-[0.98] active:bg-muted'
-  const activeClass = 'text-brand after:absolute after:top-0 after:h-0.5 after:w-8 after:rounded-full after:bg-brand'
-  return <nav className="fixed inset-x-0 bottom-0 z-[55] border-t border-border bg-background/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden" aria-label="Mobile shopping navigation"><div className="grid h-16 grid-cols-5"><a href="/" aria-current={pathname === '/' ? 'page' : undefined} className={cn(itemClass, pathname === '/' && activeClass)}><Home className="size-4" />Home</a><a href="/c/cameras" aria-current={pathname.startsWith('/c/') ? 'page' : undefined} className={cn(itemClass, pathname.startsWith('/c/') && activeClass)}><Grid2X2 className="size-4" />Categories</a><button type="button" onClick={openSearch} aria-current={searchOpen || pathname.startsWith('/search') ? 'page' : undefined} className={cn(itemClass, (searchOpen || pathname.startsWith('/search')) && activeClass)}><Search className="size-4" />Search</button><button type="button" onClick={openWishlist} className={cn(itemClass, pathname.startsWith('/wishlist') && activeClass)}><Heart className="size-4" />Wishlist{wishlistCount > 0 && <span className="absolute right-5 top-2 min-w-4 rounded-full bg-brand px-1 text-center text-[0.6rem] text-brand-foreground">{wishlistCount}</span>}</button><button type="button" onClick={openCart} className={cn(itemClass, pathname.startsWith('/cart') && activeClass)}><ShoppingBag className="size-4" />Cart{cartCount > 0 && <span className="absolute right-5 top-2 min-w-4 rounded-full bg-brand px-1 text-center text-[0.6rem] text-brand-foreground">{cartCount}</span>}</button></div></nav>
-}
-
 export function WishlistDrawer() {
   const { wishlistOpen, closeWishlist, notify, addToCart, wishlistItems, toggleWishlist } = useInteractions()
   if (!wishlistOpen) return null
@@ -157,9 +151,9 @@ export function RouteProgress() {
   return loading ? <div className="fixed inset-x-0 top-0 z-[120] h-0.5 overflow-hidden bg-brand-muted" role="progressbar" aria-label="Loading page"><div className="h-full w-1/3 animate-pulse bg-brand" /></div> : null
 }
 
-export function InteractionOverlays() { const { cartOpen } = useInteractions(); return <><RouteProgress /><GlobalSearchOverlay /><WishlistDrawer /><CompareTray />{!cartOpen && <MobileBottomNav />}</> }
+export function InteractionOverlays() { const { cartOpen } = useInteractions(); return <><RouteProgress /><GlobalSearchOverlay /><WishlistDrawer /><CompareTray />{!cartOpen && <GlassMobileBottomNav />}</> }
 
-export function InteractionShell({ children }: { children: React.ReactNode }) { return <InteractionProvider><div className="pb-[calc(var(--mobile-bottom-nav-height)+var(--safe-area-bottom))] md:pb-0">{children}</div><InteractionOverlays /></InteractionProvider> }
+export function InteractionShell({ children }: { children: React.ReactNode }) { return <InteractionProvider><Header /><div className="pb-[calc(var(--mobile-bottom-nav-height)+var(--safe-area-bottom))] md:pb-0">{children}</div><InteractionOverlays /></InteractionProvider> }
 
 export function InteractionButton({ label, onClick, className }: { label: string; onClick?: () => void; className?: string }) { const [pending, setPending] = useState(false); return <button type="button" disabled={pending} onClick={() => { setPending(true); onClick?.(); window.setTimeout(() => setPending(false), 600) }} className={cn('transition-[background-color,opacity,transform] active:scale-[0.98] disabled:cursor-wait disabled:opacity-70', className)}>{pending ? 'Loading…' : label}</button> }
 

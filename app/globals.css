@@ -98,7 +98,7 @@
   --info: #4f6578;
   --info-muted: #eef2f5;
   --surface-dark: #171717;
-  --mobile-bottom-nav-height: 4rem;
+  --mobile-bottom-nav-height: 5rem;
   --sticky-purchase-height: 4.5rem;
   --compare-tray-height: 4.75rem;
   --safe-area-bottom: env(safe-area-inset-bottom, 0px);

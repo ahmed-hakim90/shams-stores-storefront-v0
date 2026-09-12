@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import { Search, ArrowRight } from 'lucide-react'
-import { Header } from '@/components/shams/header'
 import { Footer } from '@/components/shams/footer'
 
 const links = [
@@ -12,7 +11,6 @@ const links = [
 export default function NotFound() {
   return (
     <div className="min-h-screen bg-background">
-      <Header />
       <main className="mx-auto flex min-h-[60vh] max-w-3xl flex-col items-center justify-center px-5 py-16 text-center sm:px-8">
         <div className="mb-6 flex size-14 items-center justify-center rounded-full bg-brand-muted text-brand" aria-hidden="true">
           <Search />

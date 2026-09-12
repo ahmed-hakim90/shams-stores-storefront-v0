@@ -17,6 +17,7 @@ import { MegaMenu } from './mega-menu'
 import { MobileMenu } from './mobile-menu'
 import { CartDrawer } from './cart-drawer'
 import { useInteractions } from './interaction-provider'
+import { MobileHeader } from './mobile-navigation'
 
 function IconAction({
   href,
@@ -50,7 +51,9 @@ function IconAction({
 export function Header() {
   const { openWishlist } = useInteractions()
   return (
-    <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+    <>
+      <MobileHeader />
+    <header className="sticky top-0 z-50 hidden bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 md:block">
       {/* Utility bar */}
       <div className="hidden border-b border-border bg-brand text-brand-foreground lg:block">
         <div className="mx-auto flex h-9 max-w-[1400px] items-center justify-between px-6 text-xs">
@@ -116,5 +119,6 @@ export function Header() {
         </div>
       </div>
     </header>
+    </>
   )
 }

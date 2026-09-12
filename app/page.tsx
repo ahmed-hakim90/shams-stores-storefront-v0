@@ -1,5 +1,4 @@
 import { commerce } from '@/lib/commerce'
-import { Header } from '@/components/shams/header'
 import { Hero } from '@/components/shams/hero'
 import { CategoryExplorer } from '@/components/shams/category-explorer'
 import { CatalogDiscovery } from '@/components/shams/catalog-discovery'
@@ -19,7 +18,6 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
       <main>
         <Hero />
 
