@@ -134,9 +134,26 @@ export interface UseCase {
   productCount: number
 }
 
+export type BundleAvailability = 'available' | 'low_stock' | 'partially_available' | 'unavailable' | 'preorder'
+
+export interface BundleOption {
+  id: string
+  label: string
+  choices: { id: string; label: string; productId?: string }[]
+  required: boolean
+}
+
 export interface BundleItem {
   role: string
   productId: string
+  variationId?: string
+  required?: boolean
+  quantity?: number
+  selectable?: boolean
+  selectedOption?: string
+  individualPrice?: Money
+  bundleAllocatedPrice?: Money
+  sortOrder?: number
 }
 
 export interface Bundle {
@@ -148,8 +165,19 @@ export interface Bundle {
   items: BundleItem[]
   bundlePrice: Money
   originalPrice: Money
+  heroImage?: string
+  gallery?: string[]
+  availability?: BundleAvailability
+  options?: BundleOption[]
   badge?: string
+  categories?: CategorySlug[]
+  brands?: string[]
+  seo?: { title?: string; description?: string }
 }
+
+export type BundleSummary = Pick<Bundle, 'id' | 'slug' | 'name' | 'useCase' | 'bundlePrice' | 'originalPrice' | 'badge' | 'availability' | 'heroImage'>
+export type BundleDetail = Bundle & { products: Product[] }
+
 
 export interface Collection {
   slug: string

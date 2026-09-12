@@ -9,7 +9,7 @@ import {
   accessoryGroups,
   useCases,
 } from './data'
-import type { Bundle, CatalogPage, CatalogQuery, Money, Product, ProductRelationshipType, StockStatus, UseCaseSlug } from './types'
+import type { Bundle, BundleAvailability, BundleDetail, CatalogPage, CatalogQuery, Money, Product, ProductRelationshipType, StockStatus, UseCaseSlug } from './types'
 
 export * from './types'
 
@@ -96,11 +96,24 @@ export const commerce = {
   },
   bundles: {
     list: () => bundles,
-    withProducts: (): (Bundle & { products: Product[] })[] =>
-      bundles.map((b) => ({
-        ...b,
-        products: commerce.products.byIds(b.items.map((i) => i.productId)),
-      })),
+    getBySlug: (slug: string): BundleDetail | undefined => {
+      const bundle = bundles.find((item) => item.slug === slug)
+      if (!bundle) return undefined
+      const productsForBundle = commerce.products.byIds(bundle.items.map((item) => item.productId))
+      const statuses = bundle.items.map((item) => productsForBundle.find((product) => product.id === item.productId)?.stock ?? 'out_of_stock')
+      const availability: BundleAvailability = statuses.some((status) => status === 'out_of_stock') ? 'partially_available' : statuses.some((status) => status === 'low_stock') ? 'low_stock' : statuses.some((status) => status === 'preorder') ? 'preorder' : 'available'
+      return { ...bundle, availability, products: productsForBundle }
+    },
+    getFeatured: () => bundles.slice(0, 3),
+    getByUseCase: (useCase: UseCaseSlug) => bundles.filter((bundle) => bundle.useCase === useCase),
+    getRelated: (productId: string) => bundles.filter((bundle) => bundle.items.some((item) => item.productId === productId)),
+    validateSelection: (bundleId: string) => {
+      const bundle = bundles.find((item) => item.id === bundleId)
+      if (!bundle) return { valid: false, missingProductIds: [] as string[] }
+      const missingProductIds = bundle.items.filter((item) => item.required !== false).filter((item) => products.find((product) => product.id === item.productId)?.stock === 'out_of_stock').map((item) => item.productId)
+      return { valid: missingProductIds.length === 0, missingProductIds }
+    },
+    withProducts: (): (BundleDetail)[] => bundles.map((bundle) => commerce.bundles.getBySlug(bundle.slug)).filter((bundle): bundle is BundleDetail => Boolean(bundle)),
   },
   collections: {
     get: (slug: string) => {

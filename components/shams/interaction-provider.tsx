@@ -21,7 +21,7 @@ type InteractionContextValue = {
   closeCart: () => void
   openSearch: () => void
   closeSearch: () => void
-  addToCart: (name?: string) => void
+  addToCart: (name?: string, quantity?: number) => void
   toggleWishlist: (name: string) => void
   isWishlisted: (name: string) => boolean
   toggleCompare: (name: string) => void
@@ -84,7 +84,7 @@ export function InteractionProvider({ children }: { children: React.ReactNode })
     return () => { document.body.style.overflow = ''; document.removeEventListener('keydown', onKeyDown) }
   }, [wishlistOpen, cartOpen, searchOpen])
   const notify = useCallback((message: string, tone: Notice['tone'] = 'success') => { const id = Date.now(); setNotices((current) => { const existing = current.find((item) => item.message === message && item.tone === tone); if (existing) return current.map((item) => item.id === existing.id ? { ...item, id } : item); return [...current.slice(-1), { id, message, tone }] }); window.setTimeout(() => setNotices((current) => current.filter((item) => item.id !== id)), 3200) }, [])
-  const addToCart = useCallback((name = 'Product') => { setCartCount((count) => count + 1); notify(`${name} added to cart`) }, [notify])
+  const addToCart = useCallback((name = 'Product', quantity = 1) => { setCartCount((count) => count + Math.max(1, quantity)); notify(`${name} added to cart`) }, [notify])
   const toggleWishlist = useCallback((name: string) => { setWishlistItems((items) => { const exists = items.includes(name); notify(exists ? 'Removed from wishlist' : 'Added to wishlist', exists ? 'info' : 'success'); return exists ? items.filter((item) => item !== name) : [...items, name] }) }, [notify])
   const isWishlisted = useCallback((name: string) => wishlistItems.includes(name), [wishlistItems])
   const toggleCompare = useCallback((name: string) => { setCompareItems((items) => { const exists = items.includes(name); if (exists) { notify('Removed from comparison', 'info'); return items.filter((item) => item !== name) }; if (items.length >= 4) { notify('Compare up to 4 products', 'warning'); return items }; notify('Added to comparison'); return [...items, name] }) }, [notify])

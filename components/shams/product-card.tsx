@@ -28,7 +28,7 @@ export function ProductCard({
         className,
       )}
     >
-      <div className={cn('relative shrink-0 bg-white p-3 sm:p-5', view === 'list' ? 'aspect-square w-[38%] sm:aspect-[1.15/1] sm:w-auto' : 'aspect-[1.15/1] sm:aspect-square')}>
+      <div className={cn('relative shrink-0 bg-white p-3 sm:p-5', view === 'list' ? 'aspect-square w-[38%] sm:aspect-[1.15/1] sm:w-auto' : 'aspect-[4/3] sm:aspect-[1.15/1]')}>
         {product.badges.length > 0 && (
           <div className="absolute left-3 top-3 z-10 flex flex-col items-start gap-1">
             {product.badges.map((b) => (
