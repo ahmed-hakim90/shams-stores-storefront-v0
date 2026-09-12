@@ -22,23 +22,23 @@ export function MobileListingHeader({
 }) {
   return (
     <>
-      <nav aria-label="Breadcrumb" className="mb-3 text-sm text-muted-foreground sm:mb-5">
+      <nav aria-label="Breadcrumb" className="mb-2 text-xs text-muted-foreground sm:mb-3">
         <Link href="/" className="hover:text-brand">{breadcrumb}</Link>
-        <span className="mx-2">/</span>
+        <span className="mx-1.5">/</span>
         <span className="text-foreground">{title}</span>
       </nav>
-      <header className="mobile-section-header flex flex-col gap-2 border-b border-border pb-4 sm:gap-3 sm:pb-6">
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand">Shams Stores</p>
-        <h1 className="text-3xl font-semibold tracking-tight sm:text-5xl">
-          {query ? <>Results for <span className="text-brand">“{query}”</span></> : title}
+      <header className="mobile-section-header flex flex-col gap-1.5 border-b border-border pb-3 sm:gap-2 sm:pb-4">
+        <p className="text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-brand">Shams Stores</p>
+        <h1 className="text-xl font-semibold tracking-tight sm:text-4xl">
+          {query ? <>Results for <span className="text-brand">"{query}"</span></> : title}
         </h1>
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-          <p className="max-w-2xl text-sm leading-6 text-muted-foreground">{description}</p>
-          <span className="text-sm text-muted-foreground">{count} products</span>
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+          <p className="max-w-2xl text-xs leading-5 text-muted-foreground">{description}</p>
+          {count > 0 && <span className="text-xs text-muted-foreground">{count} products</span>}
         </div>
       </header>
-      {chips && <div className="py-3 sm:py-5">{chips}</div>}
-      {toolbar && <div className="mb-3 sm:mb-5">{toolbar}</div>}
+      {chips && <div className="py-2 sm:py-3">{chips}</div>}
+      {toolbar && <div className="mb-2 sm:mb-3">{toolbar}</div>}
     </>
   )
 }

@@ -46,9 +46,9 @@ export function MobileMenu() {
         type="button"
         onClick={() => setOpen(true)}
         aria-label="Open menu"
-        className="inline-flex size-11 shrink-0 items-center justify-center rounded-full border border-white/45 bg-white/20 text-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.65)] transition-colors hover:bg-white/40 lg:hidden"
+        className="relative inline-flex size-11 items-center justify-center rounded-full border border-white/45 bg-white/20 text-foreground/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.65)] transition-colors hover:bg-white/40 hover:text-brand lg:hidden"
       >
-        <Menu className="size-5.5" />
+        <Menu className="size-5" />
       </button>
 
       {open && (

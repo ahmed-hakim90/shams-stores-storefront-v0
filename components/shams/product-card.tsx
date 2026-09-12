@@ -28,7 +28,9 @@ export function ProductCard({
         className,
       )}
     >
-      <div className={cn('relative shrink-0 bg-white p-3 sm:p-5', view === 'list' ? 'flex w-[38%] flex-col sm:w-[42%]' : view === 'rail' ? 'h-[200px] sm:h-[214px]' : 'aspect-[4/3] sm:aspect-[1.15/1]')}>
+      {/* MEDIA AREA */}
+      <div className={cn('relative shrink-0 bg-white overflow-hidden flex items-center justify-center', view === 'list' ? 'flex w-[38%] flex-col p-3 sm:w-[42%] sm:p-5' : view === 'rail' ? 'aspect-[1/1] p-3 sm:p-4' : 'aspect-[4/3] p-3 sm:aspect-[1.15/1] sm:p-5')}>
+        {/* BADGES - Top Left */}
         {product.badges.length > 0 && (
           <div className="absolute left-3 top-3 z-10 flex flex-col items-start gap-1">
             {product.badges.map((b) => (
@@ -36,39 +38,30 @@ export function ProductCard({
             ))}
           </div>
         )}
-        {view !== 'list' ? (
-          <div className={cn('grid h-full min-h-0 grid-cols-[minmax(0,1fr)_44px] gap-2 sm:gap-3', view === 'grid' && '-my-3 -mr-3 sm:-my-5 sm:-mr-5')}>
-            <Link href={`/p/${product.slug}`} className="relative block min-h-0 overflow-hidden">
-              <Image
-                src={product.image || '/placeholder.svg'}
-                alt={product.name}
-                fill
-                sizes="(max-width: 640px) calc(100vw - 76px), (max-width: 768px) calc(50vw - 60px), (max-width: 1280px) 190px, 220px"
-                className={cn(
-                  'object-contain p-2 transition-transform duration-300 group-hover:scale-[1.04]',
-                  dimmed && 'opacity-70 grayscale',
-                )}
-              />
-            </Link>
-            <div className="flex flex-col gap-1.5 pt-0.5 opacity-100 transition-opacity md:opacity-0 md:group-hover:opacity-100 md:focus-within:opacity-100">
-              <WishlistAction productName={product.name} className={view === 'grid' ? 'rounded-none' : undefined} />
-              <CompareAction productName={product.name} className={view === 'grid' ? 'rounded-none' : undefined} />
-            </div>
+
+        {/* WISHLIST + COMPARE - Top Right (visible on mobile, hover on desktop for rail/grid) */}
+        {view !== 'list' && (
+          <div className={cn('absolute right-3 top-3 z-10 flex flex-col gap-1.5', view === 'rail' ? 'opacity-100' : 'opacity-100 transition-opacity md:opacity-0 md:group-hover:opacity-100 md:focus-within:opacity-100')}>
+            <WishlistAction productName={product.name} />
+            <CompareAction productName={product.name} />
           </div>
-        ) : (
-          <Link href={`/p/${product.slug}`} className="relative block aspect-square shrink-0 overflow-hidden">
-            <Image
-              src={product.image || '/placeholder.svg'}
-              alt={product.name}
-              fill
-              sizes="38vw"
-              className={cn(
-                'object-contain p-2 transition-transform duration-300 group-hover:scale-[1.04]',
-                dimmed && 'opacity-70 grayscale',
-              )}
-            />
-          </Link>
         )}
+
+        {/* PRODUCT IMAGE */}
+        <Link href={`/p/${product.slug}`} className="relative block w-full h-full min-h-0 overflow-hidden">
+          <Image
+            src={product.image || '/placeholder.svg'}
+            alt={product.name}
+            fill
+            sizes={view === 'list' ? '38vw' : view === 'rail' ? '(max-width: 640px) calc(min(78vw, 292px) - 1.5rem), (max-width: 768px) calc(256px - 1.5rem), 240px' : '(max-width: 640px) calc(100vw - 40px), (max-width: 768px) calc(50vw - 60px), (max-width: 1280px) 190px, 220px'}
+            className={cn(
+              'object-contain transition-transform duration-300 group-hover:scale-[1.04]',
+              dimmed && 'opacity-70 grayscale',
+            )}
+          />
+        </Link>
+
+        {/* WISHLIST + COMPARE for List View - Below Image */}
         {view === 'list' && (
           <div className="relative z-20 flex shrink-0 justify-center gap-2 pt-2 sm:pt-3">
             <WishlistAction productName={product.name} className="rounded-none" />
@@ -77,7 +70,9 @@ export function ProductCard({
         )}
       </div>
 
-      <div className={cn('flex min-w-0 flex-1 flex-col gap-2.5 p-3 sm:p-4', view === 'grid' && 'border-t border-border')}>
+      {/* CONTENT AREA */}
+      <div className={cn('flex min-w-0 flex-1 flex-col gap-2.5 p-3 sm:p-4', view === 'grid' && 'border-t border-border', view === 'rail' && 'border-t border-border')}>
+        {/* BRAND + RATING */}
         <div className="flex min-w-0 items-start justify-between gap-2">
           <span className="min-w-0 pt-1 text-xs font-semibold uppercase tracking-wide text-brand">
             {product.brand}
@@ -92,10 +87,11 @@ export function ProductCard({
           </div>
         )}
 
+        {/* PRODUCT NAME + CONFIGURATION */}
         <div className="min-h-10">
           <Link
             href={`/p/${product.slug}`}
-            className={cn('line-clamp-2 font-medium text-foreground transition-colors hover:text-brand', view === 'rail' && 'line-clamp-2')}
+            className="line-clamp-2 font-medium text-foreground transition-colors hover:text-brand"
           >
             {product.name}
           </Link>
@@ -106,8 +102,10 @@ export function ProductCard({
           )}
         </div>
 
+        {/* STOCK STATUS */}
         <StockStatus status={product.stock} />
 
+        {/* PRICE + INSTALLMENT + CTA (STICKY AT BOTTOM) */}
         <div className="mt-auto flex flex-col gap-3 pt-1">
           <PriceDisplay
             price={product.price}
