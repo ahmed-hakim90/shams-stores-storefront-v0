@@ -17,15 +17,15 @@ function CountBadge({ count }: { count: number }) {
 export function MobileHeader() {
   const { openWishlist, openCart, wishlistCount, cartCount } = useInteractions()
   return (
-    <header className="sticky top-0 z-50 px-3 pt-[max(0.5rem,env(safe-area-inset-top))] md:hidden">
+    <header className="sticky top-0 z-50 px-3 pt-[max(0.375rem,env(safe-area-inset-top))] md:hidden">
       <GlassSurface className="relative flex h-14 items-center justify-between rounded-full px-2">
         <MobileMenuTrigger />
         <Link href="/" aria-label="Shams Stores home" className="absolute left-1/2 flex -translate-x-1/2 items-center justify-center">
           <ShamsLogo className="scale-[0.88]" />
         </Link>
         <div className="ml-auto flex items-center gap-1">
-          <button type="button" onClick={openWishlist} aria-label="Open wishlist" className="relative flex size-11 items-center justify-center rounded-full text-foreground/80 transition-colors hover:bg-white/30 hover:text-brand"><Heart className="size-5" /><CountBadge count={wishlistCount} /></button>
-          <button type="button" onClick={openCart} aria-label="Open cart" className="relative flex size-11 items-center justify-center rounded-full text-foreground/80 transition-colors hover:bg-white/30 hover:text-brand"><ShoppingBag className="size-5" /><CountBadge count={cartCount} /></button>
+          <button type="button" onClick={openWishlist} aria-label="Open wishlist" className="relative flex size-11 items-center justify-center rounded-full border border-white/45 bg-white/20 text-foreground/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.65)] transition-colors hover:bg-white/40 hover:text-brand"><Heart className="size-5" /><CountBadge count={wishlistCount} /></button>
+          <button type="button" onClick={openCart} aria-label="Open cart" className="relative flex size-11 items-center justify-center rounded-full border border-white/45 bg-white/20 text-foreground/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.65)] transition-colors hover:bg-white/40 hover:text-brand"><ShoppingBag className="size-5" /><CountBadge count={cartCount} /></button>
         </div>
       </GlassSurface>
     </header>
@@ -47,5 +47,5 @@ const items = [
 export function MobileBottomNav() {
   const pathname = usePathname()
   const { openSearch } = useInteractions()
-  return <nav className="fixed inset-x-0 bottom-0 z-[55] px-3 pb-[max(0.5rem,env(safe-area-inset-bottom))] md:hidden" aria-label="Mobile shopping navigation"><GlassSurface className="mx-auto grid h-16 max-w-lg grid-cols-5 rounded-full p-1.5"><span className="sr-only">Store navigation</span>{items.map(({ label, href, icon: Icon }) => { const active = label === 'Search' ? pathname.startsWith('/search') : label === 'Home' ? pathname === '/' : label === 'Categories' ? pathname.startsWith('/c/') : label === 'Offers' ? pathname.startsWith('/deals') : pathname.startsWith('/account'); const content = <><Icon className="size-5" /><span>{label}</span></>; return label === 'Search' ? <button key={label} type="button" onClick={openSearch} aria-label={label} aria-current={active ? 'page' : undefined} className={cn('relative flex min-h-11 flex-col items-center justify-center gap-0.5 rounded-full px-1 text-[0.65rem] transition-colors', active ? 'bg-white/75 text-brand shadow-sm' : 'text-muted-foreground hover:text-brand')}>{content}</button> : <Link key={label} href={href} aria-current={active ? 'page' : undefined} className={cn('relative flex min-h-11 flex-col items-center justify-center gap-0.5 rounded-full px-1 text-[0.65rem] transition-colors', active ? 'bg-white/75 text-brand shadow-sm' : 'text-muted-foreground hover:text-brand')}>{content}</Link>})}</GlassSurface></nav>
+  return <nav className="fixed inset-x-0 bottom-0 z-[55] px-3 pb-[max(0.5rem,env(safe-area-inset-bottom))] md:hidden" aria-label="Mobile shopping navigation"><GlassSurface className="mx-auto grid h-[4.25rem] max-w-lg grid-cols-5 rounded-full p-1.5"><span className="sr-only">Store navigation</span>{items.map(({ label, href, icon: Icon }) => { const active = label === 'Search' ? pathname.startsWith('/search') : label === 'Home' ? pathname === '/' : label === 'Categories' ? pathname.startsWith('/c/') : label === 'Offers' ? pathname.startsWith('/deals') : pathname.startsWith('/account'); const content = <><Icon className="size-5" /><span>{label}</span></>; return label === 'Search' ? <button key={label} type="button" onClick={openSearch} aria-label={label} aria-current={active ? 'page' : undefined} className={cn('relative flex min-h-11 flex-col items-center justify-center gap-0.5 rounded-full px-1 text-[0.65rem] transition-colors', active ? 'bg-white/75 text-brand shadow-sm' : 'text-muted-foreground hover:text-brand')}>{content}</button> : <Link key={label} href={href} aria-current={active ? 'page' : undefined} className={cn('relative flex min-h-11 flex-col items-center justify-center gap-0.5 rounded-full px-1 text-[0.65rem] transition-colors', active ? 'bg-white/75 text-brand shadow-sm' : 'text-muted-foreground hover:text-brand')}>{content}</Link>})}</GlassSurface></nav>
 }

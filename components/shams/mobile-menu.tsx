@@ -16,6 +16,7 @@ import {
 import { cn } from '@/lib/utils'
 import { commerce } from '@/lib/commerce'
 import { ShamsLogo } from './logo'
+import { GlassSurface } from './glass-surface'
 
 const categories = commerce.categories.list()
 const useCases = commerce.useCases.list()
@@ -45,7 +46,7 @@ export function MobileMenu() {
         type="button"
         onClick={() => setOpen(true)}
         aria-label="Open menu"
-        className="inline-flex size-11 shrink-0 items-center justify-center rounded-lg text-foreground hover:bg-muted lg:hidden"
+        className="inline-flex size-11 shrink-0 items-center justify-center rounded-full border border-white/45 bg-white/20 text-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.65)] transition-colors hover:bg-white/40 lg:hidden"
       >
         <Menu className="size-5.5" />
       </button>
@@ -56,7 +57,7 @@ export function MobileMenu() {
             className="absolute inset-0 bg-foreground/40 backdrop-blur-sm"
             onClick={() => setOpen(false)}
           />
-          <div className="absolute inset-y-0 left-0 flex h-dvh w-[88%] max-w-sm flex-col bg-background shadow-2xl" role="dialog" aria-modal="true" aria-label="Mobile navigation">
+          <GlassSurface className="fixed inset-y-0 left-0 z-[61] flex h-dvh w-[88%] max-w-sm flex-col rounded-r-[2rem] bg-background shadow-2xl" role="dialog" aria-modal="true" aria-label="Mobile navigation">
             <div className="flex items-center justify-between border-b border-border px-4 py-3">
               <ShamsLogo />
               <button
@@ -165,7 +166,7 @@ export function MobileMenu() {
             <div className="border-t border-border px-4 py-3 text-xs text-muted-foreground">
               Egypt · EGP · العربية / English
             </div>
-          </div>
+          </GlassSurface>
         </div>
       )}
     </>
