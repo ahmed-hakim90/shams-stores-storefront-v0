@@ -1,3 +1,5 @@
+> تحديث التنفيذ: [حالة الربط الفعلي وبوابات الإطلاق](COMMERCE_IMPLEMENTATION.md). التفاصيل أدناه توثّق الحالة السابقة.
+
 # Project Handoff
 
 ## Project

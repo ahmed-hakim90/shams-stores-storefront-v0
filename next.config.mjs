@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    unoptimized: true,
+    remotePatterns: [{ protocol: 'https', hostname: 'www.shams-stores.com', pathname: '/wp-content/uploads/**' }, { protocol: 'https', hostname: 'shams-stores.com', pathname: '/wp-content/uploads/**' }],
   },
   async headers() {
     return [

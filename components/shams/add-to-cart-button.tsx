@@ -22,28 +22,47 @@ export function AddToCartButton({
   const outOfStock = stock === 'out_of_stock'
   const preorder = stock === 'preorder'
 
-  const label = outOfStock
-    ? 'Notify me'
-    : preorder
-      ? 'Pre-order'
-        : pending
-        ? 'Adding…'
-        : added
-        ? 'Added ✓'
-        : 'Add to cart'
+  const label =
+    product.price.amount === 0
+      ? 'Contact for price'
+      : product.hasOptions
+        ? 'Choose options'
+        : product.purchasable === false && stock !== 'out_of_stock'
+          ? 'Unavailable online'
+          : outOfStock
+            ? 'Out of stock'
+            : preorder
+              ? 'Pre-order'
+              : pending
+                ? 'Adding…'
+                : added
+                  ? 'Added ✓'
+                  : 'Add to cart'
 
-  const Icon = pending ? LoaderCircle : outOfStock ? Bell : added ? Check : ShoppingCart
+  const Icon = pending
+    ? LoaderCircle
+    : outOfStock
+      ? Bell
+      : added
+        ? Check
+        : ShoppingCart
 
   return (
     <button
       type="button"
       disabled={outOfStock || pending || product.purchasable === false}
-      onClick={() => {
+      onClick={async () => {
         if (outOfStock || pending) return
         setPending(true)
-        if (!addToCart(product, quantity)) { setPending(false); return }
+        if (!(await addToCart(product, quantity))) {
+          setPending(false)
+          return
+        }
         setAdded(true)
-        window.setTimeout(() => { setPending(false); setAdded(false) }, 1600)
+        window.setTimeout(() => {
+          setPending(false)
+          setAdded(false)
+        }, 1600)
       }}
       aria-label={`${label}: ${productName}`}
       className={cn(
@@ -56,7 +75,7 @@ export function AddToCartButton({
       )}
     >
       <Icon className={cn('size-4', pending && 'animate-spin')} />
-      {product.purchasable === false ? 'Options unavailable' : label}
+      {label}
     </button>
   )
 }

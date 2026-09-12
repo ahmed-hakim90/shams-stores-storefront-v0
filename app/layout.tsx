@@ -1,3 +1,4 @@
+import { CommerceQueryProvider } from '@/components/shams/query-provider'
 import { commerceProvider } from '@/lib/commerce/server'
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
@@ -12,13 +13,15 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL || 'https://www.shams-stores.com',
+  ),
   title: {
     default: 'Shams Stores — Photography, Cinema & Creator Gear in Egypt',
     template: '%s · Shams Stores',
   },
   description:
-    'Egypt&apos;s specialist for cameras, lenses, cinema, audio, lighting and drones. Official products, expert advice, installments and nationwide delivery from Shams Stores.',
-  generator: 'v0.app',
+    'Photography, cinema and creator equipment in Egypt. Explore cameras, lenses, audio, lighting and accessories at Shams Stores.',
   keywords: [
     'camera store Egypt',
     'Sony camera Egypt',
@@ -53,7 +56,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={`light ${inter.variable}`}>
       <body className="antialiased">
-        <InteractionShell liveMode={commerceProvider() === 'woocommerce'}>{children}</InteractionShell>
+        <CommerceQueryProvider>
+          <InteractionShell liveMode={commerceProvider() === 'woocommerce'}>
+            {children}
+          </InteractionShell>
+        </CommerceQueryProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>

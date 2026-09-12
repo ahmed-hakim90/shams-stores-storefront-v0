@@ -1,8 +1,5 @@
 export type StockStatus =
-  | 'in_stock'
-  | 'low_stock'
-  | 'out_of_stock'
-  | 'preorder'
+  'in_stock' | 'low_stock' | 'out_of_stock' | 'preorder' | 'unknown'
 
 export type ProductBadge = 'new' | 'best_seller' | 'sale' | 'exclusive'
 
@@ -37,6 +34,11 @@ export interface Product {
   slug: string
   name: string
   brand: string
+  secondaryImage?: string
+  highlights?: ProductHighlight[]
+  pricing?: ProductPrice
+  brandSlug?: string
+  hasOptions?: boolean
   description?: string
   sku?: string
   /** Short configuration line, e.g. "Body only" or "with 24-70mm". */
@@ -108,7 +110,21 @@ export interface ProductSystem {
   categoryIds: string[]
 }
 
-export type ProductRelationshipType = 'compatible_with' | 'accessory_for' | 'lens_for' | 'battery_for' | 'memory_for' | 'cage_for' | 'gimbal_for' | 'microphone_for' | 'flash_for' | 'monitor_for' | 'replacement_for' | 'alternative_to' | 'frequently_bought_with' | 'bundle_with'
+export type ProductRelationshipType =
+  | 'compatible_with'
+  | 'accessory_for'
+  | 'lens_for'
+  | 'battery_for'
+  | 'memory_for'
+  | 'cage_for'
+  | 'gimbal_for'
+  | 'microphone_for'
+  | 'flash_for'
+  | 'monitor_for'
+  | 'replacement_for'
+  | 'alternative_to'
+  | 'frequently_bought_with'
+  | 'bundle_with'
 
 export interface ProductRelationship {
   sourceProductId: string
@@ -136,7 +152,8 @@ export interface UseCase {
   productCount: number
 }
 
-export type BundleAvailability = 'available' | 'low_stock' | 'partially_available' | 'unavailable' | 'preorder'
+export type BundleAvailability =
+  'available' | 'low_stock' | 'partially_available' | 'unavailable' | 'preorder'
 
 export interface BundleOption {
   id: string
@@ -177,9 +194,19 @@ export interface Bundle {
   seo?: { title?: string; description?: string }
 }
 
-export type BundleSummary = Pick<Bundle, 'id' | 'slug' | 'name' | 'useCase' | 'bundlePrice' | 'originalPrice' | 'badge' | 'availability' | 'heroImage'>
+export type BundleSummary = Pick<
+  Bundle,
+  | 'id'
+  | 'slug'
+  | 'name'
+  | 'useCase'
+  | 'bundlePrice'
+  | 'originalPrice'
+  | 'badge'
+  | 'availability'
+  | 'heroImage'
+>
 export type BundleDetail = Bundle & { products: Product[] }
-
 
 export interface Collection {
   slug: string
@@ -187,34 +214,221 @@ export interface Collection {
   productIds: string[]
 }
 
-export interface ProductSummary {
-  id: string
-  slug: string
-  name: string
-  brand: string
-  primaryImage: string
-  price: Money
-  regularPrice?: Money
-  stock: StockStatus
-  rating?: number
-  reviewCount?: number
-  badge?: ProductBadge
-  shortVariantLabel?: string
-  installmentSummary?: string
-}
+/** Listing payload: no gallery, descriptions, inventory or raw metadata. */
+export type ProductSummary = Omit<Product, 'description' | 'branches'>
 
 export interface CatalogQuery {
   category?: string
   brand?: string
   query?: string
-  sort?: 'featured' | 'price-asc' | 'price-desc' | 'rating'
+  sort?:
+    | 'featured'
+    | 'newest'
+    | 'relevance'
+    | 'best-selling'
+    | 'price-asc'
+    | 'price-desc'
+    | 'rating'
+  stock?: 'instock' | 'outofstock' | 'onbackorder'
+  minPrice?: number
+  maxPrice?: number
+  onSale?: boolean
+  tag?: string
+  include?: string[]
   cursor?: string
   pageSize?: number
 }
 
 export interface CatalogPage {
-  items: Product[]
+  items: ProductSummary[]
   nextCursor?: string
   hasNextPage: boolean
   total: number
+}
+
+export interface ProductImage {
+  url: string
+  alt: string
+  width?: number
+  height?: number
+}
+export interface ProductPrice {
+  amount: number
+  regularAmount?: number
+  saleAmount?: number
+  currency: 'EGP'
+  minorUnit: number
+  discount?: number
+  contactForPrice: boolean
+}
+export interface ProductStock {
+  status: StockStatus
+  purchasable: boolean
+  quantity?: number
+  backordersAllowed: boolean
+}
+export interface ProductSpecification {
+  key: string
+  label: string
+  value: string
+  group?: string
+  comparable: boolean
+  filterable: boolean
+}
+export interface ProductHighlight {
+  label: string
+  value: string
+}
+export interface ProductVariant {
+  id: string
+  attributes: { name: string; value: string }[]
+  price: ProductPrice
+  stock: ProductStock
+  image?: ProductImage
+}
+export interface ProductDetail extends ProductSummary {
+  description?: string
+  shortDescription?: string
+  gallery: ProductImage[]
+  specifications: ProductSpecification[]
+  warranty?: string
+  variants: ProductVariant[]
+  relationships: RelationshipGroup[]
+  categories: TaxonomyTerm[]
+}
+export interface TaxonomyTerm {
+  id: string
+  slug: string
+  name: string
+  parentId?: string
+  description: string
+  image?: string
+  count: number
+}
+export interface RelationshipGroup {
+  type: 'related' | 'accessories' | 'alternatives' | 'compatible'
+  title: string
+  source: string
+  products: ProductSummary[]
+}
+export interface FilterOption {
+  id: string
+  label: string
+  count: number
+}
+export interface FilterDefinition {
+  key: string
+  label: string
+  options: FilterOption[]
+}
+export interface FacetResult {
+  groups: FilterDefinition[]
+  minPrice?: number
+  maxPrice?: number
+}
+export interface PaginationMeta {
+  nextCursor?: string
+  hasNextPage: boolean
+  total: number
+}
+export interface SearchSuggestion {
+  kind: 'product' | 'brand' | 'category'
+  id: string
+  label: string
+  href: string
+  image?: string
+  product?: ProductSummary
+}
+export interface Branch {
+  id: string
+  name: string
+  address?: string
+}
+export interface BranchAvailability {
+  available: boolean
+  branches: (Branch & { status: string })[]
+  updatedAt?: string
+  message?: string
+}
+export interface Address {
+  firstName: string
+  lastName: string
+  email: string
+  phone: string
+  country: 'EG'
+  state: string
+  city: string
+  address1: string
+  address2: string
+  postcode: string
+}
+export interface Customer {
+  id: string
+  email: string
+  addresses: Address[]
+}
+export interface CartLine {
+  id: string
+  productId: string
+  productName: string
+  productImage?: string
+  quantity: number
+  price: number
+  total?: number
+  maxQuantity?: number
+  variationId?: string
+  selectedOptions?: string[]
+  bundleId?: string
+  bundleGroupId?: string
+  bundleName?: string
+  bundleItemRole?: string
+  bundlePricingMetadata?: {
+    regularTotal: number
+    bundleTotal: number
+    savingsAmount: number
+    currency: 'EGP'
+  }
+}
+export interface ShippingRate {
+  id: string
+  packageId: number
+  name: string
+  price: number
+  selected: boolean
+}
+export interface Cart {
+  lines: CartLine[]
+  subtotal: number
+  total: number
+  discount: number
+  tax: number
+  shipping: number | null
+  coupons: string[]
+  rates: ShippingRate[]
+  paymentMethods: string[]
+  needsShipping: boolean
+  errors: string[]
+}
+export interface WishlistItem {
+  productId: string
+}
+export interface CompareItem {
+  productId: string
+}
+export interface OrderItem {
+  productId: string
+  name: string
+  quantity: number
+  total: number
+}
+export interface Order {
+  id: string
+  status: string
+  items: OrderItem[]
+  total: number
+}
+export interface CheckoutResult {
+  orderId: string
+  status: string
+  redirectUrl?: string
 }

@@ -5,10 +5,9 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowRight, ChevronDown, Tag } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useCatalogNavigation } from './catalog-navigation'
 import { commerce, formatMoney } from '@/lib/commerce'
 import type { Category } from '@/lib/commerce'
-
-const categories = commerce.categories.list()
 
 const extraLinks = [
   { label: 'Deals', href: '/deals', accent: true },
@@ -18,6 +17,7 @@ const extraLinks = [
 ]
 
 export function MegaMenu() {
+  const { categories, liveMode } = useCatalogNavigation()
   const [active, setActive] = useState<string | null>(null)
   const closeTimer = useRef<number | undefined>(undefined)
 
@@ -70,22 +70,24 @@ export function MegaMenu() {
 
         <li aria-hidden className="mx-1 h-5 w-px bg-border" />
 
-        {extraLinks.map((link) => (
-          <li key={link.href}>
-            <Link
-              href={link.href}
-              className={cn(
-                'inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-                link.accent
-                  ? 'text-sale hover:text-sale/80'
-                  : 'text-foreground/80 hover:text-brand',
-              )}
-            >
-              {link.accent && <Tag className="size-3.5" />}
-              {link.label}
-            </Link>
-          </li>
-        ))}
+        {extraLinks
+          .filter((x) => !liveMode || x.href !== '/used')
+          .map((link) => (
+            <li key={link.href}>
+              <Link
+                href={link.href}
+                className={cn(
+                  'inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                  link.accent
+                    ? 'text-sale hover:text-sale/80'
+                    : 'text-foreground/80 hover:text-brand',
+                )}
+              >
+                {link.accent && <Tag className="size-3.5" />}
+                {link.label}
+              </Link>
+            </li>
+          ))}
       </ul>
     </nav>
   )
@@ -102,8 +104,12 @@ function MegaPanel({ category }: { category: Category }) {
         <div className="p-6">
           <div className="mb-4 flex items-center justify-between">
             <div>
-              <p className="text-sm font-semibold text-foreground">{category.name}</p>
-              <p className="text-xs text-muted-foreground">{category.tagline}</p>
+              <p className="text-sm font-semibold text-foreground">
+                {category.name}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {category.tagline}
+              </p>
             </div>
             <Link
               href={`/c/${category.slug}`}
@@ -147,7 +153,9 @@ function MegaPanel({ category }: { category: Category }) {
               <p className="mt-1 text-sm font-medium text-foreground">
                 {featured.brand} {featured.name}
               </p>
-              <p className="text-xs text-muted-foreground">{featured.configuration}</p>
+              <p className="text-xs text-muted-foreground">
+                {featured.configuration}
+              </p>
             </div>
             <div className="relative my-3 h-32">
               <Image

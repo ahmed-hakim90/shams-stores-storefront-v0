@@ -1,0 +1,66 @@
+[
+  {
+    "width": 320,
+    "result": "\"{\\\"width\\\":320,\\\"document\\\":320,\\\"cards\\\":24,\\\"sidebar\\\":\\\"static\\\",\\\"overflow\\\":[\\\"A.group min-w-0 overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-brand flex w-40 shrink-0 items-center gap-3 p-3\\\",\\\"A.group min-w-0 overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-brand flex w-40 shrink-0 items-center gap-3 p-3\\\",\\\"DIV.relative shrink-0 bg-white size-12\\\"]}\""
+  },
+  {
+    "width": 360,
+    "result": "\"{\\\"width\\\":360,\\\"document\\\":360,\\\"cards\\\":24,\\\"sidebar\\\":\\\"static\\\",\\\"overflow\\\":[\\\"A.group min-w-0 overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-brand flex w-40 shrink-0 items-center gap-3 p-3\\\",\\\"DIV.relative shrink-0 bg-white size-12\\\",\\\"IMG.object-contain p-2\\\"]}\""
+  },
+  {
+    "width": 375,
+    "result": "\"{\\\"width\\\":375,\\\"document\\\":375,\\\"cards\\\":24,\\\"sidebar\\\":\\\"static\\\",\\\"overflow\\\":[\\\"A.group min-w-0 overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-brand flex w-40 shrink-0 items-center gap-3 p-3\\\",\\\"DIV.relative shrink-0 bg-white size-12\\\",\\\"IMG.object-contain p-2\\\"]}\""
+  },
+  {
+    "width": 390,
+    "result": "\"{\\\"width\\\":390,\\\"document\\\":390,\\\"cards\\\":24,\\\"sidebar\\\":\\\"static\\\",\\\"overflow\\\":[\\\"A.group min-w-0 overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-brand flex w-40 shrink-0 items-center gap-3 p-3\\\",\\\"DIV.relative shrink-0 bg-white size-12\\\",\\\"IMG.object-contain p-2\\\"]}\""
+  },
+  {
+    "width": 393,
+    "result": "\"{\\\"width\\\":393,\\\"document\\\":393,\\\"cards\\\":24,\\\"sidebar\\\":\\\"static\\\",\\\"overflow\\\":[\\\"A.group min-w-0 overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-brand flex w-40 shrink-0 items-center gap-3 p-3\\\",\\\"DIV.relative shrink-0 bg-white size-12\\\",\\\"IMG.object-contain p-2\\\"]}\""
+  },
+  {
+    "width": 412,
+    "result": "\"{\\\"width\\\":412,\\\"document\\\":412,\\\"cards\\\":24,\\\"sidebar\\\":\\\"static\\\",\\\"overflow\\\":[\\\"A.group min-w-0 overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-brand flex w-40 shrink-0 items-center gap-3 p-3\\\",\\\"DIV.relative shrink-0 bg-white size-12\\\",\\\"IMG.object-contain p-2\\\"]}\""
+  },
+  {
+    "width": 430,
+    "result": "\"{\\\"width\\\":430,\\\"document\\\":430,\\\"cards\\\":24,\\\"sidebar\\\":\\\"static\\\",\\\"overflow\\\":[\\\"A.group min-w-0 overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-brand flex w-40 shrink-0 items-center gap-3 p-3\\\",\\\"DIV.min-w-0\\\",\\\"H3.text-sm font-semibold group-hover:text-brand\\\"]}\""
+  },
+  {
+    "width": 480,
+    "result": "\"{\\\"width\\\":480,\\\"document\\\":480,\\\"cards\\\":24,\\\"sidebar\\\":\\\"static\\\",\\\"overflow\\\":[\\\"A.group min-w-0 overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-brand flex w-40 shrink-0 items-center gap-3 p-3\\\",\\\"DIV.min-w-0\\\",\\\"H3.text-sm font-semibold group-hover:text-brand\\\"]}\""
+  },
+  {
+    "width": 768,
+    "result": "\"{\\\"width\\\":768,\\\"document\\\":768,\\\"cards\\\":24,\\\"sidebar\\\":\\\"static\\\",\\\"overflow\\\":[\\\"A.group min-w-0 overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-brand flex w-40 shrink-0 items-center gap-3 p-3\\\",\\\"DIV.relative shrink-0 bg-white size-12\\\",\\\"IMG.object-contain p-2\\\"]}\""
+  },
+  {
+    "width": 834,
+    "result": "\"{\\\"width\\\":834,\\\"document\\\":834,\\\"cards\\\":24,\\\"sidebar\\\":\\\"static\\\",\\\"overflow\\\":[\\\"A.group min-w-0 overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-brand flex w-40 shrink-0 items-center gap-3 p-3\\\",\\\"DIV.min-w-0\\\",\\\"H3.text-sm font-semibold group-hover:text-brand\\\"]}\""
+  },
+  {
+    "width": 1024,
+    "result": "\"{\\\"width\\\":1024,\\\"document\\\":1024,\\\"cards\\\":24,\\\"sidebar\\\":\\\"sticky\\\",\\\"overflow\\\":[\\\"A.group min-w-0 overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-brand flex w-40 shrink-0 items-center gap-3 p-3\\\",\\\"A.group min-w-0 overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-brand flex w-40 shrink-0 items-center gap-3 p-3\\\",\\\"DIV.relative shrink-0 bg-white size-12\\\"]}\""
+  },
+  {
+    "width": 1280,
+    "result": "\"{\\\"width\\\":1280,\\\"document\\\":1280,\\\"cards\\\":24,\\\"sidebar\\\":\\\"sticky\\\",\\\"overflow\\\":[\\\"A.group min-w-0 overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-brand flex w-40 shrink-0 items-center gap-3 p-3\\\",\\\"DIV.relative shrink-0 bg-white size-12\\\",\\\"IMG.object-contain p-2\\\"]}\""
+  },
+  {
+    "width": 1366,
+    "result": "\"{\\\"width\\\":1366,\\\"document\\\":1366,\\\"cards\\\":24,\\\"sidebar\\\":\\\"sticky\\\",\\\"overflow\\\":[\\\"A.group min-w-0 overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-brand flex w-40 shrink-0 items-center gap-3 p-3\\\"]}\""
+  },
+  {
+    "width": 1440,
+    "result": "\"{\\\"width\\\":1440,\\\"document\\\":1440,\\\"cards\\\":24,\\\"sidebar\\\":\\\"sticky\\\",\\\"overflow\\\":[]}\""
+  },
+  {
+    "width": 1536,
+    "result": "\"{\\\"width\\\":1536,\\\"document\\\":1536,\\\"cards\\\":24,\\\"sidebar\\\":\\\"sticky\\\",\\\"overflow\\\":[]}\""
+  },
+  {
+    "width": 1920,
+    "result": "\"{\\\"width\\\":1920,\\\"document\\\":1920,\\\"cards\\\":24,\\\"sidebar\\\":\\\"sticky\\\",\\\"overflow\\\":[]}\""
+  }
+]

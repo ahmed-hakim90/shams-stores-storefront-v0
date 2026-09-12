@@ -15,21 +15,23 @@ export function PriceDisplay({
   size?: 'sm' | 'md' | 'lg'
   className?: string
 }) {
-  const off = discountPercent(price, previousPrice)
+  const off =
+    price.amount > 0 ? discountPercent(price, previousPrice) : undefined
   const priceClass =
-    size === 'lg'
-      ? 'text-2xl'
-      : size === 'sm'
-        ? 'text-base'
-        : 'text-lg'
+    size === 'lg' ? 'text-2xl' : size === 'sm' ? 'text-base' : 'text-lg'
 
   return (
     <div className={cn('flex flex-col gap-0.5', className)}>
       <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-        <span className={cn('font-semibold tracking-tight text-foreground', priceClass)}>
-          {formatMoney(price)}
+        <span
+          className={cn(
+            'font-semibold tracking-tight text-foreground',
+            priceClass,
+          )}
+        >
+          {price.amount > 0 ? formatMoney(price) : 'Contact for price'}
         </span>
-        {previousPrice && (
+        {price.amount > 0 && previousPrice && (
           <span className="text-sm text-muted-foreground line-through">
             {formatMoney(previousPrice)}
           </span>

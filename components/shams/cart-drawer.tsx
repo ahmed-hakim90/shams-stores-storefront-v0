@@ -1,28 +1,146 @@
 'use client'
-
 import Link from 'next/link'
-import Image from 'next/image'
-import { useInteractions } from './interaction-provider'
+import { Dialog } from '@base-ui/react/dialog'
 import { ShoppingCart, X } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-
+import { useInteractions } from './interaction-provider'
+import { ProductImage } from './product-image'
+import { formatEgp } from '@/lib/commerce'
 export function CartDrawer({ showTrigger = true }: { showTrigger?: boolean }) {
-  const { cartOpen: open, openCart, closeCart, cartCount, cartLines, removeBundleFromCart, removeCartLine, notify } = useInteractions()
-  const bundleGroups = Array.from(new Map(cartLines.filter((line) => line.bundleGroupId).map((line) => [line.bundleGroupId!, line])).values())
-  const standaloneLines = cartLines.filter((line) => !line.bundleGroupId)
-
+  const {
+    cartOpen,
+    openCart,
+    closeCart,
+    cartCount,
+    cartLines,
+    cart,
+    cartLoading,
+    cartError,
+    refreshCart,
+    removeCartLine,
+    cartPending,
+  } = useInteractions()
   return (
-    <>
-      {showTrigger && <button type="button" onClick={openCart} aria-label="Open cart" className="group relative flex size-10 shrink-0 items-center justify-center rounded-lg text-foreground/80 transition-colors hover:text-brand xl:size-11">
-        <span className="relative"><ShoppingCart className="size-5.5" />{cartCount > 0 && <span className="absolute -right-2 -top-2 inline-flex min-w-4.5 items-center justify-center rounded-full bg-brand px-1 text-[0.6rem] font-semibold leading-4.5 text-brand-foreground">{cartCount}</span>}</span>
-        <span className="sr-only">Cart</span>
-      </button>}
-      {open && <div className="fixed inset-0 z-[100] bg-foreground/40 backdrop-blur-sm" onClick={closeCart} aria-hidden="true" />}
-      <aside className={`fixed inset-y-0 right-0 z-[101] flex h-dvh w-full max-w-md flex-col overflow-hidden bg-card shadow-2xl transition-transform duration-200 ${open ? 'translate-x-0' : 'pointer-events-none translate-x-full'}`} role="dialog" aria-modal="true" aria-label="Shopping cart" aria-hidden={!open}>
-        <header className="shrink-0 border-b border-border bg-background px-5 py-4"><div className="flex items-center justify-between"><div><p className="text-xs font-semibold uppercase tracking-widest text-brand">Your cart</p><h2 className="mt-1 text-lg font-semibold">{cartCount} {cartCount === 1 ? 'item' : 'items'}</h2></div><button type="button" onClick={closeCart} className="flex size-11 items-center justify-center rounded-lg border border-border" aria-label="Close cart"><X /></button></div></header>
-        <div className="min-h-0 flex-1 overflow-y-auto bg-background p-5">{bundleGroups.map((bundle) => { const lines = cartLines.filter((line) => line.bundleGroupId === bundle.bundleGroupId); return <section key={bundle.bundleGroupId} className="border-b border-border pb-5"><div className="flex items-start justify-between gap-3"><div><p className="text-xs font-semibold uppercase tracking-widest text-brand">Complete setup</p><h3 className="mt-1 font-semibold">{bundle.bundleName}</h3><p className="mt-1 text-sm text-muted-foreground">{lines.length} items · Save EGP {bundle.bundlePricingMetadata?.savingsAmount.toLocaleString()}</p></div><button type="button" onClick={() => removeBundleFromCart(bundle.bundleGroupId!)} className="min-h-11 rounded-lg border border-border px-3 text-xs font-semibold">Remove setup</button></div><div className="mt-4 flex flex-col gap-3">{lines.map((line) => <div key={line.id} className="flex items-center gap-3"><div className="relative size-14 shrink-0 rounded-lg bg-white"><Image src={line.productImage || '/placeholder.svg'} alt={line.productName} fill sizes="56px" className="object-contain p-1" /></div><div className="min-w-0"><p className="truncate text-sm font-medium">{line.productName}</p><p className="text-xs text-muted-foreground">{line.bundleItemRole} × {line.quantity}</p></div></div>)}</div><div className="mt-4 flex items-center justify-between font-semibold"><span>Bundle total</span><span>EGP {bundle.bundlePricingMetadata?.bundleTotal.toLocaleString()}</span></div></section>})}{standaloneLines.map((line) => <div key={line.id} className="border-b border-border py-4"><p className="font-medium">{line.productName}</p><p className="text-sm text-muted-foreground">{line.quantity} item · EGP {(line.price * line.quantity).toLocaleString()}</p><button type="button" onClick={() => removeCartLine(line.id)} className="mt-2 min-h-11 rounded-lg border border-border px-3 text-sm">Remove product</button></div>)}{!cartLines.length && <div className="py-12 text-center"><p className="font-semibold">Your cart is empty</p><p className="mt-2 text-sm text-muted-foreground">Add a setup or product to get started.</p></div>}<p className="mt-5 text-sm text-muted-foreground">Free delivery across Egypt on eligible orders.</p></div>
-        <footer className="shrink-0 border-t border-border bg-background p-5 pb-[calc(1.25rem+var(--safe-area-bottom))]"><div className="flex items-center justify-between text-sm"><span className="text-muted-foreground">Subtotal</span><span className="text-lg font-semibold">EGP {(bundleGroups.reduce((total, line) => total + (line.bundlePricingMetadata?.bundleTotal ?? 0), 0) + standaloneLines.reduce((total, line) => total + line.price * line.quantity, 0)).toLocaleString()}</span></div><div className="mt-4 grid gap-2"><Link href="/cart" onClick={closeCart}><Button variant="outline" className="min-h-12 w-full">View cart</Button></Link><Link href="/checkout" onClick={closeCart}><Button className="min-h-12 w-full">Checkout</Button></Link></div></footer>
-      </aside>
-    </>
+    <Dialog.Root
+      open={cartOpen}
+      onOpenChange={(v) => (v ? openCart() : closeCart())}
+    >
+      {showTrigger && (
+        <Dialog.Trigger
+          aria-label="Open cart"
+          className="relative flex size-11 items-center justify-center rounded-lg"
+        >
+          <ShoppingCart className="size-5" />
+          {cartCount > 0 && (
+            <span className="absolute right-0 top-0 rounded-full bg-brand px-1.5 text-[10px] text-white">
+              {cartCount}
+            </span>
+          )}
+        </Dialog.Trigger>
+      )}
+      <Dialog.Portal>
+        <Dialog.Backdrop className="fixed inset-0 z-[120] bg-black/40" />
+        <Dialog.Popup className="fixed inset-y-0 right-0 z-[121] flex h-dvh w-full max-w-md flex-col bg-background shadow-xl outline-none">
+          <header className="flex items-center justify-between border-b p-5">
+            <Dialog.Title className="text-xl font-semibold">
+              Your cart{' '}
+              <span className="text-sm text-muted-foreground">
+                ({cartCount})
+              </span>
+            </Dialog.Title>
+            <Dialog.Close
+              aria-label="Close cart"
+              className="size-11 rounded-full border"
+            >
+              <X className="mx-auto size-5" />
+            </Dialog.Close>
+          </header>
+          <div className="min-h-0 flex-1 overflow-y-auto p-5">
+            {cartLoading ? (
+              <p>Loading cart…</p>
+            ) : cartError ? (
+              <div>
+                <p className="text-sm">{cartError}</p>
+                <button onClick={refreshCart} className="min-h-11 text-brand">
+                  Retry
+                </button>
+              </div>
+            ) : cartLines.length ? (
+              cartLines.map((l) => (
+                <article key={l.id} className="flex gap-3 border-b py-4">
+                  <div className="relative size-20 shrink-0 bg-white">
+                    <ProductImage
+                      src={l.productImage || '/placeholder.svg'}
+                      alt={l.productName}
+                      fill
+                      sizes="80px"
+                      className="object-contain p-2"
+                    />
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="text-sm font-medium">{l.productName}</h3>
+                    <p className="mt-2 text-sm font-semibold">
+                      {formatEgp(l.total ?? l.price * l.quantity)}
+                    </p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      Qty {l.quantity}
+                    </p>
+                    <button
+                      disabled={cartPending}
+                      onClick={() => removeCartLine(l.id)}
+                      className="min-h-10 text-xs text-muted-foreground underline"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </article>
+              ))
+            ) : (
+              <div className="py-12 text-center">
+                <p className="font-semibold">Your cart is empty</p>
+                <Link
+                  href="/shop"
+                  onClick={closeCart}
+                  className="mt-4 inline-flex min-h-11 items-center text-sm text-brand"
+                >
+                  Find your next piece of gear →
+                </Link>
+              </div>
+            )}
+          </div>
+          {cartLines.length > 0 && (
+            <footer className="border-t p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
+              <div className="flex justify-between font-semibold">
+                <span>Subtotal</span>
+                <span>
+                  {formatEgp(
+                    cart?.subtotal ??
+                      cartLines.reduce((s, l) => s + l.price * l.quantity, 0),
+                  )}
+                </span>
+              </div>
+              <p className="mt-2 text-xs text-muted-foreground">
+                Shipping and discounts are calculated at checkout.
+              </p>
+              <div className="mt-4 grid grid-cols-2 gap-3">
+                <Link
+                  href="/cart"
+                  onClick={closeCart}
+                  className="flex min-h-12 items-center justify-center rounded-lg border text-sm"
+                >
+                  View cart
+                </Link>
+                <Link
+                  href="/checkout"
+                  onClick={closeCart}
+                  className="flex min-h-12 items-center justify-center rounded-lg bg-brand text-sm font-semibold text-white"
+                >
+                  Checkout
+                </Link>
+              </div>
+            </footer>
+          )}
+        </Dialog.Popup>
+      </Dialog.Portal>
+    </Dialog.Root>
   )
 }
