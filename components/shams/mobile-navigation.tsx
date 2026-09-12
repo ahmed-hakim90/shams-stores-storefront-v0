@@ -18,7 +18,7 @@ export function MobileHeader() {
   const { openWishlist, openCart, wishlistCount, cartCount } = useInteractions()
   return (
     <header className="sticky top-0 z-50 px-3 pt-[max(0.375rem,env(safe-area-inset-top))] md:hidden">
-      <GlassSurface className="relative flex h-14 items-center justify-between rounded-full px-2">
+      <div className="relative flex h-14 items-center justify-between px-0">
         <MobileMenuTrigger />
         <Link href="/" aria-label="Shams Stores home" className="absolute left-1/2 flex -translate-x-1/2 items-center justify-center">
           <ShamsLogo className="scale-[0.88]" />
@@ -27,7 +27,7 @@ export function MobileHeader() {
           <button type="button" onClick={openWishlist} aria-label="Open wishlist" className="relative flex size-11 items-center justify-center rounded-full border border-white/45 bg-white/20 text-foreground/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.65)] transition-colors hover:bg-white/40 hover:text-brand"><Heart className="size-5" /><CountBadge count={wishlistCount} /></button>
           <button type="button" onClick={openCart} aria-label="Open cart" className="relative flex size-11 items-center justify-center rounded-full border border-white/45 bg-white/20 text-foreground/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.65)] transition-colors hover:bg-white/40 hover:text-brand"><ShoppingBag className="size-5" /><CountBadge count={cartCount} /></button>
         </div>
-      </GlassSurface>
+      </div>
     </header>
   )
 }
