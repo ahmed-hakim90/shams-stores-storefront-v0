@@ -41,13 +41,15 @@ export interface Product {
   sku?: string
   /** Short configuration line, e.g. "Body only" or "with 24-70mm". */
   configuration?: string
-  category: CategorySlug
+  category: string
   price: Money
   /** Was-price for showing a markdown. */
   previousPrice?: Money
   rating: number
   reviewCount: number
   stock: StockStatus
+  /** False for products that require unsupported options or external checkout. */
+  purchasable?: boolean
   image: string
   badges: ProductBadge[]
   useCases: UseCaseSlug[]

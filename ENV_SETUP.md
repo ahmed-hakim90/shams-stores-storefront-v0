@@ -1,218 +1,51 @@
-# Environment Configuration Guide
+# WooCommerce connection setup
 
-This document explains how to set up environment variables for Shams Stores development and deployment.
+The project now has two explicit modes. `COMMERCE_PROVIDER=mock` preserves the original design preview. `COMMERCE_PROVIDER=woocommerce` enables a connected catalog; it is **not a complete production checkout**. Connection failures never fall back to demo products.
 
-## Quick Start
+## Configure
 
-1. **Copy the template:**
-   ```bash
-   cp .env.example .env.local
-   ```
+Use Node 22.18+ and pnpm. Copy `.env.example` to `.env.local` only if you do not already have local settings. Otherwise add/update these variables without overwriting other secrets:
 
-2. **Fill in development values:**
-   Edit `.env.local` and update the values with your local/development credentials.
+```dotenv
+COMMERCE_PROVIDER=mock
+WOOCOMMERCE_API_URL=https://YOUR-STORE.example/wp-json/wc/v3
+WOOCOMMERCE_API_KEY=ck_...
+WOOCOMMERCE_API_SECRET=cs_...
+WOOCOMMERCE_CURRENCY=EGP
+```
 
-3. **Verify setup:**
-   ```bash
-   npm run dev
-   ```
+Generate a **read-only** REST API key in WooCommerce > Settings > Advanced > REST API. Verify that the store actually uses EGP before setting the currency confirmation. Configure WordPress permalinks and HTTPS. Never put credentials in `NEXT_PUBLIC_*` variables, URLs, or git.
 
-## Environment Files
+Run `pnpm commerce:check`. It performs read-only catalog requests, reports the visible product count and exits nonzero if configuration or connectivity is invalid. No orders, payments or products are created. Existing legacy `NEXT_PUBLIC_WOOCOMMERCE_API_URL`, Shams API, payment and email placeholder variables are not consumed by the new connection.
 
-- **`.env.example`** — Template with all available variables. Commit this to git.
-- **`.env.local`** — Local development overrides. **Never commit** (already in `.gitignore`).
-- **`.env.production.local`** — Production secrets (created during deployment).
+After the check succeeds, set `COMMERCE_PROVIDER=woocommerce`, restart the server and open `/shop`. In deployment settings, set the same variables and rebuild. Do not publish as a finished transactional store until the remaining work below is complete.
 
-## Configuration by Environment
+## Connected behavior
 
-### Development (Local)
+- Home opens `/shop` with a simple search/cart header; the original designed home and its merchandising remain available in mock mode.
+- `/shop` reads published, visible products with offset pagination, search, category/brand slug or ID filters, and price/rating sorting. Both filters persist when loading more.
+- `/p/:slug` reads the real product. `/c/:slug`, `/b/:slug` and `/brands/:slug` redirect to filtered shop results. `/search?q=...` redirects to the connected search.
+- `/api/commerce/products` returns only mapped public product data. Authentication stays server-side, HTTPS is required, redirects are rejected, requests time out after 10 seconds and errors are sanitized. Responses are uncached while preparing the integration.
+- The cart stores product IDs, names, images, prices and quantities locally. Old prototype carts and mock/connected carts are isolated. Local prices are display estimates, never authoritative checkout totals.
+- Simple products can be added locally. Variable, grouped and external products cannot be added until their selection/checkout flows are implemented.
+- Payment is explicitly unavailable. Demo account/order/bundle/wishlist/comparison routes do not serve fake records in connected mode.
 
-Use `.env.local` with mock/test API keys:
+## Work required before launch
+
+1. Supply and verify real endpoint/credentials, taxonomy slugs, brand support and EGP currency. Only mocked upstream responses have been tested until `commerce:check` passes against the store.
+2. Integrate WooCommerce Store API cart sessions and checkout: shipping, taxes, coupons, authoritative totals, stock revalidation and payment provider flows. Do not create orders using browser-supplied prices.
+3. Implement variations and inventory limits; connect the installed bundle plugin after its exact API schema is confirmed.
+4. Connect customer authentication and scoped order history/tracking. Wishlist and comparison require real product IDs and retrieval.
+5. Replace homepage merchandising, menus, editorial descriptions, warranty/branch claims and product recommendations with approved content/data; restore the full designed shell using real taxonomies. The connected shell is intentionally limited to catalog validation.
+6. Define caching/invalidation, monitoring, accessibility and full mobile/desktop acceptance tests with real fixtures. Review image hosts before enabling image optimization.
+
+## Checks
 
 ```bash
-NODE_ENV=development
-NEXT_PUBLIC_APP_URL=http://localhost:3000
-NEXT_PUBLIC_SHAMS_API_URL=http://localhost:3001/api
+pnpm typecheck
+pnpm test
+pnpm build
+pnpm commerce:check
 ```
 
-**Mock Data:** While API endpoints are configured, the app currently uses mock data from `lib/commerce/data.ts`. This is automatically used when API calls fail or in development mode.
-
-### Staging
-
-Create `.env.staging` for staging deployment:
-
-```bash
-NODE_ENV=production
-NEXT_PUBLIC_APP_URL=https://staging.shams-stores.com
-NEXT_PUBLIC_SHAMS_API_URL=https://api-staging.shams-stores.com
-```
-
-### Production
-
-Vercel automatically uses `.env.production.local` (set via dashboard):
-
-```bash
-NODE_ENV=production
-NEXT_PUBLIC_APP_URL=https://shams-stores.com
-NEXT_PUBLIC_SHAMS_API_URL=https://api.shams-stores.com
-```
-
-## Configuration Sections
-
-### SHAMS API & WooCommerce
-
-**When to update:**
-- After Shams API is deployed and ready
-- When integrating real WooCommerce backend
-- When switching API environments (dev → staging → prod)
-
-**Key variables:**
-- `NEXT_PUBLIC_SHAMS_API_URL` — API endpoint (can be public)
-- `WOOCOMMERCE_API_KEY` — WooCommerce authentication (server-side only)
-- `WOOCOMMERCE_API_SECRET` — WooCommerce secret (server-side only)
-- `SHAMS_API_KEY` — Shams API key (server-side only)
-- `SHAMS_API_SECRET` — Shams API secret (server-side only)
-
-**Server-side variables** (prefixed without `NEXT_PUBLIC_`) are only available on the server and cannot be exposed to the browser.
-
-### Payment & Installment
-
-**When to update:**
-- When setting up payment processing
-- When configuring installment providers (Telr, Fawry, etc.)
-- For different payment providers per environment
-
-**Key variables:**
-- `NEXT_PUBLIC_INSTALLMENT_PROVIDER` — Which installment service to use
-- `INSTALLMENT_API_KEY` — Provider API key
-- `INSTALLMENT_MERCHANT_ID` — Merchant account ID
-
-### Analytics & Monitoring
-
-**When to update:**
-- After creating Google Analytics property
-- After setting up Facebook Pixel
-- For each environment (dev, staging, prod)
-
-**Key variables:**
-- `NEXT_PUBLIC_GA_ID` — Google Analytics ID
-- `NEXT_PUBLIC_FB_PIXEL_ID` — Facebook Pixel ID
-
-### Feature Flags
-
-**When to update:**
-- To enable/disable features per environment
-- During gradual rollouts
-- For testing in production
-
-**Available flags:**
-```bash
-NEXT_PUBLIC_FEATURE_INSTALLMENTS=true   # Enable installment payments
-NEXT_PUBLIC_FEATURE_COMPARE=true        # Enable compare functionality
-NEXT_PUBLIC_FEATURE_WISHLIST=true       # Enable wishlist
-NEXT_PUBLIC_FEATURE_BUNDLES=true        # Enable bundle products
-NEXT_PUBLIC_FEATURE_REVIEWS=true        # Enable product reviews
-```
-
-## Variable Naming Convention
-
-- **`NEXT_PUBLIC_*`** — Available in browser (client-side safe, non-secret)
-- **`NEXT_*`** (without PUBLIC) — Server-side only (secrets, API keys)
-- Plain names — Generic Node.js variables
-
-**Security Rule:** Never expose API keys, secrets, or tokens with `NEXT_PUBLIC_`. They will appear in client-side code.
-
-## Vercel Deployment
-
-### Setting Environment Variables
-
-1. **Via Vercel Dashboard:**
-   - Go to Project Settings → Environment Variables
-   - Add variables for each environment (Preview, Production)
-   - Redeploy to apply changes
-
-2. **Via Vercel CLI:**
-   ```bash
-   vercel env add VARIABLE_NAME
-   ```
-
-3. **Via `vercel.json`** (for non-secret variables):
-   ```json
-   {
-     "env": {
-       "NEXT_PUBLIC_APP_NAME": "Shams Stores"
-     }
-   }
-   ```
-
-### Secrets in Vercel
-
-For sensitive variables (API keys, tokens):
-- Add them via Vercel Dashboard
-- Use "Encrypted" option for extra security
-- They won't be exposed in git or build logs
-
-## Troubleshooting
-
-### "Variable is undefined"
-
-- Check variable is defined in `.env.local`
-- Ensure variable name matches code (case-sensitive)
-- For `NEXT_PUBLIC_*` variables, restart dev server after changes
-- For server-side variables, verify they're NOT prefixed with `NEXT_PUBLIC_`
-
-### "CORS error" when calling API
-
-- Check `NEXT_PUBLIC_SHAMS_API_URL` points to correct endpoint
-- Verify API server has CORS enabled for localhost in development
-- Check browser console for actual error message
-
-### "API key not working"
-
-- Verify credentials are correct in `.env.local`
-- Check API key is active (not expired or revoked)
-- Verify key has correct permissions/scopes
-- For development, use test/sandbox API keys
-
-### "Build fails with missing variable"
-
-- All `NEXT_PUBLIC_*` variables must be present at build time
-- Optional variables should have default values in code
-- Use nullish coalescing: `process.env.VAR_NAME ?? 'default'`
-
-## Examples
-
-### Using Variables in Components
-
-**Client-side (browser):**
-```tsx
-const apiUrl = process.env.NEXT_PUBLIC_SHAMS_API_URL
-const featureEnabled = process.env.NEXT_PUBLIC_FEATURE_REVIEWS === 'true'
-```
-
-**Server-side (API routes/server functions):**
-```tsx
-const apiKey = process.env.SHAMS_API_KEY  // Not exposed to browser
-```
-
-### Conditional Rendering Based on Env
-
-```tsx
-{process.env.NEXT_PUBLIC_FEATURE_COMPARE === 'true' && (
-  <CompareButton />
-)}
-```
-
-## Next Steps
-
-1. ✅ Create `.env.local` with development values
-2. 📝 Document actual API endpoints when Shams API is ready
-3. 🔑 Set up Vercel environment variables for deployment
-4. 🚀 Test in staging before production deployment
-5. 🔍 Verify all features work with real API
-
-## References
-
-- [Next.js Environment Variables](https://nextjs.org/docs/basic-features/environment-variables)
-- [Vercel Environment Variables](https://vercel.com/docs/projects/environment-variables)
-- [Security Best Practices](https://nextjs.org/docs/basic-features/environment-variables#exposing-variables-to-the-browser)
+Reference contracts: [WooCommerce products](https://developer.woocommerce.com/docs/apis/rest-api/v3/products), [authentication](https://developer.woocommerce.com/docs/apis/rest-api/authentication).

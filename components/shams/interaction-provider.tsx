@@ -3,9 +3,13 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { Check, Info, X, AlertTriangle } from 'lucide-react'
+import type { Product } from '@/lib/commerce'
+import { commerce } from '@/lib/commerce'
 import { cn } from '@/lib/utils'
 import { GlobalSearchOverlay } from './global-search-overlay'
 import { MobileBottomNav as GlassMobileBottomNav } from './mobile-navigation'
+import Link from 'next/link'
+import { CartDrawer } from './cart-drawer'
 import { Header } from './header'
 
 type Notice = { id: number; message: string; tone: 'success' | 'error' | 'warning' | 'info' }
@@ -23,9 +27,11 @@ export type CartLine = {
   bundlePricingMetadata?: { regularTotal: number; bundleTotal: number; savingsAmount: number; currency: 'EGP' }
 }
 type InteractionContextValue = {
+  liveMode: boolean
   cartCount: number
   cartLines: CartLine[]
   addBundleToCart: (bundle: { id: string; name: string; bundlePrice: { amount: number }; originalPrice: { amount: number }; items: { productId: string; role: string; required?: boolean }[]; products: { id: string; name: string; image: string; price: { amount: number }; stock: string }[] }) => boolean
+  removeCartLine: (id: string) => void
   removeBundleFromCart: (bundleGroupId: string) => void
   wishlistCount: number
   wishlistItems: string[]
@@ -39,7 +45,7 @@ type InteractionContextValue = {
   closeCart: () => void
   openSearch: () => void
   closeSearch: () => void
-  addToCart: (name?: string, quantity?: number) => void
+  addToCart: (product: Product | string, quantity?: number) => boolean
   toggleWishlist: (name: string) => void
   isWishlisted: (name: string) => boolean
   toggleCompare: (name: string) => void
@@ -66,7 +72,7 @@ function ToastStack({ notices, dismiss }: { notices: Notice[]; dismiss: (id: num
   </div>
 }
 
-export function InteractionProvider({ children }: { children: React.ReactNode }) {
+export function InteractionProvider({ children, liveMode = false }: { children: React.ReactNode; liveMode?: boolean }) {
   const [cartLines, setCartLines] = useState<CartLine[]>([])
   const cartCount = cartLines.reduce((total, line) => total + line.quantity, 0)
   const [wishlistItems, setWishlistItems] = useState<string[]>([])
@@ -81,7 +87,7 @@ export function InteractionProvider({ children }: { children: React.ReactNode })
     try {
       const savedWishlist = window.localStorage.getItem('shams-wishlist-ids')
       const savedCompare = window.localStorage.getItem('shams-compare-ids')
-      const savedCart = window.localStorage.getItem('shams-cart-lines')
+      const savedCart = window.localStorage.getItem(`shams-cart-lines-v2-${liveMode ? 'woo' : 'mock'}`)
       if (savedWishlist) setWishlistItems(JSON.parse(savedWishlist))
       if (savedCompare) setCompareItems(JSON.parse(savedCompare))
       if (savedCart) setCartLines(JSON.parse(savedCart))
@@ -89,7 +95,7 @@ export function InteractionProvider({ children }: { children: React.ReactNode })
   }, [])
   useEffect(() => { if (hydrated.current) window.localStorage.setItem('shams-wishlist-ids', JSON.stringify(wishlistItems)) }, [wishlistItems])
   useEffect(() => { if (hydrated.current) window.localStorage.setItem('shams-compare-ids', JSON.stringify(compareItems)) }, [compareItems])
-  useEffect(() => { if (hydrated.current) window.localStorage.setItem('shams-cart-lines', JSON.stringify(cartLines)) }, [cartLines])
+  useEffect(() => { if (hydrated.current) window.localStorage.setItem(`shams-cart-lines-v2-${liveMode ? 'woo' : 'mock'}`, JSON.stringify(cartLines)) }, [cartLines])
   useEffect(() => {
     document.documentElement.style.setProperty('--sticky-purchase-offset', stickyPurchaseVisible ? 'var(--sticky-purchase-height)' : '0px')
     document.documentElement.style.setProperty('--compare-tray-offset', compareItems.length && !wishlistOpen && !cartOpen ? 'var(--compare-tray-height)' : '0px')
@@ -103,14 +109,24 @@ export function InteractionProvider({ children }: { children: React.ReactNode })
     return () => { document.body.style.overflow = ''; document.removeEventListener('keydown', onKeyDown) }
   }, [wishlistOpen, cartOpen, searchOpen])
   const notify = useCallback((message: string, tone: Notice['tone'] = 'success') => { const id = Date.now(); setNotices((current) => { const existing = current.find((item) => item.message === message && item.tone === tone); if (existing) return current.map((item) => item.id === existing.id ? { ...item, id } : item); return [...current.slice(-1), { id, message, tone }] }); window.setTimeout(() => setNotices((current) => current.filter((item) => item.id !== id)), 3200) }, [])
-  const addToCart = useCallback((name = 'Product', quantity = 1) => {
-    setCartLines((lines) => [...lines, { id: `line-${Date.now()}`, productId: name, productName: name, quantity: Math.max(1, quantity), price: 0 }])
-    notify(`${name} added to cart`)
-  }, [notify])
+  const addToCart = useCallback((input: Product | string, quantity = 1) => {
+    const product = typeof input === 'string' ? (liveMode ? undefined : commerce.products.list().find((item) => item.id === input || item.name === input)) : input
+    if (!product || product.stock === 'out_of_stock' || product.purchasable === false || !Number.isFinite(product.price.amount) || product.price.amount < 0 || !Number.isInteger(quantity) || quantity < 1 || quantity > 99) {
+      notify('Open the product page to check availability and options.', 'warning')
+      return false
+    }
+    setCartLines((lines) => {
+      const existing = lines.find((line) => !line.bundleGroupId && line.productId === product.id)
+      if (existing) return lines.map((line) => line === existing ? { ...line, quantity: Math.min(99, line.quantity + quantity), price: product.price.amount } : line)
+      return [...lines, { id: `product-${product.id}`, productId: product.id, productName: product.name, productImage: product.image, quantity, price: product.price.amount }]
+    })
+    notify(`${product.name} added to cart`)
+    return true
+  }, [notify, liveMode])
   const addBundleToCart = useCallback((bundle: Parameters<InteractionContextValue['addBundleToCart']>[0]) => {
     const requiredItems = bundle.items.filter((item) => item.required !== false)
     const products = requiredItems.map((item) => bundle.products.find((product) => product.id === item.productId))
-    const unavailable = products.find((product) => !product || product.stock === 'out_of_stock')
+    const unavailable = products.some((product) => !product || product.stock === 'out_of_stock')
     if (unavailable) { notify('This setup cannot be added because one required item is unavailable', 'warning'); return false }
     const bundleGroupId = `bundle-${Date.now()}`
     const savingsAmount = bundle.originalPrice.amount - bundle.bundlePrice.amount
@@ -119,18 +135,19 @@ export function InteractionProvider({ children }: { children: React.ReactNode })
     notify(`${bundle.name} added to cart`)
     return true
   }, [notify])
+  const removeCartLine = useCallback((id: string) => setCartLines((lines) => lines.filter((line) => line.id !== id || line.bundleGroupId)), [])
   const removeBundleFromCart = useCallback((bundleGroupId: string) => setCartLines((lines) => lines.filter((line) => line.bundleGroupId !== bundleGroupId)), [])
-  const toggleWishlist = useCallback((name: string) => { setWishlistItems((items) => { const exists = items.includes(name); notify(exists ? 'Removed from wishlist' : 'Added to wishlist', exists ? 'info' : 'success'); return exists ? items.filter((item) => item !== name) : [...items, name] }) }, [notify])
+  const toggleWishlist = useCallback((name: string) => { if (liveMode) { notify('Wishlist is not available yet.', 'info'); return } setWishlistItems((items) => { const exists = items.includes(name); notify(exists ? 'Removed from wishlist' : 'Added to wishlist', exists ? 'info' : 'success'); return exists ? items.filter((item) => item !== name) : [...items, name] }) }, [notify, liveMode])
   const isWishlisted = useCallback((name: string) => wishlistItems.includes(name), [wishlistItems])
-  const toggleCompare = useCallback((name: string) => { setCompareItems((items) => { const exists = items.includes(name); if (exists) { notify('Removed from comparison', 'info'); return items.filter((item) => item !== name) }; if (items.length >= 4) { notify('Compare up to 4 products', 'warning'); return items }; notify('Added to comparison'); return [...items, name] }) }, [notify])
-  const value = useMemo(() => ({ cartCount, cartLines, addBundleToCart, removeBundleFromCart, wishlistCount: wishlistItems.length, wishlistItems, compareItems, wishlistOpen, cartOpen, searchOpen, stickyPurchaseVisible, setStickyPurchaseVisible, openWishlist: () => setWishlistOpen(true), closeWishlist: () => setWishlistOpen(false), openCart: () => setCartOpen(true), closeCart: () => setCartOpen(false), openSearch: () => { setSearchOpen(true); setWishlistOpen(false); setCartOpen(false) }, closeSearch: () => setSearchOpen(false), addToCart, toggleWishlist, isWishlisted, toggleCompare, notify }), [cartLines, addBundleToCart, removeBundleFromCart, wishlistItems, compareItems, wishlistOpen, cartOpen, searchOpen, stickyPurchaseVisible, addToCart, toggleWishlist, isWishlisted, toggleCompare, notify])
+  const toggleCompare = useCallback((name: string) => { if (liveMode) { notify('Comparison is not available yet.', 'info'); return } setCompareItems((items) => { const exists = items.includes(name); if (exists) { notify('Removed from comparison', 'info'); return items.filter((item) => item !== name) }; if (items.length >= 4) { notify('Compare up to 4 products', 'warning'); return items }; notify('Added to comparison'); return [...items, name] }) }, [notify, liveMode])
+  const value = useMemo(() => ({ liveMode, cartCount, cartLines, addBundleToCart, removeCartLine, removeBundleFromCart, wishlistCount: wishlistItems.length, wishlistItems, compareItems, wishlistOpen, cartOpen, searchOpen, stickyPurchaseVisible, setStickyPurchaseVisible, openWishlist: () => setWishlistOpen(true), closeWishlist: () => setWishlistOpen(false), openCart: () => setCartOpen(true), closeCart: () => setCartOpen(false), openSearch: () => { setSearchOpen(true); setWishlistOpen(false); setCartOpen(false) }, closeSearch: () => setSearchOpen(false), addToCart, toggleWishlist, isWishlisted, toggleCompare, notify }), [liveMode, cartLines, addBundleToCart, removeCartLine, removeBundleFromCart, wishlistItems, compareItems, wishlistOpen, cartOpen, searchOpen, stickyPurchaseVisible, addToCart, toggleWishlist, isWishlisted, toggleCompare, notify])
   return <InteractionContext.Provider value={value}>{children}<ToastStack notices={notices} dismiss={(id) => setNotices((current) => current.filter((item) => item.id !== id))} /></InteractionContext.Provider>
 }
 
 export function WishlistDrawer() {
   const { wishlistOpen, closeWishlist, notify, addToCart, wishlistItems, toggleWishlist } = useInteractions()
   if (!wishlistOpen) return null
-  return <><div className="fixed inset-0 z-[70] bg-foreground/40 backdrop-blur-sm" onClick={closeWishlist} aria-hidden="true" /><aside className="fixed inset-y-0 right-0 z-[71] flex h-dvh w-full max-w-md flex-col overflow-hidden bg-card shadow-2xl" role="dialog" aria-modal="true" aria-label="Wishlist"><header className="flex items-center justify-between border-b border-border px-5 py-4"><div><p className="text-xs font-semibold uppercase tracking-widest text-brand">Saved for later</p><h2 className="mt-1 text-lg font-semibold">Wishlist <span className="text-sm font-normal text-muted-foreground">({wishlistItems.length})</span></h2></div><button type="button" onClick={closeWishlist} className="flex size-11 items-center justify-center rounded-lg border border-border" aria-label="Close wishlist"><X /></button></header><div className="flex-1 overflow-y-auto p-5">{wishlistItems.length ? wishlistItems.map((name) => <div key={name} className="flex gap-3 border-b border-border py-4 first:pt-0"><div className="size-20 shrink-0 rounded-lg bg-surface-subtle" /><div className="min-w-0 flex-1"><p className="text-xs text-brand">Saved product</p><p className="font-medium">{name}</p><p className="mt-1 font-semibold">Price available on product page</p><div className="mt-3 flex gap-2"><button type="button" onClick={() => { addToCart(name); notify('Added to cart') }} className="min-h-10 rounded-md bg-brand px-3 text-sm font-medium text-brand-foreground">Add to cart</button><button type="button" onClick={() => toggleWishlist(name)} className="min-h-10 rounded-md border border-border px-3 text-sm">Remove</button></div></div></div>) : <div className="py-12 text-center"><p className="font-semibold">Your wishlist is empty</p><p className="mt-2 text-sm text-muted-foreground">Save gear you want to revisit later.</p></div>}</div><footer className="border-t border-border p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))]"><a href="/wishlist" className="flex min-h-12 items-center justify-center rounded-md border border-border text-sm font-medium">View full wishlist</a></footer></aside></>
+  return <><div className="fixed inset-0 z-[70] bg-foreground/40 backdrop-blur-sm" onClick={closeWishlist} aria-hidden="true" /><aside className="fixed inset-y-0 right-0 z-[71] flex h-dvh w-full max-w-md flex-col overflow-hidden bg-card shadow-2xl" role="dialog" aria-modal="true" aria-label="Wishlist"><header className="flex items-center justify-between border-b border-border px-5 py-4"><div><p className="text-xs font-semibold uppercase tracking-widest text-brand">Saved for later</p><h2 className="mt-1 text-lg font-semibold">Wishlist <span className="text-sm font-normal text-muted-foreground">({wishlistItems.length})</span></h2></div><button type="button" onClick={closeWishlist} className="flex size-11 items-center justify-center rounded-lg border border-border" aria-label="Close wishlist"><X /></button></header><div className="flex-1 overflow-y-auto p-5">{wishlistItems.length ? wishlistItems.map((name) => <div key={name} className="flex gap-3 border-b border-border py-4 first:pt-0"><div className="size-20 shrink-0 rounded-lg bg-surface-subtle" /><div className="min-w-0 flex-1"><p className="text-xs text-brand">Saved product</p><p className="font-medium">{name}</p><p className="mt-1 font-semibold">Price available on product page</p><div className="mt-3 flex gap-2"><button type="button" onClick={() => { addToCart(name) }} className="min-h-10 rounded-md bg-brand px-3 text-sm font-medium text-brand-foreground">Add to cart</button><button type="button" onClick={() => toggleWishlist(name)} className="min-h-10 rounded-md border border-border px-3 text-sm">Remove</button></div></div></div>) : <div className="py-12 text-center"><p className="font-semibold">Your wishlist is empty</p><p className="mt-2 text-sm text-muted-foreground">Save gear you want to revisit later.</p></div>}</div><footer className="border-t border-border p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))]"><a href="/wishlist" className="flex min-h-12 items-center justify-center rounded-md border border-border text-sm font-medium">View full wishlist</a></footer></aside></>
 }
 
 export function CompareTray() {
@@ -153,7 +170,26 @@ export function RouteProgress() {
 
 export function InteractionOverlays() { const { cartOpen } = useInteractions(); return <><RouteProgress /><GlobalSearchOverlay /><WishlistDrawer /><CompareTray />{!cartOpen && <GlassMobileBottomNav />}</> }
 
-export function InteractionShell({ children }: { children: React.ReactNode }) { return <InteractionProvider><Header /><div className="pb-[calc(var(--mobile-bottom-nav-height)+var(--safe-area-bottom))] md:pb-0">{children}</div><InteractionOverlays /></InteractionProvider> }
+function ConnectedHeader() {
+  return <header className="border-b border-border bg-background">
+    <div className="mx-auto flex max-w-[1400px] flex-wrap items-center gap-4 px-4 py-4 sm:px-6">
+      <Link href="/shop" className="text-lg font-bold text-brand">Shams Stores</Link>
+      <form action="/shop" className="order-last flex min-w-0 flex-1 basis-full gap-2 sm:order-none sm:basis-auto">
+        <input name="q" aria-label="Search products" placeholder="Search products…" className="min-h-11 w-full rounded-lg border border-border bg-background px-3" />
+        <button className="rounded-lg bg-brand px-4 text-sm font-semibold text-brand-foreground">Search</button>
+      </form>
+      <CartDrawer />
+    </div>
+  </header>
+}
+
+export function InteractionShell({ children, liveMode = false }: { children: React.ReactNode; liveMode?: boolean }) {
+  return <InteractionProvider liveMode={liveMode}>
+    {liveMode ? <ConnectedHeader /> : <Header />}
+    <div className={liveMode ? '' : 'pb-[calc(var(--mobile-bottom-nav-height)+var(--safe-area-bottom))] md:pb-0'}>{children}</div>
+    {liveMode ? <RouteProgress /> : <InteractionOverlays />}
+  </InteractionProvider>
+}
 
 export function InteractionButton({ label, onClick, className }: { label: string; onClick?: () => void; className?: string }) { const [pending, setPending] = useState(false); return <button type="button" disabled={pending} onClick={() => { setPending(true); onClick?.(); window.setTimeout(() => setPending(false), 600) }} className={cn('transition-[background-color,opacity,transform] active:scale-[0.98] disabled:cursor-wait disabled:opacity-70', className)}>{pending ? 'Loading…' : label}</button> }
 

@@ -1,3 +1,5 @@
+import { notFound } from 'next/navigation'
+import { commerceProvider } from '@/lib/commerce/server'
 import Link from 'next/link'
 import { ArrowRight, Check, Scale } from 'lucide-react'
 import { commerce, formatMoney } from '@/lib/commerce'
@@ -6,6 +8,7 @@ import { Footer } from '@/components/shams/footer'
 export const metadata = { title: 'Compare gear | Shams Stores', description: 'Compare photography and creator gear side by side.' }
 
 export default function ComparePage() {
+  if (commerceProvider() === 'woocommerce') notFound()
   const products = commerce.products.list().slice(0, 3)
   return (
     <div className="min-h-screen bg-background">

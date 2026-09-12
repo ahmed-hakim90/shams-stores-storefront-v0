@@ -112,7 +112,7 @@ export function ProductCard({
             previousPrice={product.previousPrice}
             installmentFrom={product.installmentFrom}
           />
-          <AddToCartButton productName={product.name} stock={product.stock} />
+          <AddToCartButton product={product} />
         </div>
       </div>
     </article>

@@ -1,3 +1,4 @@
+import { commerceProvider } from '@/lib/commerce/server'
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
@@ -52,7 +53,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`light ${inter.variable}`}>
       <body className="antialiased">
-        <InteractionShell>{children}</InteractionShell>
+        <InteractionShell liveMode={commerceProvider() === 'woocommerce'}>{children}</InteractionShell>
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>

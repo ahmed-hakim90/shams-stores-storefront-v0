@@ -1,8 +1,10 @@
+import { commerceProvider } from '@/lib/commerce/server'
 import { notFound } from 'next/navigation'
 import { BundleDetailPage } from '@/components/shams/bundle-detail-page'
 import { commerce } from '@/lib/commerce'
 
 export default async function BundleRoute({ params }: { params: Promise<{ slug: string }> }) {
+  if (commerceProvider() === 'woocommerce') notFound()
   const { slug } = await params
   const bundle = commerce.bundles.getBySlug(slug)
   if (!bundle) notFound()

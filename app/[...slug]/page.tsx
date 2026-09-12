@@ -1,4 +1,5 @@
-import { notFound } from 'next/navigation'
+import { commerceProvider, serverProducts } from '@/lib/commerce/server'
+import { notFound, redirect } from 'next/navigation'
 import { CatalogPage } from '@/components/shams/catalog-page'
 import { ProductDetail } from '@/components/shams/product-detail'
 import { ExperiencePage, BundlePage } from '@/components/shams/curated-pages'
@@ -19,6 +20,11 @@ export default async function StorefrontRoute({ params }: PageProps) {
   const { slug } = await params
   const [section, value] = slug
   if (!section) notFound()
+  if (commerceProvider() === 'woocommerce' && ['c', 'b', 'brands'].includes(section)) {
+    const filter = section === 'c' ? 'category' : 'brand'
+    redirect(value ? `/shop?${filter}=${encodeURIComponent(value)}` : '/shop')
+  }
+  if (commerceProvider() === 'woocommerce' && !['p', 'cart', 'checkout'].includes(section)) notFound()
   if (section === 'cart') return <CartPage />
   if (section === 'checkout') return <CheckoutPage />
   if (section === 'bundles') return <BundlePage />
@@ -28,7 +34,7 @@ export default async function StorefrontRoute({ params }: PageProps) {
   if (section === 'orders' || section === 'track-order') return <OrderPage />
   if (section === 'brands' && !value) return <CatalogPage products={commerce.products.list()} title="Shop by brand" description="Explore cameras, lenses, audio and creator gear from the brands Shams trusts." />
   if (section === 'p') {
-    const product = commerce.products.bySlug(value ?? '')
+    const product = await serverProducts().bySlug(value ?? '')
     if (!product) notFound()
     return <ProductDetail product={product} />
   }

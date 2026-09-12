@@ -4,17 +4,18 @@ import { useState } from 'react'
 import { Bell, Check, LoaderCircle, ShoppingCart } from 'lucide-react'
 import { useInteractions } from './interaction-provider'
 import { cn } from '@/lib/utils'
-import type { StockStatus } from '@/lib/commerce'
+import type { Product } from '@/lib/commerce'
 
 export function AddToCartButton({
-  productName,
-  stock,
+  product,
+  quantity = 1,
   className,
 }: {
-  productName: string
-  stock: StockStatus
+  product: Product
+  quantity?: number
   className?: string
 }) {
+  const { name: productName, stock } = product
   const [added, setAdded] = useState(false)
   const [pending, setPending] = useState(false)
   const { addToCart } = useInteractions()
@@ -36,11 +37,11 @@ export function AddToCartButton({
   return (
     <button
       type="button"
-      disabled={outOfStock || pending}
+      disabled={outOfStock || pending || product.purchasable === false}
       onClick={() => {
         if (outOfStock || pending) return
         setPending(true)
-        addToCart(productName)
+        if (!addToCart(product, quantity)) { setPending(false); return }
         setAdded(true)
         window.setTimeout(() => { setPending(false); setAdded(false) }, 1600)
       }}
@@ -55,7 +56,7 @@ export function AddToCartButton({
       )}
     >
       <Icon className={cn('size-4', pending && 'animate-spin')} />
-      {label}
+      {product.purchasable === false ? 'Options unavailable' : label}
     </button>
   )
 }

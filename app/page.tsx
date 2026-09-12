@@ -1,3 +1,5 @@
+import { commerceProvider } from '@/lib/commerce/server'
+import { redirect } from 'next/navigation'
 import { commerce } from '@/lib/commerce'
 import { Hero } from '@/components/shams/hero'
 import { CategoryExplorer } from '@/components/shams/category-explorer'
@@ -13,6 +15,7 @@ import { Newsletter } from '@/components/shams/newsletter'
 import { Footer } from '@/components/shams/footer'
 
 export default function HomePage() {
+  if (commerceProvider() === 'woocommerce') redirect('/shop')
   const trending = commerce.collections.get('trending')?.products ?? []
   const newArrivals = commerce.collections.get('new-arrivals')?.products ?? []
 

@@ -1,3 +1,5 @@
+import { commerceProvider } from '@/lib/commerce/server'
+import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { CatalogPage } from '@/components/shams/catalog-page'
 import { SearchTrigger } from '@/components/shams/global-search-overlay'
@@ -10,6 +12,7 @@ export async function generateMetadata() { return { title: 'Search · Shams Stor
 export default async function SearchPage({ searchParams }: SearchProps) {
   const { q = '' } = await searchParams
   const query = q.trim()
+  if (commerceProvider() === 'woocommerce') redirect(query ? `/shop?q=${encodeURIComponent(query)}` : '/shop')
 
   if (!query) {
     return (
