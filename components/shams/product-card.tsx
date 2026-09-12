@@ -37,7 +37,7 @@ export function ProductCard({
           </div>
         )}
         {view !== 'list' ? (
-          <div className="grid h-full min-h-0 grid-cols-[minmax(0,1fr)_44px] gap-2">
+          <div className={cn('grid h-full min-h-0 grid-cols-[minmax(0,1fr)_44px] gap-2', view === 'grid' && '-my-3 -mr-3 sm:-my-5 sm:-mr-5')}>
             <Link href={`/p/${product.slug}`} className="relative block min-h-0 overflow-hidden">
               <Image
                 src={product.image || '/placeholder.svg'}
@@ -51,8 +51,8 @@ export function ProductCard({
               />
             </Link>
             <div className="flex flex-col gap-1.5 pt-0.5 opacity-100 transition-opacity md:opacity-0 md:group-hover:opacity-100 md:focus-within:opacity-100">
-              <WishlistAction productName={product.name} />
-              <CompareAction productName={product.name} />
+              <WishlistAction productName={product.name} className={view === 'grid' ? 'rounded-none' : undefined} />
+              <CompareAction productName={product.name} className={view === 'grid' ? 'rounded-none' : undefined} />
             </div>
           </div>
         ) : (
