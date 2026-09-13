@@ -26,20 +26,20 @@ export function MobileListingHeader({
         aria-label="Breadcrumb"
         className="mb-2 text-xs text-muted-foreground sm:mb-3"
       >
-        <Link href="/" className="hover:text-brand">
+        <Link href="/" className="hover:text-brand-ink">
           {breadcrumb}
         </Link>
         <span className="mx-1.5">/</span>
         <span className="text-foreground">{title}</span>
       </nav>
       <header className="mobile-section-header flex flex-col gap-1.5 border-b border-border pb-3 sm:gap-2 sm:pb-4">
-        <p className="text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-brand">
+        <p className="text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-brand-ink">
           Shams Stores
         </p>
         <h1 className="text-xl font-semibold tracking-tight sm:text-4xl">
           {query ? (
             <>
-              Results for <span className="text-brand">"{query}"</span>
+              Results for <span className="text-brand-ink">"{query}"</span>
             </>
           ) : (
             title

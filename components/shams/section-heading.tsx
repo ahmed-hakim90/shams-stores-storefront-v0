@@ -18,14 +18,14 @@ export function SectionHeading({
   className?: string
 }) {
   return (
-    <div className={cn('flex items-end justify-between gap-6', className)}>
+    <div className={cn('flex flex-wrap items-end justify-between gap-4', className)}>
       <div className="space-y-1.5">
         {eyebrow && (
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-ink">
             {eyebrow}
           </p>
         )}
-        <h2 className="text-balance text-2xl font-semibold tracking-tight text-foreground sm:text-[1.7rem]">
+        <h2 className="shams-title text-foreground">
           {title}
         </h2>
         {description && (
@@ -37,7 +37,7 @@ export function SectionHeading({
       {href && (
         <Link
           href={href}
-          className="group hidden shrink-0 items-center gap-1.5 text-sm font-medium text-brand hover:underline sm:inline-flex"
+          className="group inline-flex min-h-11 shrink-0 items-center gap-1.5 text-sm font-medium text-brand-ink hover:underline"
         >
           {linkLabel}
           <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />

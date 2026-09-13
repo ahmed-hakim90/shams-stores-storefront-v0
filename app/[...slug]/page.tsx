@@ -7,6 +7,7 @@ import { SavedProducts } from '@/components/shams/saved-products'
 import { OrderStatus } from '@/components/shams/order-status'
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
+import { connection } from 'next/server'
 import { CatalogPage } from '@/components/shams/catalog-page'
 import { ProductDetail } from '@/components/shams/product-detail'
 import { ExperiencePage, BundlePage } from '@/components/shams/curated-pages'
@@ -68,6 +69,8 @@ export default async function StorefrontRoute({
   params,
   searchParams,
 }: PageProps) {
+  // Render query-aware hubs at request time; catalog fetches retain their own TTL.
+  await connection()
   const { slug } = await params
   const [section, value] = slug
   if (!section) notFound()
@@ -160,7 +163,7 @@ export default async function StorefrontRoute({
         <LiveCatalogPage
           query={{
             ...query,
-            [kind === 'categories' ? 'category' : 'brand']: term.slug,
+            [kind === 'categories' ? 'category' : 'brand']: query[kind === 'categories' ? 'category' : 'brand'] ?? term.slug,
           }}
           title={term.name}
           description={
@@ -213,13 +216,15 @@ export default async function StorefrontRoute({
           <p className="mt-4 text-sm text-muted-foreground">
             Your saved gear and recent order on this device.
           </p>
-          <div className="mt-6 flex gap-4">
-            <Link href="/wishlist" className="rounded-xl border p-5">
-              Wishlist →
+          <div className="mt-7 grid gap-4 sm:grid-cols-2">
+            <Link href="/wishlist" className="flex min-h-32 flex-col justify-between rounded-2xl border bg-card p-6 font-medium">
+              <span className="text-xs uppercase tracking-widest text-brand-ink">Your next idea</span>Wishlist →
             </Link>
-            <Link href="/orders" className="rounded-xl border p-5">
-              Recent order →
+            <Link href="/orders" className="flex min-h-32 flex-col justify-between rounded-2xl border bg-card p-6 font-medium">
+              <span className="text-xs uppercase tracking-widest text-brand-ink">Keep in touch</span>Recent order →
             </Link>
+            <Link href="/compare" className="flex min-h-32 flex-col justify-between rounded-2xl border bg-card p-6 font-medium"><span className="text-xs uppercase tracking-widest text-brand-ink">A closer look</span>Compare saved gear →</Link>
+            <Link href="/support" className="flex min-h-32 flex-col justify-between rounded-2xl border bg-card p-6 font-medium"><span className="text-xs uppercase tracking-widest text-brand-ink">Here to help</span>Talk to a specialist →</Link>
           </div>
         </main>
       )
@@ -235,7 +240,7 @@ export default async function StorefrontRoute({
           </p>
           <a
             href="https://www.shams-stores.com/shams-contact-2026/"
-            className="mt-6 inline-flex min-h-11 items-center text-brand"
+            className="shams-button mt-6"
           >
             Contact Shams Stores →
           </a>
@@ -354,8 +359,3 @@ export default async function StorefrontRoute({
     />
   )
 }
-
-export function generateStaticParams() {
-  return []
-}
-export const revalidate = 3600

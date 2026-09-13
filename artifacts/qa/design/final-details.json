@@ -1,0 +1,15 @@
+[
+  {
+    "test": "Unpublished bundle collection has useful navigation, no locked clear-filter loop",
+    "passed": true
+  },
+  {
+    "test": "Two mobile comparison columns fit their scroll region",
+    "table": 337,
+    "container": 337
+  },
+  {
+    "test": "Filter drawer final appearance",
+    "passed": true
+  }
+]

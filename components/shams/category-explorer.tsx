@@ -30,7 +30,7 @@ export function CategoryExplorer() {
   const categories = commerce.categories.list()
 
   return (
-    <section className="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 sm:py-16">
+    <section className="mx-auto max-w-[1440px] px-4 py-12 sm:px-6 sm:py-16">
       <SectionHeading
         eyebrow="Shop by product"
         title="Every category, expertly stocked"
@@ -54,7 +54,7 @@ export function CategoryExplorer() {
                   {cat.tagline}
                 </p>
               </div>
-              <span className="text-xs font-medium text-brand">
+              <span className="text-xs font-medium text-brand-ink">
                 {cat.itemCount} products
               </span>
             </Link>

@@ -1,0 +1,76 @@
+[
+  {
+    "test": "Persistent filters",
+    "result": {
+      "sidebar": true,
+      "discovery": true,
+      "heading": true,
+      "closed": true,
+      "brands": [
+        "SALE",
+        "SONY",
+        "SONY",
+        "SONY",
+        "SONY",
+        "SONY",
+        "SONY",
+        "SONY",
+        "SONY",
+        "SONY",
+        "SALE",
+        "SONY",
+        "SONY",
+        "SONY",
+        "SONY",
+        "SONY",
+        "SONY",
+        "SONY",
+        "SONY",
+        "SALE",
+        "SONY",
+        "SONY",
+        "SONY"
+      ],
+      "url": "http://localhost:3000/shop?brand=sony&sort=newest"
+    }
+  },
+  {
+    "test": "Back/forward query",
+    "passed": true
+  },
+  {
+    "test": "PDP back restoration",
+    "result": {
+      "cards": 47,
+      "y": 187,
+      "url": "http://localhost:3000/shop?brand=sony&sort=newest"
+    }
+  },
+  {
+    "test": "Drawer bars hidden",
+    "result": {
+      "dock": [
+        "hidden"
+      ],
+      "dialog": 801.796875,
+      "viewport": 844
+    }
+  },
+  {
+    "test": "Discard filter draft",
+    "passed": true
+  },
+  {
+    "test": "PDP gallery zoom",
+    "passed": true,
+    "pdp": "/p/sony-a7-iv-mirrorless-camera"
+  },
+  {
+    "test": "Focused checkout",
+    "result": {
+      "shell": "checkout",
+      "dock": false,
+      "header": "Shams\nSTORES\nBack to cart\nNeed a specialist?"
+    }
+  }
+]

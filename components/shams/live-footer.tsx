@@ -32,7 +32,7 @@ export function LiveFooter() {
   ]
   return (
     <footer className="border-t bg-card pb-24 md:pb-0">
-      <div className="mx-auto grid max-w-[1400px] gap-8 px-4 py-12 sm:grid-cols-2 sm:px-6 lg:grid-cols-[1.5fr_1fr_1fr_1fr]">
+      <div className="mx-auto grid max-w-[1440px] gap-8 px-4 py-12 sm:grid-cols-2 sm:px-6 lg:grid-cols-[1.5fr_1fr_1fr_1fr]">
         <div>
           <ShamsLogo />
           <p className="mt-4 max-w-xs text-sm leading-6 text-muted-foreground">
@@ -48,7 +48,7 @@ export function LiveFooter() {
                 <li key={href}>
                   <Link
                     href={href}
-                    className="text-sm text-muted-foreground hover:text-brand"
+                    className="text-sm text-muted-foreground hover:text-brand-ink"
                   >
                     {name}
                   </Link>
@@ -58,7 +58,7 @@ export function LiveFooter() {
           </div>
         ))}
       </div>
-      <div className="mx-auto flex max-w-[1400px] flex-wrap justify-between gap-3 border-t px-4 py-5 text-xs text-muted-foreground sm:px-6">
+      <div className="mx-auto flex max-w-[1440px] flex-wrap justify-between gap-3 border-t px-4 py-5 text-xs text-muted-foreground sm:px-6">
         <p>© {new Date().getFullYear()} Shams Stores.</p>
         <p>Egypt · Prices in EGP</p>
       </div>

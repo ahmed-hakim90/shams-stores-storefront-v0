@@ -16,7 +16,7 @@ export function ProductRailSection({
   products: Product[]
 }) {
   return (
-    <section className="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 sm:py-14">
+    <section className="shams-container shams-section">
       <SectionHeading
         eyebrow={eyebrow}
         title={title}

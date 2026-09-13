@@ -1,4 +1,5 @@
 'use client'
+import { useOverlayPresence } from './shell-policy'
 
 import { useState } from 'react'
 import Link from 'next/link'
@@ -34,16 +35,15 @@ export function MobileMenu() {
   const [open, setOpen] = useState(false)
   const [expanded, setExpanded] = useState<string | null>(null)
 
+  useOverlayPresence(open)
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
+      <Dialog.Trigger
         aria-label="Open menu"
         className="relative inline-flex size-11 items-center justify-center rounded-full border border-white/45 bg-white/20 text-foreground/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.65)] transition-colors hover:bg-white/40 hover:text-brand lg:hidden"
       >
         <Menu className="size-5" />
-      </button>
+      </Dialog.Trigger>
 
       <Dialog.Portal>
         <Dialog.Backdrop className="fixed inset-0 z-[140] bg-foreground/40 backdrop-blur-sm" />
@@ -55,7 +55,7 @@ export function MobileMenu() {
               type="button"
               onClick={() => setOpen(false)}
               aria-label="Close menu"
-              className="inline-flex size-10 items-center justify-center rounded-lg text-foreground hover:bg-muted"
+              className="inline-flex size-11 items-center justify-center rounded-lg text-foreground hover:bg-muted"
             >
               <X className="size-5" />
             </button>
@@ -84,7 +84,7 @@ export function MobileMenu() {
                           aria-label={`Expand ${cat.name}`}
                           aria-expanded={isOpen}
                           onClick={() => setExpanded(isOpen ? null : cat.slug)}
-                          className="inline-flex size-10 items-center justify-center text-muted-foreground"
+                          className="inline-flex size-11 items-center justify-center text-muted-foreground"
                         >
                           <ChevronDown
                             className={cn(
@@ -103,7 +103,7 @@ export function MobileMenu() {
                                 key={link.label + link.href}
                                 href={link.href}
                                 onClick={() => setOpen(false)}
-                                className="truncate py-1.5 text-sm text-muted-foreground hover:text-brand"
+                                className="truncate py-1.5 text-sm text-muted-foreground hover:text-brand-ink"
                               >
                                 {link.label}
                               </Link>
@@ -127,7 +127,7 @@ export function MobileMenu() {
                       key={u.slug}
                       href={`/w/${u.slug}`}
                       onClick={() => setOpen(false)}
-                      className="rounded-full border border-border px-3 py-1.5 text-sm text-foreground hover:border-brand hover:text-brand"
+                      className="rounded-full border border-border px-3 py-1.5 text-sm text-foreground hover:border-brand hover:text-brand-ink"
                     >
                       {u.name}
                     </Link>
@@ -140,7 +140,7 @@ export function MobileMenu() {
               <Link
                 href="/deals"
                 onClick={() => setOpen(false)}
-                className="mx-3 my-2 flex items-center gap-2 rounded-lg bg-brand-muted px-3 py-2.5 text-sm font-semibold text-brand"
+                className="mx-3 my-2 flex items-center gap-2 rounded-lg bg-brand-muted px-3 py-2.5 text-sm font-semibold text-brand-ink"
               >
                 <Tag className="size-4" /> Deals & bundles
               </Link>

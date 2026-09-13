@@ -8,7 +8,7 @@ export function Newsletter() {
   const [done, setDone] = useState(false)
 
   return (
-    <section className="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 sm:py-16">
+    <section className="mx-auto max-w-[1440px] px-4 py-12 sm:px-6 sm:py-16">
       <div className="relative overflow-hidden rounded-3xl bg-brand px-6 py-10 text-brand-foreground sm:px-12 sm:py-14">
         <div
           aria-hidden

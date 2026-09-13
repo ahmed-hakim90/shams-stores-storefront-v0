@@ -10,10 +10,12 @@ import type { SearchSuggestion } from '@/lib/commerce/types'
 import { ProductImage } from './product-image'
 import { formatMoney } from '@/lib/commerce'
 import { cn } from '@/lib/utils'
+import { useCatalogNavigation } from './catalog-navigation'
 export function GlobalSearchOverlay() {
   const { searchOpen, closeSearch } = useInteractions(),
     router = useRouter(),
     input = useRef<HTMLInputElement>(null)
+  const { categories, brands } = useCatalogNavigation()
   const [query, setQuery] = useState(''),
     [debounced, setDebounced] = useState(''),
     [active, setActive] = useState(-1),
@@ -71,7 +73,7 @@ export function GlobalSearchOverlay() {
         <Dialog.Backdrop className="fixed inset-0 z-[150] bg-black/40 backdrop-blur-[2px]" />
         <Dialog.Popup
           initialFocus={input}
-          className="fixed inset-x-0 top-0 z-[151] mx-auto flex max-h-[85dvh] flex-col overflow-hidden rounded-b-2xl border bg-background shadow-xl outline-none md:top-8 md:max-w-3xl md:rounded-2xl"
+          className="shams-overlay fixed inset-x-0 top-0 z-[151] mx-auto flex max-h-[90dvh] flex-col overflow-hidden rounded-b-2xl border bg-background shadow-xl outline-none md:top-8 md:max-w-3xl md:rounded-2xl"
         >
           <Dialog.Title className="sr-only">Search Shams Stores</Dialog.Title>
           <form
@@ -81,7 +83,7 @@ export function GlobalSearchOverlay() {
               submit()
             }}
           >
-            <Search className="size-5 shrink-0 text-brand" />
+            <Search className="size-5 shrink-0 text-brand-ink" />
             <input
               ref={input}
               value={query}
@@ -99,7 +101,13 @@ export function GlobalSearchOverlay() {
                   e.preventDefault()
                   setActive((x) => Math.max(x - 1, 0))
                 }
-                if (e.key === 'Enter' && active >= 0 && results[active]) {
+                if (
+                  e.key === 'Enter' &&
+                  !q.isFetching &&
+                  query.trim() === debounced &&
+                  active >= 0 &&
+                  results[active]
+                ) {
                   e.preventDefault()
                   navigate(results[active].href)
                 }
@@ -113,6 +121,7 @@ export function GlobalSearchOverlay() {
               aria-autocomplete="list"
               aria-label="Search products"
               autoComplete="off"
+              enterKeyHint="search"
               placeholder="Model, brand or SKU…"
               className="min-w-0 flex-1 bg-transparent text-base outline-none"
             />
@@ -124,7 +133,15 @@ export function GlobalSearchOverlay() {
             </Dialog.Close>
           </form>
           <div className="min-h-40 overflow-y-auto overscroll-contain p-4">
-            <div id="search-options" role="listbox">
+            <div
+              id="search-options"
+              role={
+                query.trim().length >= 2 && results.length && !q.isFetching
+                  ? 'listbox'
+                  : undefined
+              }
+              aria-label="Search suggestions"
+            >
               {query.trim().length < 2 ? (
                 <div>
                   <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
@@ -143,10 +160,53 @@ export function GlobalSearchOverlay() {
                   ))}
                   <button
                     onClick={() => navigate('/shop')}
-                    className="mt-4 min-h-11 text-sm font-semibold text-brand"
+                    className="mt-4 min-h-11 text-sm font-semibold text-brand-ink"
                   >
                     Explore all gear →
                   </button>
+                  {recent.length > 0 && (
+                    <button
+                      onClick={() => {
+                        setRecent([])
+                        try {
+                          localStorage.removeItem('shams-recent-searches')
+                        } catch {}
+                      }}
+                      className="ml-4 min-h-11 text-xs text-muted-foreground"
+                    >
+                      Clear recent searches
+                    </button>
+                  )}
+                  <div className="mt-5 grid gap-5 border-t pt-5 sm:grid-cols-2">
+                    <section>
+                      <h3 className="mb-2 text-sm font-semibold">
+                        Explore categories
+                      </h3>
+                      {categories.slice(0, 4).map((c) => (
+                        <button
+                          key={c.slug}
+                          onClick={() => navigate(`/c/${c.slug}`)}
+                          className="block min-h-11 text-sm text-muted-foreground hover:text-brand-ink"
+                        >
+                          {c.name} →
+                        </button>
+                      ))}
+                    </section>
+                    <section>
+                      <h3 className="mb-2 text-sm font-semibold">
+                        Explore brands
+                      </h3>
+                      {brands.slice(0, 4).map((b) => (
+                        <button
+                          key={b.id}
+                          onClick={() => navigate(`/b/${b.slug}`)}
+                          className="block min-h-11 text-sm text-muted-foreground hover:text-brand-ink"
+                        >
+                          {b.name} →
+                        </button>
+                      ))}
+                    </section>
+                  </div>
                 </div>
               ) : q.isFetching || query.trim() !== debounced ? (
                 <div aria-live="polite" className="space-y-3">
@@ -162,7 +222,7 @@ export function GlobalSearchOverlay() {
                   <p className="text-sm">Search is temporarily unavailable.</p>
                   <button
                     onClick={() => q.refetch()}
-                    className="min-h-11 text-brand"
+                    className="min-h-11 text-brand-ink"
                   >
                     Try again
                   </button>
@@ -193,7 +253,7 @@ export function GlobalSearchOverlay() {
                       </span>
                     )}
                     <span className="min-w-0 flex-1">
-                      <span className="text-[10px] uppercase tracking-widest text-brand">
+                      <span className="text-[10px] uppercase tracking-widest text-brand-ink">
                         {item.kind}
                       </span>
                       <span className="mt-1 block text-sm font-medium">
@@ -216,7 +276,7 @@ export function GlobalSearchOverlay() {
             {debounced.length >= 2 && (
               <button
                 onClick={() => submit()}
-                className="mt-4 min-h-12 w-full border-t text-left text-sm font-semibold text-brand"
+                className="mt-4 min-h-12 w-full border-t text-left text-sm font-semibold text-brand-ink"
               >
                 View all results for “{query.trim()}” →
               </button>

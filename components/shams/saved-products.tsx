@@ -7,7 +7,8 @@ import { commerceFetch } from '@/lib/commerce/browser'
 import type { ProductSummary } from '@/lib/commerce/types'
 import { ProductCard } from './product-card'
 import { ProductRail } from './product-rail'
-import { formatMoney } from '@/lib/commerce'
+import { comparisonRows } from '@/lib/commerce/comparison'
+import type { ProductSpecification } from '@/lib/commerce/types'
 export function SavedProducts({
   mode,
   compact = false,
@@ -15,7 +16,8 @@ export function SavedProducts({
   mode: 'wishlist' | 'compare'
   compact?: boolean
 }) {
-  const { wishlistItems, compareItems } = useInteractions(),
+  const { wishlistItems, compareItems, toggleCompare, toggleWishlist } =
+      useInteractions(),
     ids = mode === 'wishlist' ? wishlistItems : compareItems
   const q = useQuery({
     queryKey: ['saved-products', ids],
@@ -27,12 +29,28 @@ export function SavedProducts({
     enabled: ids.length > 0,
   })
   const products = q.data ?? []
+  const [differencesOnly, setDifferencesOnly] = useState(false)
+  const specs = useQuery({
+    queryKey: ['comparison-specs', ids],
+    queryFn: ({ signal }) =>
+      commerceFetch<Record<string, ProductSpecification[]>>(
+        `/api/commerce/comparison?ids=${ids.join(',')}`,
+        { signal },
+      ),
+    enabled: mode === 'compare' && ids.length > 0,
+    staleTime: 120000,
+  })
+  const rows = comparisonRows(products, specs.data)
+  const unavailable = q.isSuccess
+    ? ids.filter((id) => !products.some((p) => p.id === id))
+    : []
+  const Container = compact ? 'div' : 'main'
   return (
-    <div
+    <Container
       className={
         compact
           ? 'py-3'
-          : 'mobile-storefront-page mx-auto max-w-[1400px] px-4 py-10 sm:px-6'
+          : 'mobile-storefront-page shams-container shams-section'
       }
     >
       <h1 className="text-2xl font-semibold">
@@ -59,45 +77,139 @@ export function SavedProducts({
           </p>
           <Link
             href="/shop"
-            className="mt-4 inline-flex min-h-11 items-center rounded-lg bg-brand px-5 text-sm text-white"
+            className="mt-4 inline-flex min-h-11 items-center rounded-lg bg-brand px-5 text-sm text-brand-foreground"
           >
             Explore gear
           </Link>
         </div>
       )}
+      {unavailable.length > 0 && (
+        <div className="mt-5 rounded-xl border bg-card p-4 text-sm">
+          <p>Some saved gear is no longer available in the catalog.</p>
+          <button
+            className="mt-2 min-h-11 text-brand-ink"
+            onClick={() =>
+              unavailable.forEach((id) =>
+                mode === 'compare' ? toggleCompare(id) : toggleWishlist(id),
+              )
+            }
+          >
+            Remove unavailable items
+          </button>
+        </div>
+      )}
       {mode === 'compare' && products.length > 0 ? (
-        <div className="mt-6 overflow-x-auto">
-          <table className="w-full min-w-[660px] border-collapse text-left text-sm">
-            <thead>
-              <tr>
-                <th className="p-4">Product</th>
-                {products.map((p) => (
-                  <th key={p.id} className="w-64 border p-3">
-                    <ProductCard product={p} view="rail" />
+        <div className="mt-6">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <label className="flex min-h-11 items-center gap-3 text-sm">
+              <input
+                type="checkbox"
+                checked={differencesOnly}
+                onChange={(e) => setDifferencesOnly(e.target.checked)}
+              />
+              Show differences only
+            </label>
+            <span role="status" className="text-xs text-muted-foreground">
+              {specs.isFetching
+                ? 'Loading specifications…'
+                : 'Differences appear first'}
+            </span>
+          </div>
+          {specs.isError && (
+            <button
+              className="mb-3 min-h-11 text-sm text-brand-ink"
+              onClick={() => specs.refetch()}
+            >
+              Retry specifications
+            </button>
+          )}
+          <div
+            className="max-h-[70dvh] overflow-auto overscroll-contain rounded-2xl border bg-card"
+            tabIndex={0}
+            role="region"
+            aria-label="Product comparison"
+          >
+            <table
+              className="w-full table-fixed border-collapse text-left text-sm"
+              style={{
+                minWidth: `calc(72px + ${products.length} * clamp(104px, (100vw - 8rem) / 2, 240px))`,
+              }}
+            >
+              <caption className="sr-only">
+                Compare product differences and shared specifications
+              </caption>
+              <thead className="sticky top-0 z-10 bg-card">
+                <tr>
+                  <th
+                    scope="col"
+                    className="w-18 break-words bg-muted p-3 text-xs sm:min-w-36"
+                  >
+                    Your shortlist
                   </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {['Brand', 'Price', 'Availability', 'Highlights'].map((label) => (
-                <tr key={label}>
-                  <th className="border p-4">{label}</th>
                   {products.map((p) => (
-                    <td key={p.id} className="border p-4 align-top">
-                      {label === 'Brand'
-                        ? p.brand || '—'
-                        : label === 'Price'
-                          ? formatMoney(p.price)
-                          : label === 'Availability'
-                            ? p.stock.replaceAll('_', ' ')
-                            : p.highlights?.map((h) => h.value).join(' · ') ||
-                              'See product details'}
-                    </td>
+                    <th
+                      scope="col"
+                      key={p.id}
+                      className="break-words border-l p-3 align-top sm:min-w-60"
+                    >
+                      <div className="sticky top-0 bg-card">
+                        <Link
+                          href={`/p/${p.slug}`}
+                          className="block text-sm font-semibold leading-6"
+                        >
+                          {p.name}
+                        </Link>
+                        <button
+                          className="mt-2 min-h-11 text-xs font-normal text-muted-foreground underline"
+                          onClick={() => toggleCompare(p.id)}
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    </th>
                   ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {rows
+                  .filter((r) => !differencesOnly || r.different)
+                  .map((row) => (
+                    <tr
+                      key={row.key}
+                      className={
+                        row.different ? 'bg-brand-muted/40' : 'bg-card'
+                      }
+                    >
+                      <th
+                        scope="row"
+                        className="break-words border-t p-3 text-xs font-medium text-muted-foreground sm:p-4"
+                      >
+                        {row.label}
+                      </th>
+                      {row.values.map((v, i) => (
+                        <td
+                          key={products[i].id}
+                          className="break-words border-l border-t p-3 align-top leading-6 sm:p-4"
+                        >
+                          {v}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          </div>
+          {differencesOnly && rows.every((r) => !r.different) && (
+            <p className="py-4 text-sm text-muted-foreground">
+              No differences in the available specifications. Open product
+              details for a closer look.
+            </p>
+          )}
+          <div className="mt-6 grid gap-4 md:grid-cols-2">
+            {products.map((p) => (
+              <ProductCard key={p.id} product={p} view="compact-related" />
+            ))}
+          </div>
         </div>
       ) : (
         <div className="mt-6 grid grid-cols-1 gap-4">
@@ -106,7 +218,7 @@ export function SavedProducts({
           ))}
         </div>
       )}
-    </div>
+    </Container>
   )
 }
 export function RecordViewed({ id }: { id: string }) {
@@ -150,7 +262,7 @@ export function RecentlyViewed() {
   })
   if (!q.data?.length) return null
   return (
-    <section className="mx-auto max-w-[1400px] px-4 py-10 sm:px-6">
+    <section className="shams-container shams-section">
       <h2 className="mb-5 text-2xl font-semibold">Recently viewed</h2>
       <ProductRail products={q.data} />
     </section>

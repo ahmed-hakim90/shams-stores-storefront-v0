@@ -10,7 +10,7 @@ export function Hero() {
   if (!featured) return null
 
   return (
-    <section className="mx-auto max-w-[1400px] px-4 pt-5 sm:px-6">
+    <section className="mx-auto max-w-[1440px] px-4 pt-5 sm:px-6">
       <div className="grid gap-4 lg:grid-cols-12">
         {/* Main feature */}
         <div className="relative overflow-hidden rounded-3xl bg-brand text-brand-foreground lg:col-span-8">
@@ -134,7 +134,7 @@ export function Hero() {
             className="group relative flex flex-1 flex-col justify-between overflow-hidden rounded-3xl border border-border bg-accent p-6"
           >
             <div className="space-y-1.5">
-              <Layers className="size-6 text-brand" />
+              <Layers className="size-6 text-brand-ink" />
               <p className="text-lg font-semibold tracking-tight text-foreground">
                 Build a complete setup
               </p>
@@ -143,7 +143,7 @@ export function Hero() {
                 audio and support that work together.
               </p>
             </div>
-            <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-brand">
+            <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-ink">
               Start with your workflow
               <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
             </span>
@@ -160,7 +160,7 @@ export function Hero() {
           { icon: ArrowRight, title: 'Expert setup', sub: 'Talk to a specialist' },
         ].map((item) => (
           <div key={item.title} className="flex items-center gap-3 bg-card px-4 py-3.5">
-            <item.icon className="size-5 shrink-0 text-brand" />
+            <item.icon className="size-5 shrink-0 text-brand-ink" />
             <div className="min-w-0">
               <p className="truncate text-sm font-medium text-foreground">{item.title}</p>
               <p className="truncate text-xs text-muted-foreground">{item.sub}</p>

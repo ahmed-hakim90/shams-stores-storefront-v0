@@ -2,12 +2,12 @@
 import Image, { type ImageProps } from 'next/image'
 import { useState } from 'react'
 export function ProductImage(props: ImageProps) {
-  const [failed, setFailed] = useState(false)
+  const [failedSource, setFailedSource] = useState<ImageProps['src'] | null>(null)
   return (
     <Image
       {...props}
-      src={failed ? '/placeholder.svg' : props.src}
-      onError={() => setFailed(true)}
+      src={failedSource === props.src ? '/placeholder.svg' : props.src}
+      onError={() => setFailedSource(props.src)}
     />
   )
 }

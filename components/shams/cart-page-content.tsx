@@ -22,12 +22,19 @@ export function CartPageContent({ checkout = false }: { checkout?: boolean }) {
     cart?.total ?? cartLines.reduce((sum, l) => sum + l.quantity * l.price, 0)
   return (
     <main className="mobile-storefront-page mx-auto max-w-[1200px] px-4 py-8 sm:px-6 sm:py-12">
-      <Link href="/shop" className="text-sm text-brand">
-        ← Continue shopping
-      </Link>
+      {!checkout && (
+        <Link href="/shop" className="text-sm text-brand-ink">
+          ← Continue shopping
+        </Link>
+      )}
       <h1 className="mt-5 text-3xl font-semibold">
         {checkout ? 'Checkout' : 'Your cart'}
       </h1>
+      <p className="mt-3 text-sm text-muted-foreground">
+        {checkout
+          ? 'Your details. Your delivery. Ready to create.'
+          : 'A final look at the gear for your next idea.'}
+      </p>
       {cartLoading ? (
         <div className="mt-8 h-56 animate-pulse rounded-xl bg-muted" />
       ) : cartError ? (
@@ -45,7 +52,7 @@ export function CartPageContent({ checkout = false }: { checkout?: boolean }) {
           <h2 className="font-semibold">Your cart is empty</h2>
           <Link
             href="/shop"
-            className="mt-5 inline-flex min-h-11 items-center rounded-lg bg-brand px-6 text-white"
+            className="mt-5 inline-flex min-h-11 items-center rounded-lg bg-brand px-6 text-brand-foreground"
           >
             Explore gear
           </Link>
@@ -60,9 +67,9 @@ export function CartPageContent({ checkout = false }: { checkout?: boolean }) {
                 {cartLines.map((line) => (
                   <article
                     key={line.id}
-                    className="flex gap-4 rounded-xl border p-4"
+                    className="flex gap-3 rounded-2xl border bg-card p-4 sm:gap-5"
                   >
-                    <div className="relative size-24 shrink-0 bg-white">
+                    <div className="relative size-20 shrink-0 sm:size-24 bg-white">
                       <ProductImage
                         src={line.productImage || '/placeholder.svg'}
                         alt={line.productName}
@@ -126,8 +133,28 @@ export function CartPageContent({ checkout = false }: { checkout?: boolean }) {
               </div>
             )}
           </div>
-          <aside className="rounded-xl border p-5 lg:sticky lg:top-44">
+          <aside className="rounded-2xl border bg-card p-5 lg:sticky lg:top-[calc(var(--shell-header-height)+24px)]">
             <h2 className="text-lg font-semibold">Order summary</h2>
+            {checkout && (
+              <details className="mt-4 border-b pb-3">
+                <summary className="min-h-11 cursor-pointer text-sm">
+                  Review {cartLines.length} item
+                  {cartLines.length === 1 ? '' : 's'}
+                </summary>
+                <ul className="space-y-3 pb-3">
+                  {cartLines.map((line) => (
+                    <li key={line.id} className="flex gap-3 text-xs">
+                      <span className="min-w-0 flex-1">
+                        {line.quantity} × {line.productName}
+                      </span>
+                      <span className="shrink-0">
+                        {formatEgp(line.total ?? line.price * line.quantity)}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </details>
+            )}
             <dl className="mt-5 space-y-3 text-sm">
               <div className="flex justify-between">
                 <dt>Products</dt>
@@ -142,7 +169,8 @@ export function CartPageContent({ checkout = false }: { checkout?: boolean }) {
               <div className="flex justify-between gap-3">
                 <dt>Delivery</dt>
                 <dd className="text-right">
-                  {cart?.shipping == null
+                  {cart?.shipping == null ||
+                  !cart.rates.some((rate) => rate.selected)
                     ? 'Calculated from your address'
                     : formatEgp(cart.shipping)}
                 </dd>
@@ -153,7 +181,7 @@ export function CartPageContent({ checkout = false }: { checkout?: boolean }) {
                   <dd>{formatEgp(cart.tax)}</dd>
                 </div>
               )}
-              <div className="flex justify-between border-t pt-4 text-lg font-semibold">
+              <div className="flex flex-wrap justify-between gap-2 border-t pt-4 text-lg font-semibold">
                 <dt>Total</dt>
                 <dd>{formatEgp(total)}</dd>
               </div>
@@ -189,7 +217,7 @@ export function CartPageContent({ checkout = false }: { checkout?: boolean }) {
                     (e) => notify(e.message, 'error'),
                   )
                 }
-                className="mt-3 text-xs text-brand"
+                className="mt-3 text-xs text-brand-ink"
               >
                 {code} ×
               </button>
@@ -197,7 +225,7 @@ export function CartPageContent({ checkout = false }: { checkout?: boolean }) {
             {!checkout && (
               <Link
                 href="/checkout"
-                className="mt-5 flex min-h-12 items-center justify-center rounded-lg bg-brand text-sm font-semibold text-white"
+                className="mt-5 flex min-h-12 items-center justify-center rounded-lg bg-brand text-sm font-semibold text-brand-foreground"
               >
                 Continue to checkout
               </Link>

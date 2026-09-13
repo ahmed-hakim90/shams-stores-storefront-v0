@@ -1,0 +1,562 @@
+[
+  {
+    "path": "/",
+    "width": 320,
+    "result": "\"{\\\"width\\\":320,\\\"documentWidth\\\":320,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"63px\\\",\\\"sidebar\\\":null,\\\"cards\\\":19}\""
+  },
+  {
+    "path": "/",
+    "width": 360,
+    "result": "\"{\\\"width\\\":360,\\\"documentWidth\\\":349,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"63px\\\",\\\"sidebar\\\":null,\\\"cards\\\":19}\""
+  },
+  {
+    "path": "/",
+    "width": 375,
+    "result": "\"{\\\"width\\\":375,\\\"documentWidth\\\":364,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"63px\\\",\\\"sidebar\\\":null,\\\"cards\\\":19}\""
+  },
+  {
+    "path": "/",
+    "width": 390,
+    "result": "\"{\\\"width\\\":390,\\\"documentWidth\\\":379,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"63px\\\",\\\"sidebar\\\":null,\\\"cards\\\":19}\""
+  },
+  {
+    "path": "/",
+    "width": 393,
+    "result": "\"{\\\"width\\\":393,\\\"documentWidth\\\":382,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"63px\\\",\\\"sidebar\\\":null,\\\"cards\\\":19}\""
+  },
+  {
+    "path": "/",
+    "width": 412,
+    "result": "\"{\\\"width\\\":412,\\\"documentWidth\\\":401,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"63px\\\",\\\"sidebar\\\":null,\\\"cards\\\":19}\""
+  },
+  {
+    "path": "/",
+    "width": 430,
+    "result": "\"{\\\"width\\\":430,\\\"documentWidth\\\":419,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"63px\\\",\\\"sidebar\\\":null,\\\"cards\\\":19}\""
+  },
+  {
+    "path": "/",
+    "width": 480,
+    "result": "\"{\\\"width\\\":480,\\\"documentWidth\\\":469,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"63px\\\",\\\"sidebar\\\":null,\\\"cards\\\":19}\""
+  },
+  {
+    "path": "/",
+    "width": 768,
+    "result": "\"{\\\"width\\\":768,\\\"documentWidth\\\":757,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"69px\\\",\\\"sidebar\\\":null,\\\"cards\\\":19}\""
+  },
+  {
+    "path": "/",
+    "width": 834,
+    "result": "\"{\\\"width\\\":834,\\\"documentWidth\\\":823,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"69px\\\",\\\"sidebar\\\":null,\\\"cards\\\":19}\""
+  },
+  {
+    "path": "/",
+    "width": 1024,
+    "result": "\"{\\\"width\\\":1024,\\\"documentWidth\\\":1013,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"146px\\\",\\\"sidebar\\\":null,\\\"cards\\\":19}\""
+  },
+  {
+    "path": "/",
+    "width": 1280,
+    "result": "\"{\\\"width\\\":1280,\\\"documentWidth\\\":1269,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"106px\\\",\\\"sidebar\\\":null,\\\"cards\\\":19}\""
+  },
+  {
+    "path": "/",
+    "width": 1366,
+    "result": "\"{\\\"width\\\":1366,\\\"documentWidth\\\":1355,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"106px\\\",\\\"sidebar\\\":null,\\\"cards\\\":19}\""
+  },
+  {
+    "path": "/",
+    "width": 1440,
+    "result": "\"{\\\"width\\\":1440,\\\"documentWidth\\\":1429,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"106px\\\",\\\"sidebar\\\":null,\\\"cards\\\":19}\""
+  },
+  {
+    "path": "/",
+    "width": 1536,
+    "result": "\"{\\\"width\\\":1536,\\\"documentWidth\\\":1525,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"106px\\\",\\\"sidebar\\\":null,\\\"cards\\\":19}\""
+  },
+  {
+    "path": "/",
+    "width": 1920,
+    "result": "\"{\\\"width\\\":1920,\\\"documentWidth\\\":1909,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"106px\\\",\\\"sidebar\\\":null,\\\"cards\\\":19}\""
+  },
+  {
+    "path": "/shop",
+    "width": 320,
+    "result": "\"{\\\"width\\\":320,\\\"documentWidth\\\":320,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"63px\\\",\\\"sidebar\\\":\\\"sticky\\\",\\\"cards\\\":24}\""
+  },
+  {
+    "path": "/shop",
+    "width": 360,
+    "result": "\"{\\\"width\\\":360,\\\"documentWidth\\\":349,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"63px\\\",\\\"sidebar\\\":\\\"sticky\\\",\\\"cards\\\":24}\""
+  },
+  {
+    "path": "/shop",
+    "width": 375,
+    "result": "\"{\\\"width\\\":375,\\\"documentWidth\\\":364,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"63px\\\",\\\"sidebar\\\":\\\"sticky\\\",\\\"cards\\\":24}\""
+  },
+  {
+    "path": "/shop",
+    "width": 390,
+    "result": "\"{\\\"width\\\":390,\\\"documentWidth\\\":379,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"63px\\\",\\\"sidebar\\\":\\\"sticky\\\",\\\"cards\\\":24}\""
+  },
+  {
+    "path": "/shop",
+    "width": 393,
+    "result": "\"{\\\"width\\\":393,\\\"documentWidth\\\":382,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"63px\\\",\\\"sidebar\\\":\\\"sticky\\\",\\\"cards\\\":24}\""
+  },
+  {
+    "path": "/shop",
+    "width": 412,
+    "result": "\"{\\\"width\\\":412,\\\"documentWidth\\\":401,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"63px\\\",\\\"sidebar\\\":\\\"sticky\\\",\\\"cards\\\":24}\""
+  },
+  {
+    "path": "/shop",
+    "width": 430,
+    "result": "\"{\\\"width\\\":430,\\\"documentWidth\\\":419,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"63px\\\",\\\"sidebar\\\":\\\"sticky\\\",\\\"cards\\\":24}\""
+  },
+  {
+    "path": "/shop",
+    "width": 480,
+    "result": "\"{\\\"width\\\":480,\\\"documentWidth\\\":469,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"63px\\\",\\\"sidebar\\\":\\\"sticky\\\",\\\"cards\\\":24}\""
+  },
+  {
+    "path": "/shop",
+    "width": 768,
+    "result": "\"{\\\"width\\\":768,\\\"documentWidth\\\":757,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"69px\\\",\\\"sidebar\\\":\\\"sticky\\\",\\\"cards\\\":24}\""
+  },
+  {
+    "path": "/shop",
+    "width": 834,
+    "result": "\"{\\\"width\\\":834,\\\"documentWidth\\\":823,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"69px\\\",\\\"sidebar\\\":\\\"sticky\\\",\\\"cards\\\":24}\""
+  },
+  {
+    "path": "/shop",
+    "width": 1024,
+    "result": "\"{\\\"width\\\":1024,\\\"documentWidth\\\":1013,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"146px\\\",\\\"sidebar\\\":\\\"sticky\\\",\\\"cards\\\":24}\""
+  },
+  {
+    "path": "/shop",
+    "width": 1280,
+    "result": "\"{\\\"width\\\":1280,\\\"documentWidth\\\":1269,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"106px\\\",\\\"sidebar\\\":\\\"sticky\\\",\\\"cards\\\":24}\""
+  },
+  {
+    "path": "/shop",
+    "width": 1366,
+    "result": "\"{\\\"width\\\":1366,\\\"documentWidth\\\":1355,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"106px\\\",\\\"sidebar\\\":\\\"sticky\\\",\\\"cards\\\":24}\""
+  },
+  {
+    "path": "/shop",
+    "width": 1440,
+    "result": "\"{\\\"width\\\":1440,\\\"documentWidth\\\":1429,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"106px\\\",\\\"sidebar\\\":\\\"sticky\\\",\\\"cards\\\":24}\""
+  },
+  {
+    "path": "/shop",
+    "width": 1536,
+    "result": "\"{\\\"width\\\":1536,\\\"documentWidth\\\":1525,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"106px\\\",\\\"sidebar\\\":\\\"sticky\\\",\\\"cards\\\":24}\""
+  },
+  {
+    "path": "/shop",
+    "width": 1920,
+    "result": "\"{\\\"width\\\":1920,\\\"documentWidth\\\":1909,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"106px\\\",\\\"sidebar\\\":\\\"sticky\\\",\\\"cards\\\":24}\""
+  },
+  {
+    "path": "/c/cameras",
+    "width": 320,
+    "result": "\"{\\\"width\\\":320,\\\"documentWidth\\\":320,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"63px\\\",\\\"sidebar\\\":\\\"sticky\\\",\\\"cards\\\":24}\""
+  },
+  {
+    "path": "/c/cameras",
+    "width": 360,
+    "result": "\"{\\\"width\\\":360,\\\"documentWidth\\\":349,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"63px\\\",\\\"sidebar\\\":\\\"sticky\\\",\\\"cards\\\":24}\""
+  },
+  {
+    "path": "/c/cameras",
+    "width": 375,
+    "result": "\"{\\\"width\\\":375,\\\"documentWidth\\\":364,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"63px\\\",\\\"sidebar\\\":\\\"sticky\\\",\\\"cards\\\":24}\""
+  },
+  {
+    "path": "/c/cameras",
+    "width": 390,
+    "result": "\"{\\\"width\\\":390,\\\"documentWidth\\\":379,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"63px\\\",\\\"sidebar\\\":\\\"sticky\\\",\\\"cards\\\":24}\""
+  },
+  {
+    "path": "/c/cameras",
+    "width": 393,
+    "result": "\"{\\\"width\\\":393,\\\"documentWidth\\\":382,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"63px\\\",\\\"sidebar\\\":\\\"sticky\\\",\\\"cards\\\":24}\""
+  },
+  {
+    "path": "/c/cameras",
+    "width": 412,
+    "result": "\"{\\\"width\\\":412,\\\"documentWidth\\\":401,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"63px\\\",\\\"sidebar\\\":\\\"sticky\\\",\\\"cards\\\":24}\""
+  },
+  {
+    "path": "/c/cameras",
+    "width": 430,
+    "result": "\"{\\\"width\\\":430,\\\"documentWidth\\\":419,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"63px\\\",\\\"sidebar\\\":\\\"sticky\\\",\\\"cards\\\":24}\""
+  },
+  {
+    "path": "/c/cameras",
+    "width": 480,
+    "result": "\"{\\\"width\\\":480,\\\"documentWidth\\\":469,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"63px\\\",\\\"sidebar\\\":\\\"sticky\\\",\\\"cards\\\":24}\""
+  },
+  {
+    "path": "/c/cameras",
+    "width": 768,
+    "result": "\"{\\\"width\\\":768,\\\"documentWidth\\\":757,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"69px\\\",\\\"sidebar\\\":\\\"sticky\\\",\\\"cards\\\":24}\""
+  },
+  {
+    "path": "/c/cameras",
+    "width": 834,
+    "result": "\"{\\\"width\\\":834,\\\"documentWidth\\\":823,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"69px\\\",\\\"sidebar\\\":\\\"sticky\\\",\\\"cards\\\":24}\""
+  },
+  {
+    "path": "/c/cameras",
+    "width": 1024,
+    "result": "\"{\\\"width\\\":1024,\\\"documentWidth\\\":1013,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"146px\\\",\\\"sidebar\\\":\\\"sticky\\\",\\\"cards\\\":24}\""
+  },
+  {
+    "path": "/c/cameras",
+    "width": 1280,
+    "result": "\"{\\\"width\\\":1280,\\\"documentWidth\\\":1269,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"106px\\\",\\\"sidebar\\\":\\\"sticky\\\",\\\"cards\\\":24}\""
+  },
+  {
+    "path": "/c/cameras",
+    "width": 1366,
+    "result": "\"{\\\"width\\\":1366,\\\"documentWidth\\\":1355,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"106px\\\",\\\"sidebar\\\":\\\"sticky\\\",\\\"cards\\\":24}\""
+  },
+  {
+    "path": "/c/cameras",
+    "width": 1440,
+    "result": "\"{\\\"width\\\":1440,\\\"documentWidth\\\":1429,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"106px\\\",\\\"sidebar\\\":\\\"sticky\\\",\\\"cards\\\":24}\""
+  },
+  {
+    "path": "/c/cameras",
+    "width": 1536,
+    "result": "\"{\\\"width\\\":1536,\\\"documentWidth\\\":1525,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"106px\\\",\\\"sidebar\\\":\\\"sticky\\\",\\\"cards\\\":24}\""
+  },
+  {
+    "path": "/c/cameras",
+    "width": 1920,
+    "result": "\"{\\\"width\\\":1920,\\\"documentWidth\\\":1909,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"106px\\\",\\\"sidebar\\\":\\\"sticky\\\",\\\"cards\\\":24}\""
+  },
+  {
+    "path": "/b/sony",
+    "width": 320,
+    "result": "\"{\\\"width\\\":320,\\\"documentWidth\\\":320,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"63px\\\",\\\"sidebar\\\":\\\"sticky\\\",\\\"cards\\\":23}\""
+  },
+  {
+    "path": "/b/sony",
+    "width": 360,
+    "result": "\"{\\\"width\\\":360,\\\"documentWidth\\\":349,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"63px\\\",\\\"sidebar\\\":\\\"sticky\\\",\\\"cards\\\":23}\""
+  },
+  {
+    "path": "/b/sony",
+    "width": 375,
+    "result": "\"{\\\"width\\\":375,\\\"documentWidth\\\":364,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"63px\\\",\\\"sidebar\\\":\\\"sticky\\\",\\\"cards\\\":23}\""
+  },
+  {
+    "path": "/b/sony",
+    "width": 390,
+    "result": "\"{\\\"width\\\":390,\\\"documentWidth\\\":379,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"63px\\\",\\\"sidebar\\\":\\\"sticky\\\",\\\"cards\\\":23}\""
+  },
+  {
+    "path": "/b/sony",
+    "width": 393,
+    "result": "\"{\\\"width\\\":393,\\\"documentWidth\\\":382,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"63px\\\",\\\"sidebar\\\":\\\"sticky\\\",\\\"cards\\\":23}\""
+  },
+  {
+    "path": "/b/sony",
+    "width": 412,
+    "result": "\"{\\\"width\\\":412,\\\"documentWidth\\\":401,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"63px\\\",\\\"sidebar\\\":\\\"sticky\\\",\\\"cards\\\":23}\""
+  },
+  {
+    "path": "/b/sony",
+    "width": 430,
+    "result": "\"{\\\"width\\\":430,\\\"documentWidth\\\":419,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"63px\\\",\\\"sidebar\\\":\\\"sticky\\\",\\\"cards\\\":23}\""
+  },
+  {
+    "path": "/b/sony",
+    "width": 480,
+    "result": "\"{\\\"width\\\":480,\\\"documentWidth\\\":469,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"63px\\\",\\\"sidebar\\\":\\\"sticky\\\",\\\"cards\\\":23}\""
+  },
+  {
+    "path": "/b/sony",
+    "width": 768,
+    "result": "\"{\\\"width\\\":768,\\\"documentWidth\\\":757,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"69px\\\",\\\"sidebar\\\":\\\"sticky\\\",\\\"cards\\\":23}\""
+  },
+  {
+    "path": "/b/sony",
+    "width": 834,
+    "result": "\"{\\\"width\\\":834,\\\"documentWidth\\\":823,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"69px\\\",\\\"sidebar\\\":\\\"sticky\\\",\\\"cards\\\":23}\""
+  },
+  {
+    "path": "/b/sony",
+    "width": 1024,
+    "result": "\"{\\\"width\\\":1024,\\\"documentWidth\\\":1013,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"146px\\\",\\\"sidebar\\\":\\\"sticky\\\",\\\"cards\\\":23}\""
+  },
+  {
+    "path": "/b/sony",
+    "width": 1280,
+    "result": "\"{\\\"width\\\":1280,\\\"documentWidth\\\":1269,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"106px\\\",\\\"sidebar\\\":\\\"sticky\\\",\\\"cards\\\":23}\""
+  },
+  {
+    "path": "/b/sony",
+    "width": 1366,
+    "result": "\"{\\\"width\\\":1366,\\\"documentWidth\\\":1355,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"106px\\\",\\\"sidebar\\\":\\\"sticky\\\",\\\"cards\\\":23}\""
+  },
+  {
+    "path": "/b/sony",
+    "width": 1440,
+    "result": "\"{\\\"width\\\":1440,\\\"documentWidth\\\":1429,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"106px\\\",\\\"sidebar\\\":\\\"sticky\\\",\\\"cards\\\":23}\""
+  },
+  {
+    "path": "/b/sony",
+    "width": 1536,
+    "result": "\"{\\\"width\\\":1536,\\\"documentWidth\\\":1525,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"106px\\\",\\\"sidebar\\\":\\\"sticky\\\",\\\"cards\\\":23}\""
+  },
+  {
+    "path": "/b/sony",
+    "width": 1920,
+    "result": "\"{\\\"width\\\":1920,\\\"documentWidth\\\":1909,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"106px\\\",\\\"sidebar\\\":\\\"sticky\\\",\\\"cards\\\":23}\""
+  },
+  {
+    "path": "/checkout",
+    "width": 320,
+    "result": "\"{\\\"width\\\":320,\\\"documentWidth\\\":320,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"64px\\\",\\\"sidebar\\\":null,\\\"cards\\\":0}\""
+  },
+  {
+    "path": "/checkout",
+    "width": 360,
+    "result": "\"{\\\"width\\\":360,\\\"documentWidth\\\":349,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"64px\\\",\\\"sidebar\\\":null,\\\"cards\\\":0}\""
+  },
+  {
+    "path": "/checkout",
+    "width": 375,
+    "result": "\"{\\\"width\\\":375,\\\"documentWidth\\\":364,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"64px\\\",\\\"sidebar\\\":null,\\\"cards\\\":0}\""
+  },
+  {
+    "path": "/checkout",
+    "width": 390,
+    "result": "\"{\\\"width\\\":390,\\\"documentWidth\\\":379,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"64px\\\",\\\"sidebar\\\":null,\\\"cards\\\":0}\""
+  },
+  {
+    "path": "/checkout",
+    "width": 393,
+    "result": "\"{\\\"width\\\":393,\\\"documentWidth\\\":382,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"64px\\\",\\\"sidebar\\\":null,\\\"cards\\\":0}\""
+  },
+  {
+    "path": "/checkout",
+    "width": 412,
+    "result": "\"{\\\"width\\\":412,\\\"documentWidth\\\":401,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"64px\\\",\\\"sidebar\\\":null,\\\"cards\\\":0}\""
+  },
+  {
+    "path": "/checkout",
+    "width": 430,
+    "result": "\"{\\\"width\\\":430,\\\"documentWidth\\\":419,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"64px\\\",\\\"sidebar\\\":null,\\\"cards\\\":0}\""
+  },
+  {
+    "path": "/checkout",
+    "width": 480,
+    "result": "\"{\\\"width\\\":480,\\\"documentWidth\\\":469,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"64px\\\",\\\"sidebar\\\":null,\\\"cards\\\":0}\""
+  },
+  {
+    "path": "/checkout",
+    "width": 768,
+    "result": "\"{\\\"width\\\":768,\\\"documentWidth\\\":757,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"64px\\\",\\\"sidebar\\\":null,\\\"cards\\\":0}\""
+  },
+  {
+    "path": "/checkout",
+    "width": 834,
+    "result": "\"{\\\"width\\\":834,\\\"documentWidth\\\":823,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"64px\\\",\\\"sidebar\\\":null,\\\"cards\\\":0}\""
+  },
+  {
+    "path": "/checkout",
+    "width": 1024,
+    "result": "\"{\\\"width\\\":1024,\\\"documentWidth\\\":1013,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"64px\\\",\\\"sidebar\\\":null,\\\"cards\\\":0}\""
+  },
+  {
+    "path": "/checkout",
+    "width": 1280,
+    "result": "\"{\\\"width\\\":1280,\\\"documentWidth\\\":1269,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"64px\\\",\\\"sidebar\\\":null,\\\"cards\\\":0}\""
+  },
+  {
+    "path": "/checkout",
+    "width": 1366,
+    "result": "\"{\\\"width\\\":1366,\\\"documentWidth\\\":1355,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"64px\\\",\\\"sidebar\\\":null,\\\"cards\\\":0}\""
+  },
+  {
+    "path": "/checkout",
+    "width": 1440,
+    "result": "\"{\\\"width\\\":1440,\\\"documentWidth\\\":1429,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"64px\\\",\\\"sidebar\\\":null,\\\"cards\\\":0}\""
+  },
+  {
+    "path": "/checkout",
+    "width": 1536,
+    "result": "\"{\\\"width\\\":1536,\\\"documentWidth\\\":1525,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"64px\\\",\\\"sidebar\\\":null,\\\"cards\\\":0}\""
+  },
+  {
+    "path": "/checkout",
+    "width": 1920,
+    "result": "\"{\\\"width\\\":1920,\\\"documentWidth\\\":1909,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"64px\\\",\\\"sidebar\\\":null,\\\"cards\\\":0}\""
+  },
+  {
+    "path": "/account",
+    "width": 320,
+    "result": "\"{\\\"width\\\":320,\\\"documentWidth\\\":320,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"63px\\\",\\\"sidebar\\\":null,\\\"cards\\\":0}\""
+  },
+  {
+    "path": "/account",
+    "width": 360,
+    "result": "\"{\\\"width\\\":360,\\\"documentWidth\\\":349,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"63px\\\",\\\"sidebar\\\":null,\\\"cards\\\":0}\""
+  },
+  {
+    "path": "/account",
+    "width": 375,
+    "result": "\"{\\\"width\\\":375,\\\"documentWidth\\\":364,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"63px\\\",\\\"sidebar\\\":null,\\\"cards\\\":0}\""
+  },
+  {
+    "path": "/account",
+    "width": 390,
+    "result": "\"{\\\"width\\\":390,\\\"documentWidth\\\":379,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"63px\\\",\\\"sidebar\\\":null,\\\"cards\\\":0}\""
+  },
+  {
+    "path": "/account",
+    "width": 393,
+    "result": "\"{\\\"width\\\":393,\\\"documentWidth\\\":382,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"63px\\\",\\\"sidebar\\\":null,\\\"cards\\\":0}\""
+  },
+  {
+    "path": "/account",
+    "width": 412,
+    "result": "\"{\\\"width\\\":412,\\\"documentWidth\\\":401,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"63px\\\",\\\"sidebar\\\":null,\\\"cards\\\":0}\""
+  },
+  {
+    "path": "/account",
+    "width": 430,
+    "result": "\"{\\\"width\\\":430,\\\"documentWidth\\\":419,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"63px\\\",\\\"sidebar\\\":null,\\\"cards\\\":0}\""
+  },
+  {
+    "path": "/account",
+    "width": 480,
+    "result": "\"{\\\"width\\\":480,\\\"documentWidth\\\":469,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"63px\\\",\\\"sidebar\\\":null,\\\"cards\\\":0}\""
+  },
+  {
+    "path": "/account",
+    "width": 768,
+    "result": "\"{\\\"width\\\":768,\\\"documentWidth\\\":757,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"69px\\\",\\\"sidebar\\\":null,\\\"cards\\\":0}\""
+  },
+  {
+    "path": "/account",
+    "width": 834,
+    "result": "\"{\\\"width\\\":834,\\\"documentWidth\\\":823,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"69px\\\",\\\"sidebar\\\":null,\\\"cards\\\":0}\""
+  },
+  {
+    "path": "/account",
+    "width": 1024,
+    "result": "\"{\\\"width\\\":1024,\\\"documentWidth\\\":1013,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"146px\\\",\\\"sidebar\\\":null,\\\"cards\\\":0}\""
+  },
+  {
+    "path": "/account",
+    "width": 1280,
+    "result": "\"{\\\"width\\\":1280,\\\"documentWidth\\\":1269,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"106px\\\",\\\"sidebar\\\":null,\\\"cards\\\":0}\""
+  },
+  {
+    "path": "/account",
+    "width": 1366,
+    "result": "\"{\\\"width\\\":1366,\\\"documentWidth\\\":1355,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"106px\\\",\\\"sidebar\\\":null,\\\"cards\\\":0}\""
+  },
+  {
+    "path": "/account",
+    "width": 1440,
+    "result": "\"{\\\"width\\\":1440,\\\"documentWidth\\\":1429,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"106px\\\",\\\"sidebar\\\":null,\\\"cards\\\":0}\""
+  },
+  {
+    "path": "/account",
+    "width": 1536,
+    "result": "\"{\\\"width\\\":1536,\\\"documentWidth\\\":1525,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"106px\\\",\\\"sidebar\\\":null,\\\"cards\\\":0}\""
+  },
+  {
+    "path": "/account",
+    "width": 1920,
+    "result": "\"{\\\"width\\\":1920,\\\"documentWidth\\\":1909,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"106px\\\",\\\"sidebar\\\":null,\\\"cards\\\":0}\""
+  },
+  {
+    "path": "/dev/design-system",
+    "width": 320,
+    "result": "\"{\\\"width\\\":320,\\\"documentWidth\\\":320,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"63px\\\",\\\"sidebar\\\":null,\\\"cards\\\":3}\""
+  },
+  {
+    "path": "/dev/design-system",
+    "width": 360,
+    "result": "\"{\\\"width\\\":360,\\\"documentWidth\\\":349,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"63px\\\",\\\"sidebar\\\":null,\\\"cards\\\":3}\""
+  },
+  {
+    "path": "/dev/design-system",
+    "width": 375,
+    "result": "\"{\\\"width\\\":375,\\\"documentWidth\\\":364,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"63px\\\",\\\"sidebar\\\":null,\\\"cards\\\":3}\""
+  },
+  {
+    "path": "/dev/design-system",
+    "width": 390,
+    "result": "\"{\\\"width\\\":390,\\\"documentWidth\\\":379,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"63px\\\",\\\"sidebar\\\":null,\\\"cards\\\":3}\""
+  },
+  {
+    "path": "/dev/design-system",
+    "width": 393,
+    "result": "\"{\\\"width\\\":393,\\\"documentWidth\\\":382,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"63px\\\",\\\"sidebar\\\":null,\\\"cards\\\":3}\""
+  },
+  {
+    "path": "/dev/design-system",
+    "width": 412,
+    "result": "\"{\\\"width\\\":412,\\\"documentWidth\\\":401,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"63px\\\",\\\"sidebar\\\":null,\\\"cards\\\":3}\""
+  },
+  {
+    "path": "/dev/design-system",
+    "width": 430,
+    "result": "\"{\\\"width\\\":430,\\\"documentWidth\\\":419,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"63px\\\",\\\"sidebar\\\":null,\\\"cards\\\":3}\""
+  },
+  {
+    "path": "/dev/design-system",
+    "width": 480,
+    "result": "\"{\\\"width\\\":480,\\\"documentWidth\\\":469,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"63px\\\",\\\"sidebar\\\":null,\\\"cards\\\":3}\""
+  },
+  {
+    "path": "/dev/design-system",
+    "width": 768,
+    "result": "\"{\\\"width\\\":768,\\\"documentWidth\\\":757,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"69px\\\",\\\"sidebar\\\":null,\\\"cards\\\":3}\""
+  },
+  {
+    "path": "/dev/design-system",
+    "width": 834,
+    "result": "\"{\\\"width\\\":834,\\\"documentWidth\\\":823,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"69px\\\",\\\"sidebar\\\":null,\\\"cards\\\":3}\""
+  },
+  {
+    "path": "/dev/design-system",
+    "width": 1024,
+    "result": "\"{\\\"width\\\":1024,\\\"documentWidth\\\":1013,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"146px\\\",\\\"sidebar\\\":null,\\\"cards\\\":3}\""
+  },
+  {
+    "path": "/dev/design-system",
+    "width": 1280,
+    "result": "\"{\\\"width\\\":1280,\\\"documentWidth\\\":1269,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"106px\\\",\\\"sidebar\\\":null,\\\"cards\\\":3}\""
+  },
+  {
+    "path": "/dev/design-system",
+    "width": 1366,
+    "result": "\"{\\\"width\\\":1366,\\\"documentWidth\\\":1355,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"106px\\\",\\\"sidebar\\\":null,\\\"cards\\\":3}\""
+  },
+  {
+    "path": "/dev/design-system",
+    "width": 1440,
+    "result": "\"{\\\"width\\\":1440,\\\"documentWidth\\\":1429,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"106px\\\",\\\"sidebar\\\":null,\\\"cards\\\":3}\""
+  },
+  {
+    "path": "/dev/design-system",
+    "width": 1536,
+    "result": "\"{\\\"width\\\":1536,\\\"documentWidth\\\":1525,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"106px\\\",\\\"sidebar\\\":null,\\\"cards\\\":3}\""
+  },
+  {
+    "path": "/dev/design-system",
+    "width": 1920,
+    "result": "\"{\\\"width\\\":1920,\\\"documentWidth\\\":1909,\\\"overflow\\\":false,\\\"headerHeight\\\":\\\"106px\\\",\\\"sidebar\\\":null,\\\"cards\\\":3}\""
+  }
+]

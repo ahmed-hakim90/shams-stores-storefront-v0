@@ -16,7 +16,7 @@ export function ProductCardSkeleton() {
 
 export function CatalogSkeleton() {
   return (
-    <main className="mx-auto max-w-[1400px] px-4 py-7 sm:px-6 sm:py-10" aria-label="Loading products">
+    <main className="mx-auto max-w-[1440px] px-4 py-7 sm:px-6 sm:py-10" aria-label="Loading products">
       <Skeleton className="mb-6 h-4 w-40" />
       <div className="flex flex-col gap-3 border-b border-border pb-6"><Skeleton className="h-3 w-28" /><Skeleton className="h-10 w-64 sm:h-12 sm:w-96" /><Skeleton className="h-5 w-full max-w-2xl" /><Skeleton className="h-4 w-24" /></div>
       <div className="my-5"><Skeleton className="h-4 w-40" /></div>
@@ -27,7 +27,7 @@ export function CatalogSkeleton() {
 
 export function ProductDetailSkeleton() {
   return (
-    <main className="mx-auto max-w-[1400px] px-4 py-7 sm:px-6 sm:py-10" aria-label="Loading product">
+    <main className="mx-auto max-w-[1440px] px-4 py-7 sm:px-6 sm:py-10" aria-label="Loading product">
       <Skeleton className="mb-6 h-4 w-64" />
       <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-12"><div className="aspect-square rounded-xl"><Skeleton className="size-full" /></div><div className="flex flex-col gap-4"><Skeleton className="h-4 w-20" /><Skeleton className="h-10 w-full max-w-lg" /><Skeleton className="h-5 w-40" /><Skeleton className="my-4 h-24 w-full" /><Skeleton className="h-5 w-28" /><Skeleton className="h-12 w-full" /><Skeleton className="h-12 w-full" /></div></div>
     </main>

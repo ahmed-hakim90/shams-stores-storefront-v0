@@ -12,7 +12,7 @@ export function WorkflowExplorer() {
       id="workflows"
       className="scroll-mt-28 border-y border-border bg-accent/40"
     >
-      <div className="mx-auto max-w-[1400px] px-4 py-14 sm:px-6 sm:py-20">
+      <div className="mx-auto max-w-[1440px] px-4 py-14 sm:px-6 sm:py-20">
         <SectionHeading
           eyebrow="Shop by workflow"
           title="What are you creating?"

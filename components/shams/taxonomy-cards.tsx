@@ -22,7 +22,7 @@ export function TaxonomyCards({
         <Link
           key={t.id}
           href={`/${kind === 'brand' ? 'b' : 'c'}/${t.slug}`}
-          className={`group min-w-0 overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-brand ${compact ? 'flex w-40 shrink-0 items-center gap-3 p-3' : 'p-4'}`}
+          className={`group min-w-0 overflow-hidden rounded-[var(--radius-card)] border border-border bg-card transition-colors hover:border-brand ${compact ? 'flex w-40 shrink-0 items-center gap-3 p-3' : 'p-4'}`}
         >
           {t.image ? (
             <div
@@ -38,17 +38,17 @@ export function TaxonomyCards({
             </div>
           ) : (
             !compact && (
-              <div className="mb-4 flex aspect-[4/3] items-center justify-center rounded-lg bg-brand/5 px-4 text-center text-2xl font-semibold tracking-tight">
+              <div className="mb-4 flex aspect-[4/3] items-center justify-center rounded-lg bg-brand/5 px-4 text-center text-lg font-semibold tracking-tight sm:text-2xl">
                 {t.name}
               </div>
             )
           )}
           <div className="min-w-0">
-            <h3 className="text-sm font-semibold group-hover:text-brand">
+            <h3 className="text-base font-semibold group-hover:text-brand-ink">
               {t.name}
             </h3>
             {!compact && (
-              <p className="mt-2 text-xs text-muted-foreground">
+              <p className="mt-2 text-sm text-muted-foreground">
                 Explore {t.name} →
               </p>
             )}

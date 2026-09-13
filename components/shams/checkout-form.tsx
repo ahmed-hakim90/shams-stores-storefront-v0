@@ -136,7 +136,7 @@ export function CheckoutForm() {
         </section>
         <button
           disabled={cartPending || !config.data?.states.length}
-          className="min-h-12 rounded-lg border border-brand px-5 text-sm font-semibold text-brand"
+          className="min-h-12 rounded-lg border border-brand px-5 text-sm font-semibold text-brand-ink"
         >
           {cartPending
             ? 'Calculating delivery…'
@@ -213,7 +213,7 @@ export function CheckoutForm() {
       {config.isError && (
         <button
           onClick={() => config.refetch()}
-          className="mt-4 min-h-11 text-brand"
+          className="mt-4 min-h-11 text-brand-ink"
         >
           Retry checkout options
         </button>
@@ -260,7 +260,7 @@ export function CheckoutForm() {
             } else submitting.current = false
           }
         }}
-        className="mt-6 min-h-12 w-full rounded-lg bg-brand px-6 text-sm font-semibold text-white disabled:bg-muted disabled:text-muted-foreground"
+        className="mt-6 min-h-12 w-full rounded-lg bg-brand px-6 text-sm font-semibold text-brand-foreground disabled:bg-muted disabled:text-muted-foreground"
       >
         {pending ? 'Confirming your order…' : 'Place order'}
       </button>

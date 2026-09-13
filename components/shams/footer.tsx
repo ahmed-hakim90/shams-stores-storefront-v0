@@ -49,7 +49,7 @@ const columns = [
 export function Footer() {
   return (
     <footer className="border-t border-border bg-card">
-      <div className="mx-auto max-w-[1400px] px-4 py-12 sm:px-6">
+      <div className="mx-auto max-w-[1440px] px-4 py-12 sm:px-6">
         <div className="grid gap-10 lg:grid-cols-[1.4fr_repeat(4,1fr)]">
           <div className="space-y-4">
             <ShamsLogo />
@@ -60,13 +60,13 @@ export function Footer() {
             </p>
             <div className="space-y-1.5 text-sm text-muted-foreground">
               <p className="flex items-center gap-2">
-                <MapPin className="size-4 text-brand" /> Downtown · Heliopolis · Alexandria
+                <MapPin className="size-4 text-brand-ink" /> Downtown · Heliopolis · Alexandria
               </p>
               <p className="flex items-center gap-2">
-                <Phone className="size-4 text-brand" /> +20 100 000 0000
+                <Phone className="size-4 text-brand-ink" /> +20 100 000 0000
               </p>
               <p className="flex items-center gap-2">
-                <Mail className="size-4 text-brand" /> hello@shamsstores.com
+                <Mail className="size-4 text-brand-ink" /> hello@shamsstores.com
               </p>
             </div>
             <div className="flex gap-2 pt-1">
@@ -75,7 +75,7 @@ export function Footer() {
                   key={channel}
                   href="#"
                   aria-label={`Shams ${channel}`}
-                  className="inline-flex size-9 items-center justify-center rounded-lg border border-border text-foreground/70 transition-colors hover:border-brand hover:text-brand"
+                  className="inline-flex size-9 items-center justify-center rounded-lg border border-border text-foreground/70 transition-colors hover:border-brand hover:text-brand-ink"
                 >
                   <Camera aria-hidden="true" className="size-4.5" />
                   <span className="sr-only">{channel}</span>
@@ -92,7 +92,7 @@ export function Footer() {
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-sm text-muted-foreground transition-colors hover:text-brand"
+                      className="text-sm text-muted-foreground transition-colors hover:text-brand-ink"
                     >
                       {link.label}
                     </Link>
@@ -105,7 +105,7 @@ export function Footer() {
       </div>
 
       <div className="border-t border-border">
-        <div className="mx-auto flex max-w-[1400px] flex-col items-center justify-between gap-3 px-4 py-5 text-xs text-muted-foreground sm:flex-row sm:px-6">
+        <div className="mx-auto flex max-w-[1440px] flex-col items-center justify-between gap-3 px-4 py-5 text-xs text-muted-foreground sm:flex-row sm:px-6">
           <p>© 2026 Shams Stores. All rights reserved.</p>
           <div className="flex items-center gap-4">
             <span>Prices in EGP · Egypt</span>

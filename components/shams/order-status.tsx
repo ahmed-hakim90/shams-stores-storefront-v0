@@ -45,7 +45,7 @@ export function OrderStatus() {
       )}
       <Link
         href="/shop"
-        className="mt-6 inline-flex min-h-11 items-center text-sm text-brand"
+        className="mt-6 inline-flex min-h-11 items-center text-sm text-brand-ink"
       >
         Continue shopping →
       </Link>

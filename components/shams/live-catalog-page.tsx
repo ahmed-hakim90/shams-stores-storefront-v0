@@ -7,8 +7,9 @@ import {
   parseQuery,
 } from '@/lib/commerce/live/catalog'
 import { ShopFeed } from './shop-feed'
-import { TaxonomyCards } from './taxonomy-cards'
-import type { CatalogQuery, TaxonomyTerm } from '@/lib/commerce/types'
+import { ProductImage } from './product-image'
+import { catalogParams, type CatalogScope } from '@/lib/commerce/experience'
+import type { TaxonomyTerm } from '@/lib/commerce/types'
 export async function LiveCatalogPage({
   query: input = {},
   title = 'Shop all gear',
@@ -22,25 +23,54 @@ export async function LiveCatalogPage({
   discovery?: boolean
   hub?: { kind: 'category' | 'brand'; term: TaxonomyTerm }
 }) {
-  const q = parseQuery({ ...input, pageSize: 24 })
-  const [page, facetData, categories, brands] = await Promise.all([
-    listProducts(q),
-    facets(q).catch(() => ({ groups: [] })),
+  const [categories, brands] = await Promise.all([
     terms('categories'),
     terms('brands'),
+  ])
+  const descendants = (id: string): string[] =>
+    categories
+      .filter((t) => t.parentId === id)
+      .flatMap((t) => [t.slug, ...descendants(t.id)])
+  const scope: CatalogScope =
+    hub?.kind === 'category'
+      ? { category: hub.term.slug, categoryOptions: descendants(hub.term.id) }
+      : hub?.kind === 'brand'
+        ? { brand: hub.term.slug }
+        : input.onSale === 'true' && title !== 'Shop all gear'
+          ? { onSale: true }
+          : {}
+  if (typeof input.tag === 'string') scope.tag = input.tag
+  if (title === 'Complete setups') scope.category = 'bundles'
+  const raw = new URLSearchParams(
+    Object.entries(input)
+      .filter(([, v]) => v !== undefined)
+      .map(([k, v]) => [k, String(v)]),
+  )
+  const initialParams = catalogParams(raw, scope)
+  const q = parseQuery(Object.fromEntries(new URLSearchParams(initialParams)))
+  const [page, facetData, baseFacets] = await Promise.all([
+    listProducts({ ...q, pageSize: 24 }),
+    facets(q).catch(() => ({ groups: [] })),
+    hub
+      ? facets({ category: scope.category, brand: scope.brand }).catch(() => ({
+          groups: [],
+        }))
+      : Promise.resolve({ groups: [] }),
   ])
   let categoryTerms = primaryCategories(categories),
     brandTerms = [...brands].sort((a, b) => b.count - a.count).slice(0, 6)
   if (hub?.kind === 'category') {
     categoryTerms = categories.filter((t) => t.parentId === hub.term.id)
     const counts = new Set(
-      facetData.groups.find((g) => g.key === 'brand')?.options.map((x) => x.id),
+      baseFacets.groups
+        .find((g) => g.key === 'brand')
+        ?.options.map((x) => x.id),
     )
     brandTerms = brands.filter((t) => counts.has(t.slug)).slice(0, 6)
   }
   if (hub?.kind === 'brand') {
     const counts = new Set(
-      facetData.groups
+      baseFacets.groups
         .find((g) => g.key === 'category')
         ?.options.map((x) => x.id),
     )
@@ -50,7 +80,7 @@ export async function LiveCatalogPage({
     brandTerms = []
   }
   return (
-    <main className="mobile-storefront-page mx-auto max-w-[1400px] px-4 py-6 sm:px-6 sm:py-10">
+    <main className="shams-container py-6 sm:py-9">
       <nav
         aria-label="Breadcrumb"
         className="mb-4 text-xs text-muted-foreground"
@@ -58,48 +88,83 @@ export async function LiveCatalogPage({
         <Link href="/">Home</Link> / <Link href="/shop">Shop</Link>
         {title !== 'Shop all gear' && ` / ${title}`}
       </nav>
-      <header className="border-b pb-5">
-        <p className="text-xs font-semibold uppercase tracking-[.16em] text-brand">
-          Shams Stores
+      <header
+        className={`relative overflow-hidden border-b pb-5 ${hub ? 'rounded-3xl border bg-card p-5 sm:p-7 md:pr-52' : ''}`}
+      >
+        {hub?.term.image && (
+          <div className="absolute inset-y-4 right-5 hidden w-40 overflow-hidden rounded-xl bg-white md:block">
+            <ProductImage
+              src={hub.term.image}
+              alt=""
+              fill
+              sizes="160px"
+              className="object-contain p-3"
+            />
+          </div>
+        )}
+        <p className="text-xs font-semibold uppercase tracking-[.16em] text-brand-ink">
+          {hub?.kind === 'brand'
+            ? 'The brand collection'
+            : hub
+              ? 'Find your perspective'
+              : 'Shams Stores'}
         </p>
-        <h1 className="mt-2 text-2xl font-semibold tracking-tight sm:text-4xl">
+        <h1 className="shams-title mt-2 max-w-3xl">
           {q.query ? `Results for “${q.query}”` : title}
         </h1>
         <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">
           {description.slice(0, 280)}
         </p>
       </header>
-      {discovery && (
-        <div className="mt-5 space-y-4">
-          {categoryTerms.length > 0 && (
-            <section>
-              <h2 className="mb-2 text-sm font-semibold">
-                {hub ? 'Explore the range' : 'Shop by category'}
-              </h2>
-              <TaxonomyCards terms={categoryTerms} compact />
-            </section>
-          )}
-          {brandTerms.length > 0 && (
-            <section>
-              <h2 className="mb-2 text-sm font-semibold">Shop by brand</h2>
-              <TaxonomyCards terms={brandTerms} kind="brand" compact />
-            </section>
-          )}
-        </div>
+      {scope.category &&
+      (!categories.some((t) => t.slug === scope.category) ||
+        (scope.category === 'bundles' &&
+          page.total === 0 &&
+          Object.keys(input).every((key) =>
+            ['category', 'sort'].includes(key),
+          ))) ? (
+        <section className="mt-8 rounded-3xl border bg-card p-6 sm:p-10">
+          <p className="shams-eyebrow">Create with confidence</p>
+          <h2 className="mt-3 text-2xl font-semibold">
+            Let’s find the right setup for you.
+          </h2>
+          <p className="mt-4 max-w-xl text-sm leading-7 text-muted-foreground">
+            There are no published kits in this collection right now. Explore
+            the catalog or talk to Shams about the equipment you need.
+          </p>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link href="/shop" className="shams-button">
+              Explore all gear →
+            </Link>
+            <Link
+              href="/support"
+              className="shams-button shams-button-secondary"
+            >
+              Talk through your setup
+            </Link>
+          </div>
+        </section>
+      ) : (
+        <ShopFeed
+          initialParams={initialParams}
+          scope={scope}
+          discovery={
+            discovery
+              ? { categories: categoryTerms, brands: brandTerms, hub: !!hub }
+              : undefined
+          }
+          lockedFilters={[
+            ...(scope.category ? ['category'] : []),
+            ...(scope.brand ? ['brand'] : []),
+            ...(scope.onSale ? ['onSale'] : []),
+          ]}
+          initialProducts={page.items}
+          initialCursor={page.nextCursor}
+          initialHasNext={page.hasNextPage}
+          total={page.total}
+          initialFacets={facetData}
+        />
       )}
-      <ShopFeed
-        key={JSON.stringify(q)}
-        lockedFilters={hub ? [hub.kind] : []}
-        initialProducts={page.items}
-        initialCursor={page.nextCursor}
-        initialHasNext={page.hasNextPage}
-        total={page.total}
-        initialFacets={facetData}
-        category={q.category}
-        brand={q.brand}
-        query={q.query}
-        sort={q.sort}
-      />
     </main>
   )
 }

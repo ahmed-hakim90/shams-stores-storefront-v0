@@ -14,20 +14,24 @@ export function ProductCard({
   product,
   className,
   view = 'grid',
+  purchaseDisabled = false,
 }: {
   product: ProductSummary
   className?: string
   view?: 'list' | 'grid' | 'rail' | 'compact-related'
+  purchaseDisabled?: boolean
 }) {
+  const horizontal = view === 'list' || view === 'compact-related'
   return (
     <article
       className={cn(
         cn(
-          'group mobile-product-card min-w-0 border border-border bg-card transition-[border-color,box-shadow,transform] duration-180 hover:border-brand/40 hover:shadow-[0_1px_0_rgba(0,0,0,0.02),0_12px_30px_-18px_rgba(21,63,112,0.35)]',
-          view === 'list'
-            ? 'relative grid min-h-[210px] grid-cols-[minmax(120px,38%)_minmax(0,1fr)] overflow-hidden rounded-xl sm:min-h-[210px] sm:grid-cols-[220px_minmax(0,1fr)]'
+          'group shams-product-card min-w-0 border border-border bg-card transition-[border-color,box-shadow,transform] duration-180 hover:border-brand/40 hover:shadow-[0_1px_0_rgba(0,0,0,0.02),0_12px_30px_-18px_rgba(21,63,112,0.35)]',
+          horizontal
+            ? 'relative grid min-h-[210px] grid-cols-[minmax(96px,34%)_minmax(0,1fr)] overflow-hidden rounded-xl sm:min-h-[210px] sm:grid-cols-[200px_minmax(0,1fr)]'
             : 'flex flex-col rounded-xl',
-          view !== 'list' && 'mobile-product-card-grid',
+          !horizontal && 'mobile-product-card-grid',
+          view === 'compact-related' && 'grid-cols-[96px_minmax(0,1fr)] sm:grid-cols-[120px_minmax(0,1fr)]',
         ),
         className,
       )}
@@ -36,7 +40,7 @@ export function ProductCard({
       <div
         className={cn(
           'relative min-w-0 shrink-0 overflow-hidden bg-white',
-          view === 'list'
+          horizontal
             ? 'flex h-full flex-col border-r border-border p-3 sm:p-5'
             : view === 'rail'
               ? 'aspect-[1/1] p-3 sm:p-4'
@@ -53,7 +57,7 @@ export function ProductCard({
         )}
 
         {/* WISHLIST + COMPARE - Top Right (visible on mobile, hover on desktop for rail/grid) */}
-        {view !== 'list' && (
+        {!horizontal && (
           <div
             className={cn(
               'absolute right-3 top-3 z-10 flex flex-col gap-1.5',
@@ -77,14 +81,14 @@ export function ProductCard({
             alt={product.name}
             fill
             sizes={
-              view === 'list'
+              horizontal
                 ? '(max-width: 639px) 38vw, 260px'
                 : view === 'rail'
                   ? '(max-width: 640px) calc(min(78vw, 292px) - 1.5rem), (max-width: 768px) calc(256px - 1.5rem), 240px'
                   : '(max-width: 640px) calc(100vw - 40px), (max-width: 768px) calc(50vw - 60px), (max-width: 1280px) 190px, 220px'
             }
             className={cn(
-              'object-contain transition-transform duration-300 motion-safe:group-hover:scale-[1.04]',
+              'object-contain transition-[transform,opacity] duration-300 motion-safe:[@media(hover:hover)]:group-hover:scale-[1.04]',
               product.secondaryImage &&
                 '[@media(hover:hover)]:group-hover:opacity-0',
             )}
@@ -95,7 +99,7 @@ export function ProductCard({
               alt=""
               fill
               sizes={
-                view === 'list' ? '(max-width: 639px) 38vw, 220px' : '260px'
+                horizontal ? '(max-width: 639px) 38vw, 220px' : '260px'
               }
               className="pointer-events-none hidden object-contain opacity-0 transition-opacity duration-200 motion-reduce:transition-none [@media(hover:hover)]:block [@media(hover:hover)]:group-hover:opacity-100"
             />
@@ -103,8 +107,8 @@ export function ProductCard({
         </Link>
 
         {/* WISHLIST + COMPARE for List View - Below Image */}
-        {view === 'list' && (
-          <div className="relative z-20 flex shrink-0 justify-center gap-2 pt-2 sm:pt-3">
+        {horizontal && (
+          <div className="relative z-20 flex shrink-0 -mx-3 justify-center gap-1 pt-2 sm:mx-0 sm:gap-2 sm:pt-3">
             <WishlistAction productName={product.name} productId={product.id} />
             <CompareAction productName={product.name} productId={product.id} />
           </div>
@@ -121,11 +125,11 @@ export function ProductCard({
       >
         {/* BRAND + RATING */}
         <div className="flex min-w-0 flex-wrap items-center justify-between gap-x-3 gap-y-1">
-          <span className="min-w-0 truncate text-xs font-semibold uppercase tracking-wide text-brand">
+          <span className="min-w-0 truncate text-xs font-semibold uppercase tracking-wide text-brand-ink">
             {product.brand}
           </span>
           <div className="flex shrink-0 items-center gap-1.5">
-            {view !== 'list' && product.reviewCount > 0 && (
+            {!horizontal && product.reviewCount > 0 && (
               <RatingStars
                 rating={product.rating}
                 reviewCount={product.reviewCount}
@@ -133,7 +137,7 @@ export function ProductCard({
             )}
           </div>
         </div>
-        {view === 'list' && product.reviewCount > 0 && (
+        {horizontal && product.reviewCount > 0 && (
           <RatingStars
             rating={product.rating}
             reviewCount={product.reviewCount}
@@ -145,7 +149,7 @@ export function ProductCard({
         <div className="min-h-0">
           <Link
             href={`/p/${product.slug}`}
-            className="line-clamp-2 text-sm font-semibold leading-5 text-foreground transition-colors hover:text-brand sm:text-lg sm:leading-6"
+            className="line-clamp-3 break-words text-base font-semibold leading-[1.4] text-foreground transition-colors hover:text-brand-ink sm:text-lg"
           >
             {product.name}
           </Link>
@@ -157,15 +161,15 @@ export function ProductCard({
         </div>
 
         {product.highlights?.length ? (
-          <p className="line-clamp-2 text-xs leading-5 text-muted-foreground">
-            {product.highlights.map((h) => h.value).join(' · ')}
+          <p className="line-clamp-2 text-sm leading-5 text-muted-foreground">
+            {product.highlights.slice(0, 3).map((h) => h.value).join(' · ')}
           </p>
         ) : null}
         {/* STOCK STATUS */}
         <StockStatus status={product.stock} />
 
         {/* PRICE + INSTALLMENT + CTA (STICKY AT BOTTOM) */}
-        <div className="mt-auto flex min-w-0 flex-col gap-3 pt-1 sm:flex-row sm:items-end sm:justify-between">
+        <div className={cn("mt-auto flex min-w-0 flex-col gap-3 pt-1", horizontal && "md:flex-row md:flex-wrap md:items-end md:justify-between")}>
           <PriceDisplay
             price={product.price}
             previousPrice={product.previousPrice}
@@ -173,7 +177,8 @@ export function ProductCard({
           />
           <AddToCartButton
             product={product}
-            className="w-full flex-none rounded-lg sm:w-auto sm:min-w-44"
+            disabled={purchaseDisabled}
+            className={cn("w-full flex-none rounded-xl", horizontal && "md:w-auto md:min-w-40")}
           />
         </div>
       </div>

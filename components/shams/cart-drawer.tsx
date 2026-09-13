@@ -31,7 +31,7 @@ export function CartDrawer({ showTrigger = true }: { showTrigger?: boolean }) {
         >
           <ShoppingCart className="size-5" />
           {cartCount > 0 && (
-            <span className="absolute right-0 top-0 rounded-full bg-brand px-1.5 text-[10px] text-white">
+            <span className="absolute right-0 top-0 rounded-full bg-brand px-1.5 text-[10px] text-brand-foreground">
               {cartCount}
             </span>
           )}
@@ -39,7 +39,7 @@ export function CartDrawer({ showTrigger = true }: { showTrigger?: boolean }) {
       )}
       <Dialog.Portal>
         <Dialog.Backdrop className="fixed inset-0 z-[120] bg-black/40" />
-        <Dialog.Popup className="fixed inset-y-0 right-0 z-[121] flex h-dvh w-full max-w-md flex-col bg-background shadow-xl outline-none">
+        <Dialog.Popup className="shams-overlay fixed inset-y-0 right-0 z-[121] flex h-dvh w-full max-w-md flex-col bg-background shadow-xl outline-none">
           <header className="flex items-center justify-between border-b p-5">
             <Dialog.Title className="text-xl font-semibold">
               Your cart{' '}
@@ -54,13 +54,13 @@ export function CartDrawer({ showTrigger = true }: { showTrigger?: boolean }) {
               <X className="mx-auto size-5" />
             </Dialog.Close>
           </header>
-          <div className="min-h-0 flex-1 overflow-y-auto p-5">
+          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-5">
             {cartLoading ? (
               <p>Loading cart…</p>
             ) : cartError ? (
               <div>
                 <p className="text-sm">{cartError}</p>
-                <button onClick={refreshCart} className="min-h-11 text-brand">
+                <button onClick={refreshCart} className="min-h-11 text-brand-ink">
                   Retry
                 </button>
               </div>
@@ -87,7 +87,7 @@ export function CartDrawer({ showTrigger = true }: { showTrigger?: boolean }) {
                     <button
                       disabled={cartPending}
                       onClick={() => removeCartLine(l.id)}
-                      className="min-h-10 text-xs text-muted-foreground underline"
+                      className="min-h-11 text-xs text-muted-foreground underline"
                     >
                       Remove
                     </button>
@@ -100,7 +100,7 @@ export function CartDrawer({ showTrigger = true }: { showTrigger?: boolean }) {
                 <Link
                   href="/shop"
                   onClick={closeCart}
-                  className="mt-4 inline-flex min-h-11 items-center text-sm text-brand"
+                  className="mt-4 inline-flex min-h-11 items-center text-sm text-brand-ink"
                 >
                   Find your next piece of gear →
                 </Link>
@@ -132,7 +132,7 @@ export function CartDrawer({ showTrigger = true }: { showTrigger?: boolean }) {
                 <Link
                   href="/checkout"
                   onClick={closeCart}
-                  className="flex min-h-12 items-center justify-center rounded-lg bg-brand text-sm font-semibold text-white"
+                  className="flex min-h-12 items-center justify-center rounded-lg bg-brand text-sm font-semibold text-brand-foreground"
                 >
                   Checkout
                 </Link>

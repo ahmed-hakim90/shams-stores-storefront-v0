@@ -10,11 +10,11 @@ const perks = [
 
 export function StoreSection() {
   return (
-    <section className="mobile-store-section mx-auto max-w-[1400px] px-4 py-12 sm:px-6 sm:py-16">
+    <section className="mobile-store-section mx-auto max-w-[1440px] px-4 py-12 sm:px-6 sm:py-16">
       <div className="grid gap-8 overflow-hidden rounded-3xl border border-border bg-card p-6 sm:p-10 lg:grid-cols-2 lg:items-center">
         <div className="space-y-6">
           <div className="space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-ink">
               More than a website
             </p>
             <h2 className="text-balance text-2xl font-semibold tracking-tight text-foreground sm:text-[1.9rem]">
@@ -30,7 +30,7 @@ export function StoreSection() {
           <ul className="space-y-3">
             {perks.map((perk) => (
               <li key={perk.label} className="flex items-center gap-3 text-sm text-foreground">
-                <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-lg bg-brand-muted text-brand">
+                <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-lg bg-brand-muted text-brand-ink">
                   <perk.icon className="size-4.5" />
                 </span>
                 {perk.label}
@@ -47,7 +47,7 @@ export function StoreSection() {
             </Link>
             <Link
               href="/support"
-              className="inline-flex h-11 items-center rounded-xl border border-border px-5 text-sm font-semibold text-foreground transition-colors hover:border-brand hover:text-brand"
+              className="inline-flex h-11 items-center rounded-xl border border-border px-5 text-sm font-semibold text-foreground transition-colors hover:border-brand hover:text-brand-ink"
             >
               Talk to a specialist
             </Link>

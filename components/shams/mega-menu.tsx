@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowRight, ChevronDown, Tag } from 'lucide-react'
@@ -21,6 +21,7 @@ export function MegaMenu() {
   const [active, setActive] = useState<string | null>(null)
   const closeTimer = useRef<number | undefined>(undefined)
 
+  useEffect(() => () => window.clearTimeout(closeTimer.current), [])
   const open = (slug: string) => {
     window.clearTimeout(closeTimer.current)
     setActive(slug)
@@ -30,7 +31,21 @@ export function MegaMenu() {
   }
 
   return (
-    <nav aria-label="Primary" className="relative hidden lg:block">
+    <nav
+      aria-label="Primary"
+      className="relative hidden lg:block"
+      onKeyDown={(e) => {
+        if (e.key === 'Escape') {
+          setActive(null)
+        }
+      }}
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget)) setActive(null)
+      }}
+      onClickCapture={(e) => {
+        if ((e.target as HTMLElement).closest('a')) setActive(null)
+      }}
+    >
       <ul className="flex items-center gap-1">
         {categories.map((cat) => (
           <li
@@ -42,8 +57,8 @@ export function MegaMenu() {
               href={`/c/${cat.slug}`}
               onFocus={() => open(cat.slug)}
               className={cn(
-                'inline-flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium text-foreground/80 transition-colors hover:text-brand',
-                active === cat.slug && 'text-brand',
+                'inline-flex min-h-11 items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium text-foreground/80 transition-colors hover:text-brand-ink',
+                active === cat.slug && 'text-brand-ink',
               )}
               aria-expanded={active === cat.slug}
             >
@@ -77,10 +92,10 @@ export function MegaMenu() {
               <Link
                 href={link.href}
                 className={cn(
-                  'inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                  'inline-flex min-h-11 items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
                   link.accent
                     ? 'text-sale hover:text-sale/80'
-                    : 'text-foreground/80 hover:text-brand',
+                    : 'text-foreground/80 hover:text-brand-ink',
                 )}
               >
                 {link.accent && <Tag className="size-3.5" />}
@@ -99,7 +114,7 @@ function MegaPanel({ category }: { category: Category }) {
     : undefined
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-border bg-popover shadow-2xl">
+    <div className="max-h-[calc(100dvh-var(--shell-header-height)-32px)] overflow-y-auto overscroll-contain rounded-2xl border border-border bg-popover shadow-2xl">
       <div className="grid grid-cols-[1fr_18rem]">
         <div className="p-6">
           <div className="mb-4 flex items-center justify-between">
@@ -113,7 +128,7 @@ function MegaPanel({ category }: { category: Category }) {
             </div>
             <Link
               href={`/c/${category.slug}`}
-              className="inline-flex items-center gap-1 text-xs font-medium text-brand hover:underline"
+              className="inline-flex items-center gap-1 min-h-11 text-xs font-medium text-brand-ink hover:underline"
             >
               Shop all {category.itemCount} <ArrowRight className="size-3.5" />
             </Link>
@@ -129,7 +144,7 @@ function MegaPanel({ category }: { category: Category }) {
                     <li key={link.label}>
                       <Link
                         href={link.href}
-                        className="block rounded-md py-1 text-sm text-foreground/80 transition-colors hover:text-brand"
+                        className="block rounded-md py-1 text-sm text-foreground/80 transition-colors hover:text-brand-ink"
                       >
                         {link.label}
                       </Link>
@@ -147,7 +162,7 @@ function MegaPanel({ category }: { category: Category }) {
             className="group flex flex-col justify-between border-l border-border bg-brand-muted/50 p-6"
           >
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wide text-brand">
+              <p className="text-xs font-semibold uppercase tracking-wide text-brand-ink">
                 Featured
               </p>
               <p className="mt-1 text-sm font-medium text-foreground">
@@ -170,7 +185,7 @@ function MegaPanel({ category }: { category: Category }) {
               <span className="text-sm font-semibold text-foreground">
                 {formatMoney(featured.price)}
               </span>
-              <span className="inline-flex items-center gap-1 text-xs font-medium text-brand">
+              <span className="inline-flex items-center gap-1 text-xs font-medium text-brand-ink">
                 View <ArrowRight className="size-3.5" />
               </span>
             </div>

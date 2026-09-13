@@ -1,4 +1,5 @@
 'use client'
+import { useOverlayPresence } from './shell-policy'
 import { useEffect, useId, useState } from 'react'
 import { Drawer } from '@base-ui/react/drawer'
 import { SlidersHorizontal, X } from 'lucide-react'
@@ -92,14 +93,19 @@ function FilterGroup({
 }) {
   const name = useId()
   const [search, setSearch] = useState(''),
-    [expanded, setExpanded] = useState(false)
+    [expanded, setExpanded] = useState(false),
+    [opened, setOpened] = useState(true)
   const options = group.options
       .filter((x) => x.label.toLowerCase().includes(search.toLowerCase()))
       .sort((a, b) => Number(b.id === value) - Number(a.id === value)),
     shown = expanded ? options : options.slice(0, 7)
   return (
-    <details open className="border-t border-border pt-4">
-      <summary className="cursor-pointer text-sm font-semibold">
+    <details
+      open={opened}
+      onToggle={(e) => setOpened(e.currentTarget.open)}
+      className="border-t border-border pt-4"
+    >
+      <summary className="min-h-11 cursor-pointer text-sm font-semibold">
         {group.label}
       </summary>
       <div className="mt-3">
@@ -112,7 +118,7 @@ function FilterGroup({
             className="mb-2 h-10 w-full rounded-lg border px-3 text-sm"
           />
         )}
-        <label className="flex min-h-10 items-center gap-2 text-sm">
+        <label className="flex min-h-11 items-center gap-2 text-sm">
           <input
             type="radio"
             name={name}
@@ -124,7 +130,7 @@ function FilterGroup({
         {shown.map((x) => (
           <label
             key={x.id}
-            className="flex min-h-10 cursor-pointer items-center gap-2 text-sm"
+            className="flex min-h-11 cursor-pointer items-center gap-2 text-sm"
           >
             <input
               type="radio"
@@ -143,7 +149,7 @@ function FilterGroup({
           <button
             type="button"
             onClick={() => setExpanded(!expanded)}
-            className="min-h-10 text-xs font-medium text-brand"
+            className="min-h-11 text-xs font-medium text-brand-ink"
           >
             {expanded ? 'Show less' : 'Show more'}
           </button>
@@ -165,6 +171,7 @@ export function MobileFilterDrawer({
 }) {
   const [open, setOpen] = useState(false),
     [draft, setDraft] = useState(params)
+  useOverlayPresence(open)
   const [preview, setPreview] = useState(draft)
   useEffect(() => {
     const t = setTimeout(() => setPreview(draft), 250)
@@ -219,7 +226,7 @@ export function MobileFilterDrawer({
       <Drawer.Portal>
         <Drawer.Backdrop className="fixed inset-0 z-[140] bg-black/40" />
         <Drawer.Viewport className="fixed inset-0 z-[141] flex items-end">
-          <Drawer.Popup className="flex h-[95dvh] w-full flex-col rounded-t-2xl bg-background outline-none">
+          <Drawer.Popup className="shams-overlay flex h-[95dvh] w-full flex-col rounded-t-3xl bg-background outline-none md:ml-auto md:h-dvh md:max-w-lg md:rounded-none">
             <div className="mx-auto my-2 h-1 w-10 rounded-full bg-muted" />
             <header className="flex items-center justify-between border-b px-5 pb-4">
               <Drawer.Title className="text-lg font-semibold">
@@ -244,6 +251,19 @@ export function MobileFilterDrawer({
                 change={change}
               />
             </Drawer.Content>
+            {result.isError && (
+              <div role="alert" className="border-t px-5 py-3 text-sm">
+                <p>
+                  {result.error.message || 'Could not preview these filters.'}
+                </p>
+                <button
+                  onClick={() => result.refetch()}
+                  className="min-h-11 font-medium text-brand-ink"
+                >
+                  Retry preview
+                </button>
+              </div>
+            )}
             <footer className="flex gap-3 border-t p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
               <button
                 onClick={() => {
@@ -264,15 +284,17 @@ export function MobileFilterDrawer({
                 Clear all
               </button>
               <button
-                disabled={result.isError}
+                disabled={
+                  result.isError || result.isFetching || preview !== draft
+                }
                 onClick={() => {
                   apply(new URLSearchParams(draft))
                   setOpen(false)
                 }}
-                className="min-h-12 flex-1 rounded-lg bg-brand px-4 text-sm font-semibold text-white"
+                className="min-h-12 flex-1 rounded-lg bg-brand px-4 text-sm font-semibold text-brand-foreground"
               >
                 {result.isError
-                  ? 'Check the price range'
+                  ? 'Check your filters'
                   : result.isFetching || preview !== draft
                     ? 'Updating results…'
                     : result.data

@@ -1,0 +1,29 @@
+[
+  {
+    "engine": "firefox",
+    "passed": true,
+    "overflow": false,
+    "zoomReflowOverflow": false,
+    "focus": "Filters",
+    "errors": [],
+    "reducedMotion": true
+  },
+  {
+    "engine": "webkit",
+    "passed": true,
+    "overflow": false,
+    "zoomReflowOverflow": false,
+    "focus": "Filters",
+    "errors": [],
+    "reducedMotion": true
+  },
+  {
+    "engine": "chromium",
+    "passed": true,
+    "overflow": false,
+    "zoomReflowOverflow": false,
+    "focus": "Filters",
+    "errors": [],
+    "reducedMotion": true
+  }
+]

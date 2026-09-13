@@ -6,7 +6,7 @@ export function BundleSection() {
   const bundles = commerce.bundles.withProducts()
 
   return (
-    <section className="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 sm:py-16">
+    <section className="mx-auto max-w-[1440px] px-4 py-12 sm:px-6 sm:py-16">
       <SectionHeading
         eyebrow="Complete your setup"
         title="Bundles that just work together"

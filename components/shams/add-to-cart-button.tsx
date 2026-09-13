@@ -10,10 +10,12 @@ export function AddToCartButton({
   product,
   quantity = 1,
   className,
+  disabled = false,
 }: {
   product: Product
   quantity?: number
   className?: string
+  disabled?: boolean
 }) {
   const { name: productName, stock } = product
   const [added, setAdded] = useState(false)
@@ -50,9 +52,11 @@ export function AddToCartButton({
   return (
     <button
       type="button"
-      disabled={outOfStock || pending || product.purchasable === false}
+      data-purchase
+      aria-busy={pending}
+      disabled={disabled || outOfStock || pending || product.purchasable === false || product.price.amount <= 0 || product.hasOptions}
       onClick={async () => {
-        if (outOfStock || pending) return
+        if (disabled || outOfStock || pending) return
         setPending(true)
         if (!(await addToCart(product, quantity))) {
           setPending(false)
@@ -66,16 +70,16 @@ export function AddToCartButton({
       }}
       aria-label={`${label}: ${productName}`}
       className={cn(
-        'inline-flex min-h-11 min-w-0 flex-1 items-center justify-center gap-2 whitespace-nowrap px-3 text-sm font-medium transition-colors',
+        'inline-flex min-h-11 min-w-0 flex-1 items-center justify-center gap-2 text-center px-3 text-sm font-medium transition-colors',
         outOfStock
-          ? 'border border-border bg-background text-foreground hover:border-brand hover:text-brand'
+          ? 'border border-border bg-background text-foreground hover:border-brand hover:text-brand-ink'
           : 'bg-brand text-brand-foreground hover:bg-brand/90',
         added && 'bg-success text-white hover:bg-success',
         className,
       )}
     >
       <Icon className={cn('size-4', pending && 'animate-spin')} />
-      {label}
+      <span>{label}</span>
     </button>
   )
 }

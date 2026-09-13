@@ -4,19 +4,18 @@ import { useEffect, useRef, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import type { ProductDetail, BranchAvailability } from '@/lib/commerce/types'
 import { commerceFetch } from '@/lib/commerce/browser'
-import { ProductImage } from './product-image'
+import { ProductGallery } from './product-gallery'
+import { ProductCard } from './product-card'
 import { PriceDisplay } from './price-display'
 import { StockStatus } from './stock-status'
 import { AddToCartButton } from './add-to-cart-button'
 import { WishlistAction } from './wishlist-action'
 import { CompareAction } from './compare-action'
-import { ProductRail } from './product-rail'
 import { RatingStars } from './rating-stars'
 import { useInteractions } from './interaction-provider'
 import { RecordViewed } from './saved-products'
 export function LiveProductDetail({ product }: { product: ProductDetail }) {
-  const [selected, setSelected] = useState(0),
-    [quantity, setQuantity] = useState(1)
+  const [quantity, setQuantity] = useState(1)
   const purchase = useRef<HTMLDivElement>(null),
     [sticky, setSticky] = useState(false)
   const { setStickyPurchaseVisible } = useInteractions()
@@ -51,7 +50,7 @@ export function LiveProductDetail({ product }: { product: ProductDetail }) {
     ? product.gallery
     : [{ url: product.image, alt: product.name }]
   return (
-    <main className="mobile-storefront-page mx-auto max-w-[1400px] px-4 py-6 pb-28 sm:px-6 sm:py-10">
+    <main className="shams-container py-6 sm:py-10">
       <RecordViewed id={product.id} />
       <nav
         aria-label="Breadcrumb"
@@ -68,45 +67,12 @@ export function LiveProductDetail({ product }: { product: ProductDetail }) {
         ))}
       </nav>
       <div className="grid items-start gap-8 lg:grid-cols-2 lg:gap-12">
-        <section className="min-w-0">
-          <div className="relative aspect-square overflow-hidden rounded-2xl border bg-white">
-            <ProductImage
-              key={selected}
-              src={gallery[selected].url}
-              alt={gallery[selected].alt}
-              fill
-              priority
-              sizes="(max-width: 1023px) 90vw, 620px"
-              className="object-contain p-6"
-            />
-          </div>
-          {gallery.length > 1 && (
-            <div className="mt-3 flex gap-3 overflow-x-auto">
-              {gallery.map((image, i) => (
-                <button
-                  key={image.url}
-                  onClick={() => setSelected(i)}
-                  aria-label={`View image ${i + 1}`}
-                  aria-pressed={selected === i}
-                  className={`relative size-20 shrink-0 rounded-lg border bg-white ${selected === i ? 'border-brand ring-1 ring-brand' : ''}`}
-                >
-                  <ProductImage
-                    src={image.url}
-                    alt=""
-                    fill
-                    sizes="80px"
-                    className="object-contain p-2"
-                  />
-                </button>
-              ))}
-            </div>
-          )}
-        </section>
+        <ProductGallery images={gallery} name={product.name} />
         <section className="min-w-0">
           {product.brand && (
             <Link
               href={`/b/${product.brandSlug}`}
-              className="text-sm font-semibold uppercase tracking-[.15em] text-brand"
+              className="text-sm font-semibold uppercase tracking-[.15em] text-brand-ink"
             >
               {product.brand}
             </Link>
@@ -178,6 +144,12 @@ export function LiveProductDetail({ product }: { product: ProductDetail }) {
               Contact Shams to confirm the available configuration.
             </p>
           )}
+          <Link
+            href="/support"
+            className="mt-5 inline-flex min-h-11 items-center text-sm font-medium text-brand-ink"
+          >
+            Need help choosing? Talk to Shams →
+          </Link>
           {product.warranty && (
             <div className="mt-6 rounded-xl border p-4">
               <h2 className="text-sm font-semibold">Warranty</h2>
@@ -202,9 +174,41 @@ export function LiveProductDetail({ product }: { product: ProductDetail }) {
           ) : null}
         </section>
       </div>
-      <div className="mt-12 space-y-8">
+      <nav
+        aria-label="Product information"
+        className="mt-10 flex gap-3 overflow-x-auto border-y py-2 text-sm"
+      >
         {product.description && (
-          <section className="border-t pt-8">
+          <a
+            href="#overview"
+            className="shrink-0 rounded-full px-4 py-3 hover:bg-brand-muted"
+          >
+            Overview
+          </a>
+        )}
+        {product.specifications.length > 0 && (
+          <a
+            href="#specifications"
+            className="shrink-0 rounded-full px-4 py-3 hover:bg-brand-muted"
+          >
+            Specifications
+          </a>
+        )}
+        {product.relationships.length > 0 && (
+          <a
+            href="#related-gear"
+            className="shrink-0 rounded-full px-4 py-3 hover:bg-brand-muted"
+          >
+            Explore related gear
+          </a>
+        )}
+      </nav>
+      <div className="mt-8 space-y-10">
+        {product.description && (
+          <section
+            id="overview"
+            className="grid gap-5 lg:grid-cols-[240px_1fr]"
+          >
             <h2 className="mb-4 text-2xl font-semibold">Overview</h2>
             <p className="max-w-4xl whitespace-pre-line text-sm leading-7 text-muted-foreground">
               {product.description}
@@ -212,13 +216,16 @@ export function LiveProductDetail({ product }: { product: ProductDetail }) {
           </section>
         )}
         {product.specifications.length > 0 && (
-          <section className="border-t pt-8">
+          <section
+            id="specifications"
+            className="grid gap-5 border-t pt-8 lg:grid-cols-[240px_1fr]"
+          >
             <h2 className="mb-4 text-2xl font-semibold">Specifications</h2>
             <dl className="max-w-4xl overflow-hidden rounded-xl border">
               {product.specifications.map((s) => (
                 <div
                   key={s.key}
-                  className="grid grid-cols-2 gap-4 border-b p-4 text-sm last:border-0"
+                  className="grid gap-1 border-b p-4 text-sm odd:bg-card sm:grid-cols-2 sm:gap-4 last:border-0"
                 >
                   <dt className="text-muted-foreground">{s.label}</dt>
                   <dd>{s.value}</dd>
@@ -227,15 +234,24 @@ export function LiveProductDetail({ product }: { product: ProductDetail }) {
             </dl>
           </section>
         )}
-        {product.relationships.map((group) => (
-          <section key={group.type} className="border-t pt-8">
+        {product.relationships.map((group, i) => (
+          <section
+            id={i === 0 ? 'related-gear' : undefined}
+            key={group.type}
+            className="border-t pt-8"
+          >
             <h2 className="mb-6 text-2xl font-semibold">{group.title}</h2>
-            <ProductRail products={group.products} />
+            <div className="grid gap-4 md:grid-cols-2">
+              {group.products.slice(0, 6).map((p) => (
+                <ProductCard key={p.id} product={p} view="compact-related" />
+              ))}
+            </div>
           </section>
         ))}
       </div>
       {sticky && (
         <div
+          data-fixed-bar
           className="fixed inset-x-0 z-[65] border-t bg-background p-3 lg:hidden"
           style={{
             bottom: 'var(--fixed-stack-bottom)',

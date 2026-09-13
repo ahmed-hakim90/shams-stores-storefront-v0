@@ -5,7 +5,7 @@ import type { StockStatus as StockStatusType } from '@/lib/commerce'
 const toneClass: Record<string, string> = {
   success: 'text-success',
   warning: 'text-warning',
-  brand: 'text-brand',
+  brand: 'text-brand-ink',
   muted: 'text-muted-foreground',
 }
 
@@ -27,7 +27,7 @@ export function StockStatus({
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1.5 text-xs font-medium',
+        'inline-flex items-center gap-1.5 text-sm font-medium',
         toneClass[meta.tone],
         className,
       )}

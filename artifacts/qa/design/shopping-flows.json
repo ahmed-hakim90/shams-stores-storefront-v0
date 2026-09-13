@@ -1,0 +1,30 @@
+[
+  {
+    "test": "Wishlist + comparison + live guest add",
+    "passed": true
+  },
+  {
+    "test": "Quantity update and focused checkout",
+    "passed": true
+  },
+  {
+    "test": "Cancelled query cannot replace latest selection; stale purchases disabled",
+    "passed": true
+  },
+  {
+    "test": "Exact scroll and loaded pages restoration",
+    "before": {
+      "href": "/p/canon-rf-28-70mm-f-2-8-is-stm-lens",
+      "y": 1800,
+      "cards": 48
+    },
+    "after": {
+      "y": 1800,
+      "cards": 48
+    }
+  },
+  {
+    "test": "Browser errors",
+    "errors": []
+  }
+]

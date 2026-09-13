@@ -14,13 +14,22 @@ import type { Cart } from '@/lib/commerce/types'
 import { Dialog } from '@base-ui/react/dialog'
 import { SavedProducts } from './saved-products'
 import { usePathname } from 'next/navigation'
-import { Check, Info, X, AlertTriangle } from 'lucide-react'
+import { Check, Info, X, AlertTriangle, Scale, ArrowLeft } from 'lucide-react'
 import type { Product } from '@/lib/commerce'
 import { commerce } from '@/lib/commerce'
 import { cn } from '@/lib/utils'
 import { GlobalSearchOverlay } from './global-search-overlay'
 import { MobileBottomNav as GlassMobileBottomNav } from './mobile-navigation'
 import { Header } from './header'
+import Link from 'next/link'
+import { ShamsLogo } from './logo'
+import { CartDrawer } from './cart-drawer'
+import {
+  ShellPolicyProvider,
+  useOverlayPresence,
+  useOverlayActive,
+} from './shell-policy'
+import type { ShellVariant } from '@/lib/commerce/experience'
 
 function safePersist(key: string, value: unknown) {
   try {
@@ -120,7 +129,7 @@ function ToastStack({
                 notice.tone === 'success' && 'bg-success-muted text-success',
                 notice.tone === 'error' && 'bg-danger-muted text-danger',
                 notice.tone === 'warning' && 'bg-warning-muted text-warning',
-                notice.tone === 'info' && 'bg-brand-muted text-brand',
+                notice.tone === 'info' && 'bg-brand-muted text-brand-ink',
               )}
             >
               <Icon className="size-4" />
@@ -240,7 +249,10 @@ export function InteractionProvider({
     )
     document.documentElement.style.setProperty(
       '--compare-tray-offset',
-      compareItems.length && !wishlistOpen && !cartOpen
+      compareItems.length &&
+        !wishlistOpen &&
+        !cartOpen &&
+        !stickyPurchaseVisible
         ? 'var(--compare-tray-height)'
         : '0px',
     )
@@ -549,45 +561,55 @@ export function WishlistDrawer() {
 }
 
 export function CompareTray() {
-  const {
-    compareItems,
-    toggleCompare,
-    stickyPurchaseVisible,
-    cartOpen,
-    wishlistOpen,
-  } = useInteractions()
-  if (!compareItems.length || cartOpen || wishlistOpen) return null
+  const { compareItems, stickyPurchaseVisible } = useInteractions()
+  const [open, setOpen] = useState(false)
+  useOverlayPresence(open)
+  const pathname = usePathname()
+  if (!compareItems.length || pathname === '/compare') return null
   return (
-    <div
-      className={cn(
-        'fixed inset-x-3 z-[70] mx-auto flex max-w-lg items-center gap-3 rounded-lg border border-border bg-background px-3 py-3 shadow-lg transition-[bottom] duration-200 motion-reduce:transition-none',
-        stickyPurchaseVisible
-          ? 'bottom-[calc(var(--fixed-stack-bottom)+var(--sticky-purchase-height))]'
-          : 'bottom-[var(--fixed-stack-bottom)]',
-      )}
-    >
-      <div className="min-w-0 flex-1">
-        <p className="text-sm font-semibold">{compareItems.length} selected</p>
-        <p className="truncate text-xs text-muted-foreground">
-          Review your shortlisted gear
-        </p>
-      </div>
+    <>
       <button
+        data-fixed-bar
         type="button"
-        onClick={() => window.location.assign('/compare')}
-        className="min-h-10 shrink-0 rounded-md bg-brand px-3 text-sm font-medium text-brand-foreground"
+        onClick={() => setOpen(true)}
+        aria-label={`Compare ${compareItems.length} products`}
+        className={cn(
+          'fixed z-[60] flex min-h-11 items-center gap-2 rounded-full border bg-card px-4 text-sm font-semibold shadow-lg',
+          stickyPurchaseVisible
+            ? 'right-4 top-[calc(var(--shell-header-height)+12px)]'
+            : 'bottom-[var(--fixed-stack-bottom)] right-4',
+        )}
       >
-        Compare now
+        <Scale className="size-4" /> Compare{' '}
+        <span className="rounded-full bg-brand-muted px-2 py-1 text-brand-ink">
+          {compareItems.length}
+        </span>
       </button>
-      <button
-        type="button"
-        onClick={() => toggleCompare(compareItems[compareItems.length - 1])}
-        className="inline-flex size-10 shrink-0 items-center justify-center rounded-md border border-border"
-        aria-label="Remove last compared product"
-      >
-        <X className="size-4" />
-      </button>
-    </div>
+      <Dialog.Root open={open} onOpenChange={setOpen}>
+        <Dialog.Portal>
+          <Dialog.Backdrop className="fixed inset-0 z-[140] bg-black/40" />
+          <Dialog.Popup className="shams-overlay fixed inset-y-0 right-0 z-[141] w-full max-w-3xl overflow-y-auto overscroll-contain bg-background p-5 outline-none">
+            <Dialog.Title className="sr-only">
+              Compare your shortlist
+            </Dialog.Title>
+            <Dialog.Close
+              aria-label="Close comparison"
+              className="ml-auto flex size-11 items-center justify-center rounded-full border"
+            >
+              <X className="size-5" />
+            </Dialog.Close>
+            <SavedProducts mode="compare" compact />
+            <Link
+              href="/compare"
+              onClick={() => setOpen(false)}
+              className="shams-button mt-6"
+            >
+              Open full comparison
+            </Link>
+          </Dialog.Popup>
+        </Dialog.Portal>
+      </Dialog.Root>
+    </>
   )
 }
 
@@ -621,19 +643,67 @@ export function RouteProgress() {
   ) : null
 }
 
-export function InteractionOverlays() {
-  const { cartOpen } = useInteractions()
+function ShellFrame({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname()
+  const variant: ShellVariant =
+    pathname === '/checkout' || pathname === '/order/success'
+      ? 'checkout'
+      : 'store'
+  const { cartOpen, wishlistOpen, searchOpen } = useInteractions()
+  useOverlayPresence(cartOpen || wishlistOpen || searchOpen)
+  const overlayActive = useOverlayActive()
   return (
-    <>
+    <div data-shell={variant} data-overlay-active={overlayActive}>
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:rounded-lg focus:bg-card focus:p-4"
+      >
+        Skip to content
+      </a>
+      {variant === 'checkout' ? (
+        <header className="border-b bg-card">
+          <div className="shams-container flex min-h-20 flex-wrap items-center justify-between gap-3 py-3">
+            <Link href="/" aria-label="Shams Stores home">
+              <ShamsLogo />
+            </Link>
+            <Link
+              href="/cart"
+              className="flex min-h-11 items-center gap-2 text-sm"
+            >
+              <ArrowLeft className="size-4" />
+              Back to cart
+            </Link>
+            <Link
+              href="/support"
+              className="flex min-h-11 items-center text-sm text-brand-ink"
+            >
+              Need a specialist?
+            </Link>
+          </div>
+        </header>
+      ) : (
+        <Header />
+      )}
+      <div
+        id="main-content"
+        tabIndex={-1}
+        className={variant === 'store' ? 'shams-shell-content' : 'pb-8'}
+      >
+        {children}
+      </div>
       <RouteProgress />
-      <GlobalSearchOverlay />
-      <WishlistDrawer />
-      <CompareTray />
-      {!cartOpen && <GlassMobileBottomNav />}
-    </>
+      <CartDrawer showTrigger={false} />
+      {variant === 'store' && (
+        <>
+          <GlobalSearchOverlay />
+          <WishlistDrawer />
+          <CompareTray />
+          <GlassMobileBottomNav />
+        </>
+      )}
+    </div>
   )
 }
-
 export function InteractionShell({
   children,
   liveMode = false,
@@ -643,11 +713,9 @@ export function InteractionShell({
 }) {
   return (
     <InteractionProvider liveMode={liveMode}>
-      <Header />
-      <div className="pb-[calc(var(--mobile-bottom-nav-height)+var(--safe-area-bottom))] md:pb-0">
-        {children}
-      </div>
-      <InteractionOverlays />
+      <ShellPolicyProvider>
+        <ShellFrame>{children}</ShellFrame>
+      </ShellPolicyProvider>
     </InteractionProvider>
   )
 }

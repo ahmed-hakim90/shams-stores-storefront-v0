@@ -1,13 +1,20 @@
 'use client'
+import Link from 'next/link'
 import { useEffect, useLayoutEffect, useRef } from 'react'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
+import { usePathname, useSearchParams } from 'next/navigation'
+import {
+  useInfiniteQuery,
+  useQuery,
+  keepPreviousData,
+} from '@tanstack/react-query'
+import { catalogParams, type CatalogScope } from '@/lib/commerce/experience'
+import { CatalogDiscovery } from './contextual-discovery'
+import type { TaxonomyTerm } from '@/lib/commerce/types'
 import { ProductCard } from './product-card'
 import { FilterFields, MobileFilterDrawer } from './catalog-filters'
 import { commerceFetch } from '@/lib/commerce/browser'
 import type {
   CatalogPage,
-  CatalogQuery,
   FacetResult,
   ProductSummary,
 } from '@/lib/commerce/types'
@@ -18,10 +25,9 @@ export function ShopFeed({
   initialCursor,
   initialHasNext,
   total,
-  category,
-  query,
-  brand,
-  sort,
+  initialParams,
+  scope = {},
+  discovery,
   initialFacets = emptyFacets,
   lockedFilters = [],
 }: {
@@ -29,25 +35,25 @@ export function ShopFeed({
   initialCursor?: string
   initialHasNext: boolean
   total: number
-  category?: string
-  query?: string
-  brand?: string
-  sort?: CatalogQuery['sort']
+  initialParams: string
+  scope?: CatalogScope
+  discovery?: {
+    categories: TaxonomyTerm[]
+    brands: TaxonomyTerm[]
+    hub: boolean
+  }
   lockedFilters?: string[]
   initialFacets?: FacetResult
 }) {
   const search = useSearchParams(),
-    router = useRouter(),
     pathname = usePathname(),
     sentinel = useRef<HTMLDivElement>(null)
-  const p = new URLSearchParams(search.toString())
-  if (category) p.set('category', category)
-  if (brand) p.set('brand', brand)
-  if (query) p.set('q', query)
-  if (sort && !p.has('sort')) p.set('sort', sort)
-  p.delete('cursor')
-  p.sort()
-  const params = p.toString()
+  const params = catalogParams(search.toString(), scope, {
+    sort: new URLSearchParams(initialParams).get('sort') ?? undefined,
+  })
+  const p = new URLSearchParams(params)
+  const query = p.get('q')
+  const initialMatch = params === initialParams
   const feed = useInfiniteQuery({
     queryKey: ['catalog', params],
     initialPageParam: undefined as string | undefined,
@@ -57,24 +63,29 @@ export function ShopFeed({
         { signal },
       ),
     getNextPageParam: (last) => last.nextCursor,
-    initialData: {
-      pages: [
-        {
-          items: initialProducts,
-          nextCursor: initialCursor,
-          hasNextPage: initialHasNext,
-          total,
-        },
-      ],
-      pageParams: [undefined],
-    },
+    placeholderData: keepPreviousData,
+    initialData: initialMatch
+      ? {
+          pages: [
+            {
+              items: initialProducts,
+              nextCursor: initialCursor,
+              hasNextPage: initialHasNext,
+              total,
+            },
+          ],
+          pageParams: [undefined],
+        }
+      : undefined,
     staleTime: 120000,
   })
   const facetQuery = useQuery({
     queryKey: ['facets', params],
     queryFn: ({ signal }) =>
       commerceFetch<FacetResult>(`/api/commerce/facets?${params}`, { signal }),
-    initialData: initialFacets.groups.length ? initialFacets : undefined,
+    placeholderData: keepPreviousData,
+    initialData:
+      initialMatch && initialFacets.groups.length ? initialFacets : undefined,
   })
   const availableFacets = {
     ...(facetQuery.data ?? emptyFacets),
@@ -84,7 +95,7 @@ export function ShopFeed({
   }
   const items = [
     ...new Map(
-      feed.data.pages
+      (feed.data?.pages ?? [])
         .flatMap((page) => page.items)
         .map((item) => [item.id, item]),
     ).values(),
@@ -98,6 +109,7 @@ export function ShopFeed({
           e.isIntersecting &&
           feed.hasNextPage &&
           !feed.isFetching &&
+          !feed.isPlaceholderData &&
           !feed.isFetchNextPageError
         )
           void feed.fetchNextPage()
@@ -110,6 +122,7 @@ export function ShopFeed({
     feed.hasNextPage,
     feed.isFetching,
     feed.isFetchNextPageError,
+    feed.isPlaceholderData,
     feed.fetchNextPage,
   ])
   useLayoutEffect(() => {
@@ -138,7 +151,9 @@ export function ShopFeed({
   }
   const apply = (next: URLSearchParams) => {
     next.delete('cursor')
-    router.push(`${pathname}?${next}`, { scroll: false })
+    const canonical = catalogParams(next, scope)
+    if (canonical !== params)
+      window.history.pushState(null, '', `${pathname}?${canonical}`)
   }
   const change = (key: string, value: string) => {
     const next = new URLSearchParams(search.toString())
@@ -160,6 +175,14 @@ export function ShopFeed({
       className="mt-6"
       aria-label="Product catalog"
     >
+      {discovery && (
+        <CatalogDiscovery
+          {...discovery}
+          scope={scope}
+          params={params}
+          change={change}
+        />
+      )}
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <MobileFilterDrawer
           params={params}
@@ -171,11 +194,11 @@ export function ShopFeed({
           Find the right gear for your next project
         </p>
         <label className="flex items-center gap-2 text-sm">
-          Sort
+          <span className="sr-only sm:not-sr-only">Sort</span>
           <select
             value={p.get('sort') ?? 'newest'}
             onChange={(e) => change('sort', e.target.value)}
-            className="min-h-11 max-w-[180px] rounded-lg border bg-background px-3"
+            className="min-h-11 max-w-[160px] rounded-lg border bg-background px-3"
           >
             {query && <option value="relevance">Best match</option>}
             <option value="newest">Newest</option>
@@ -185,8 +208,8 @@ export function ShopFeed({
           </select>
         </label>
       </div>
-      <div className="grid items-start gap-6 lg:grid-cols-[240px_minmax(0,1fr)]">
-        <aside className="hidden max-h-[calc(100dvh-190px)] overflow-y-auto pr-3 lg:sticky lg:top-[176px] lg:block">
+      <div className="shams-catalog-layout">
+        <aside className="shams-sidebar hidden pr-3 lg:block">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="font-semibold">Refine your search</h2>
             {active.length > 0 && (
@@ -196,7 +219,7 @@ export function ShopFeed({
                   active.forEach((k) => n.delete(k))
                   apply(n)
                 }}
-                className="min-h-10 text-xs text-brand"
+                className="min-h-11 text-xs text-brand-ink"
               >
                 Clear all
               </button>
@@ -205,13 +228,12 @@ export function ShopFeed({
           {facetQuery.isError ? (
             <button
               onClick={() => facetQuery.refetch()}
-              className="text-sm text-brand"
+              className="text-sm text-brand-ink"
             >
               Retry filters
             </button>
-          ) : (
-            <FilterFields facets={availableFacets} values={p} change={change} />
-          )}
+          ) : null}
+          <FilterFields facets={availableFacets} values={p} change={change} />
         </aside>
         <div className="min-w-0">
           <div className="mb-4 flex flex-wrap gap-2">
@@ -219,18 +241,46 @@ export function ShopFeed({
               <button
                 key={k}
                 onClick={() => change(k, '')}
-                className="min-h-9 rounded-full border border-brand/30 bg-brand/5 px-3 text-xs text-brand"
+                className="min-h-11 rounded-full border border-brand/30 bg-brand/5 px-3 text-xs text-brand-ink"
               >
                 {k === 'onSale' ? 'On sale' : p.get(k)?.replaceAll('-', ' ')} ×
               </button>
             ))}
           </div>
-          <div className="grid grid-cols-1 gap-4">
+          <div
+            role="status"
+            className="mb-3 text-sm text-muted-foreground"
+            aria-live="polite"
+          >
+            {feed.isPlaceholderData
+              ? 'Updating your selection… Previous results are shown below.'
+              : feed.isError && !feed.isFetchNextPageError
+                ? 'We could not update these results.'
+                : ''}
+          </div>
+          {feed.isError && !feed.isFetchNextPageError && (
+            <button
+              className="shams-button shams-button-secondary mb-4"
+              onClick={() => feed.refetch()}
+            >
+              Retry results
+            </button>
+          )}
+          <div
+            className="grid grid-cols-1 gap-4"
+            data-results-pending={feed.isPlaceholderData}
+            aria-busy={feed.isFetching && !feed.isFetchingNextPage}
+          >
             {items.map((product) => (
-              <ProductCard key={product.id} product={product} view="list" />
+              <ProductCard
+                key={product.id}
+                product={product}
+                view="list"
+                purchaseDisabled={feed.isPlaceholderData}
+              />
             ))}
           </div>
-          {items.length === 0 && (
+          {items.length === 0 && !feed.isPending && !feed.isError && (
             <div className="rounded-xl border border-dashed p-10 text-center">
               <h2 className="text-lg font-semibold">
                 No gear matches these filters
@@ -238,10 +288,27 @@ export function ShopFeed({
               <p className="mt-2 text-sm text-muted-foreground">
                 Try removing a filter or searching for another model.
               </p>
+              {active.length || query ? (
+                <button
+                  className="shams-button mt-5"
+                  onClick={() => {
+                    const n = new URLSearchParams(params)
+                    active.forEach((k) => n.delete(k))
+                    n.delete('q')
+                    apply(n)
+                  }}
+                >
+                  Reset your search
+                </button>
+              ) : (
+                <Link href="/shop" className="shams-button mt-5">
+                  Explore all gear →
+                </Link>
+              )}
             </div>
           )}
           <div ref={sentinel} className="py-6" aria-live="polite">
-            {feed.isFetchingNextPage && (
+            {(feed.isFetchingNextPage || feed.isPending) && (
               <div className="space-y-4" aria-label="Loading more products">
                 {[0, 1, 2].map((x) => (
                   <div

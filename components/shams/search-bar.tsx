@@ -95,7 +95,7 @@ export function SearchBar({ className }: { className?: string }) {
                     </span>
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-sm font-medium text-foreground">
-                        <span className="text-brand">{p.brand}</span> {p.name}
+                        <span className="text-brand-ink">{p.brand}</span> {p.name}
                       </span>
                       <span className="block truncate text-xs text-muted-foreground">
                         {p.configuration}
@@ -130,7 +130,7 @@ export function SearchBar({ className }: { className?: string }) {
                     type="button"
                     onMouseDown={(e) => e.preventDefault()}
                     onClick={() => submit(term)}
-                    className="rounded-full border border-border px-3 py-1 text-sm text-foreground transition-colors hover:border-brand hover:text-brand"
+                    className="rounded-full border border-border px-3 py-1 text-sm text-foreground transition-colors hover:border-brand hover:text-brand-ink"
                   >
                     {term}
                   </button>
@@ -146,7 +146,7 @@ export function SearchBar({ className }: { className?: string }) {
                     href={c.href}
                     onMouseDown={(e) => e.preventDefault()}
                     onClick={() => setOpen(false)}
-                    className="rounded-lg border border-border px-3 py-2 text-sm font-medium text-foreground transition-colors hover:border-brand hover:text-brand"
+                    className="rounded-lg border border-border px-3 py-2 text-sm font-medium text-foreground transition-colors hover:border-brand hover:text-brand-ink"
                   >
                     {c.label}
                   </Link>

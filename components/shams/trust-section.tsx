@@ -26,14 +26,14 @@ const pillars = [
 export function TrustSection() {
   return (
     <section className="border-y border-border bg-accent/40">
-      <div className="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 sm:py-14">
+      <div className="mx-auto max-w-[1440px] px-4 py-12 sm:px-6 sm:py-14">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {pillars.map((p) => (
             <div
               key={p.title}
               className="flex flex-col gap-2.5 rounded-2xl border border-border bg-card p-5"
             >
-              <span className="inline-flex size-10 items-center justify-center rounded-xl bg-brand-muted text-brand">
+              <span className="inline-flex size-10 items-center justify-center rounded-xl bg-brand-muted text-brand-ink">
                 <p.icon className="size-5" />
               </span>
               <p className="font-semibold tracking-tight text-foreground">{p.title}</p>

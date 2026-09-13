@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useEffect, useRef } from 'react'
 import {
   Grid2X2,
   Heart,
@@ -14,7 +15,7 @@ import {
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { GlassSurface } from './glass-surface'
-import { CartDrawer } from './cart-drawer'
+
 import { MobileMenu } from './mobile-menu'
 import { ShamsLogo } from './logo'
 import { useInteractions } from './interaction-provider'
@@ -30,8 +31,25 @@ function CountBadge({ count }: { count: number }) {
 
 export function MobileHeader() {
   const { openWishlist, openCart, wishlistCount, cartCount } = useInteractions()
+  const header = useRef<HTMLElement>(null)
+  useEffect(() => {
+    const el = header.current
+    if (!el) return
+    const observer = new ResizeObserver(() => {
+      if (el.offsetHeight)
+        document.documentElement.style.setProperty(
+          '--shell-header-height',
+          `${el.offsetHeight}px`,
+        )
+    })
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
   return (
-    <header className="sticky top-0 z-50 px-3 pt-[max(0.375rem,env(safe-area-inset-top))] md:hidden">
+    <header
+      ref={header}
+      className="border-b border-border/70 bg-background/95 backdrop-blur sticky top-0 z-50 px-3 pt-[max(0.375rem,env(safe-area-inset-top))] md:hidden"
+    >
       <div className="relative flex h-14 items-center justify-between px-0">
         <MobileMenu />
         <Link
@@ -46,7 +64,7 @@ export function MobileHeader() {
             type="button"
             onClick={openWishlist}
             aria-label="Open wishlist"
-            className="relative inline-flex size-11 items-center justify-center rounded-full border border-white/45 bg-white/20 text-foreground/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.65)] transition-colors hover:bg-white/40 hover:text-brand"
+            className="relative inline-flex size-11 items-center justify-center rounded-full border border-white/45 bg-white/20 text-foreground/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.65)] transition-colors hover:bg-white/40 hover:text-brand-ink"
           >
             <Heart className="size-5" />
             <CountBadge count={wishlistCount} />
@@ -55,14 +73,13 @@ export function MobileHeader() {
             type="button"
             onClick={openCart}
             aria-label="Open cart"
-            className="relative inline-flex size-11 items-center justify-center rounded-full border border-white/45 bg-white/20 text-foreground/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.65)] transition-colors hover:bg-white/40 hover:text-brand"
+            className="relative inline-flex size-11 items-center justify-center rounded-full border border-white/45 bg-white/20 text-foreground/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.65)] transition-colors hover:bg-white/40 hover:text-brand-ink"
           >
             <ShoppingBag className="size-5" />
             <CountBadge count={cartCount} />
           </button>
         </div>
       </div>
-      <CartDrawer showTrigger={false} />
     </header>
   )
 }
@@ -81,6 +98,7 @@ export function MobileBottomNav() {
   return (
     <nav
       className="fixed inset-x-0 bottom-0 z-[55] px-3 pb-[max(0.5rem,env(safe-area-inset-bottom))] md:hidden"
+      data-fixed-bar
       aria-label="Mobile shopping navigation"
     >
       <GlassSurface className="mx-auto grid h-[4.5rem] max-w-lg grid-cols-5 gap-1 rounded-full bg-white/95 p-1.5 shadow-lg">
@@ -113,7 +131,7 @@ export function MobileBottomNav() {
                 'relative flex min-h-11 flex-col items-center justify-center gap-0.5 rounded-full px-1 font-medium transition-colors',
                 active
                   ? 'bg-brand text-brand-foreground'
-                  : 'text-foreground/60 hover:text-foreground',
+                  : 'text-muted-foreground hover:text-foreground',
               )}
             >
               {content}
@@ -127,7 +145,7 @@ export function MobileBottomNav() {
                 'relative flex min-h-11 flex-col items-center justify-center gap-0.5 rounded-full px-1 font-medium transition-colors',
                 active
                   ? 'bg-brand text-brand-foreground'
-                  : 'text-foreground/60 hover:text-foreground',
+                  : 'text-muted-foreground hover:text-foreground',
               )}
             >
               {content}

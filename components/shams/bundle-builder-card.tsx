@@ -25,7 +25,7 @@ export function BundleBuilderCard({
     >
       <div className="flex items-center justify-between gap-2 border-b border-border px-5 py-3">
         <div>
-          <Link href={`/bundles/${bundle.slug}`} className="font-semibold tracking-tight text-foreground hover:text-brand">{bundle.name}</Link>
+          <Link href={`/bundles/${bundle.slug}`} className="font-semibold tracking-tight text-foreground hover:text-brand-ink">{bundle.name}</Link>
           <p className="text-xs text-muted-foreground">
             {commerce.useCases.bySlug(bundle.useCase)?.name} setup ·{' '}
             {bundle.products.length} items
@@ -51,7 +51,7 @@ export function BundleBuilderCard({
                   className="object-contain"
                 />
               </div>
-              <span className="text-[0.7rem] font-medium uppercase tracking-wide text-brand">
+              <span className="text-[0.7rem] font-medium uppercase tracking-wide text-brand-ink">
                 {roles[i]}
               </span>
               <span className="line-clamp-1 max-w-full text-xs text-muted-foreground">
@@ -77,7 +77,7 @@ export function BundleBuilderCard({
             {formatMoney(bundle.bundlePrice)}
           </p>
         </div>
-        <div className="flex flex-wrap items-center gap-2"><Link href={`/bundles/${bundle.slug}`} className="inline-flex min-h-11 items-center justify-center rounded-xl border border-border px-4 text-sm font-semibold hover:border-brand hover:text-brand">View bundle</Link><AddBundleButton bundleName={bundle.name} bundle={bundle} /></div>
+        <div className="flex flex-wrap items-center gap-2"><Link href={`/bundles/${bundle.slug}`} className="inline-flex min-h-11 items-center justify-center rounded-xl border border-border px-4 text-sm font-semibold hover:border-brand hover:text-brand-ink">View bundle</Link><AddBundleButton bundleName={bundle.name} bundle={bundle} /></div>
       </div>
     </article>
   )

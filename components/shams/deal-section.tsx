@@ -8,7 +8,7 @@ export function DealSection() {
 
   return (
     <section className="border-y border-border bg-[color-mix(in_oklab,var(--color-sale)_5%,var(--background))]">
-      <div className="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 sm:py-14">
+      <div className="mx-auto max-w-[1440px] px-4 py-12 sm:px-6 sm:py-14">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div className="space-y-1.5">
             <p className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-sale">

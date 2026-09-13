@@ -25,7 +25,7 @@ export function PriceDisplay({
       <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
         <span
           className={cn(
-            'font-semibold tracking-tight text-foreground',
+            'max-w-full break-words font-semibold tracking-tight text-foreground tabular-nums',
             priceClass,
           )}
         >
