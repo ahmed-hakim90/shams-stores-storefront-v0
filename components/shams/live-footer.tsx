@@ -34,7 +34,9 @@ export function LiveFooter() {
     <footer className="border-t bg-card pb-24 md:pb-0">
       <div className="mx-auto grid max-w-[1440px] gap-8 px-4 py-12 sm:grid-cols-2 sm:px-6 lg:grid-cols-[1.5fr_1fr_1fr_1fr]">
         <div>
-          <ShamsLogo />
+          <Link href="/" aria-label="Shams Stores home" className="inline-flex rounded-lg">
+            <ShamsLogo className="w-[240px] max-w-full" />
+          </Link>
           <p className="mt-4 max-w-xs text-sm leading-6 text-muted-foreground">
             Photography, cinema and creator equipment. Find the right tools for
             your next idea.

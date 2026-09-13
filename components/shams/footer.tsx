@@ -52,7 +52,9 @@ export function Footer() {
       <div className="mx-auto max-w-[1440px] px-4 py-12 sm:px-6">
         <div className="grid gap-10 lg:grid-cols-[1.4fr_repeat(4,1fr)]">
           <div className="space-y-4">
-            <ShamsLogo />
+            <Link href="/" aria-label="Shams Stores home" className="inline-flex rounded-lg">
+              <ShamsLogo className="w-[240px] max-w-full" />
+            </Link>
             <p className="max-w-xs text-sm text-muted-foreground">
               Egypt&apos;s specialist for photography, cinema and creator gear.
               Authorized products, expert advice and nationwide delivery since

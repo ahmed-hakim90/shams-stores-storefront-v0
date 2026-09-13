@@ -55,9 +55,9 @@ export function MobileHeader() {
         <Link
           href="/"
           aria-label="Shams Stores home"
-          className="absolute left-1/2 flex -translate-x-1/2 items-center justify-center"
+          className="ml-2 mr-auto flex shrink-0 items-center justify-center"
         >
-          <ShamsLogo className="scale-[0.88]" />
+          <ShamsLogo className="w-[120px] min-[360px]:w-[152px]" />
         </Link>
         <div className="ml-auto flex items-center gap-1">
           <button
