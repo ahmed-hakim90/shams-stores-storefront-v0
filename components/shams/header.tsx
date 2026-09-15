@@ -162,11 +162,6 @@ export function Header() {
               </button>
             </div>
           </div>
-
-          {/* Mobile search */}
-          <div className="px-4 pb-3 md:hidden">
-            <SearchTrigger placeholder="Search cameras, lenses, audio and creator gear…" />
-          </div>
         </div>
 
         {/* Nav row */}

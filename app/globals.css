@@ -451,7 +451,7 @@
   display: flex;
   gap: 16px;
   overflow-x: auto;
-  overscroll-behavior-x: contain;
+  overscroll-behavior-x: none;
   scroll-snap-type: x proximity;
   padding-bottom: 12px;
 }
@@ -525,4 +525,34 @@
 .shams-button-success {
   background: var(--success);
   color: white;
+}
+
+/* Editorial discovery: compact mosaics, product rails, and campaign intervals. */
+.merch-section,
+.merch-home .shams-section {
+  padding-block: clamp(28px, 3.5vw, 48px);
+}
+.merch-home .shams-title {
+  font-size: clamp(24px, 2.3vw, 34px);
+}
+.merch-category-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.merch-discovery-rail {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  overscroll-behavior-x: none;
+  scroll-snap-type: x proximity;
+  padding-bottom: 12px;
+}
+@media (min-width: 768px) {
+  .merch-category-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .merch-category-major {
+    grid-row: span 2;
+  }
 }

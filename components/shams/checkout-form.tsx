@@ -4,7 +4,11 @@ import { useQuery } from '@tanstack/react-query'
 import { useInteractions } from './interaction-provider'
 import { BrowserCommerceError, commerceFetch } from '@/lib/commerce/browser'
 import type { Address, CheckoutResult } from '@/lib/commerce/types'
+import type { PaymentIntentClient } from '@/lib/payments/paymob/types'
 import { formatEgp } from '@/lib/commerce'
+import { PaymobPixel } from './payments/paymob-pixel'
+
+const CARD_METHOD = 'paymob-card'
 const empty: Address = {
   firstName: '',
   lastName: '',
@@ -25,12 +29,14 @@ export function CheckoutForm() {
     [pending, setPending] = useState(false),
     [uncertain, setUncertain] = useState(false),
     [saved, setSaved] = useState(false),
+    [intent, setIntent] = useState<PaymentIntentClient | null>(null),
     submitting = useRef(false)
   const config = useQuery({
     queryKey: ['checkout-config'],
     queryFn: () =>
       commerceFetch<{
         enabled: boolean
+        paymob: boolean
         verifiedMethods: string[]
         states: { code: string; name: string }[]
       }>('/api/commerce/checkout'),
@@ -39,7 +45,7 @@ export function CheckoutForm() {
     setAddress((a) => ({ ...a, [key]: value }))
     setSaved(false)
   }
-  const methods = (cart?.paymentMethods ?? []).filter((x) =>
+  const wooMethods = (cart?.paymentMethods ?? []).filter((x) =>
     config.data?.verifiedMethods.includes(x),
   )
   const names = (id: string) =>
@@ -69,6 +75,79 @@ export function CheckoutForm() {
       />
     </label>
   )
+  const deliveryReady =
+    saved && (!cart?.needsShipping || cart.rates.some((r) => r.selected))
+
+  // Card payments create a pending Woo order + Paymob intention server-side,
+  // then hand off to the embedded Pixel. Other methods keep the existing
+  // WooCommerce gateway flow untouched.
+  const startPayment = async () => {
+    if (submitting.current) return
+    submitting.current = true
+    setPending(true)
+    setError('')
+    try {
+      if (method === CARD_METHOD) {
+        const result = await commerceFetch<PaymentIntentClient>(
+          '/api/payments/intention',
+          {
+            method: 'POST',
+            body: JSON.stringify({ address }),
+          },
+        )
+        setIntent(result)
+      } else {
+        const result = await commerceFetch<CheckoutResult>(
+          '/api/commerce/checkout',
+          {
+            method: 'POST',
+            body: JSON.stringify({ address, paymentMethod: method }),
+          },
+        )
+        window.location.assign(result.redirectUrl ?? '/order/success')
+      }
+    } catch (e) {
+      setError(
+        e instanceof Error ? e.message : 'We could not confirm your order.',
+      )
+      setPending(false)
+      if (
+        e instanceof BrowserCommerceError &&
+        ['NETWORK_ERROR', 'SERVER_ERROR', 'UNKNOWN'].includes(e.code)
+      ) {
+        setUncertain(true)
+        setError(
+          'We could not confirm the result. Contact Shams before trying again to avoid a duplicate order.',
+        )
+      } else submitting.current = false
+    }
+  }
+
+  if (intent)
+    return (
+      <div className="space-y-4">
+        <PaymobPixel
+          clientSecret={intent.clientSecret}
+          amountLabel={formatEgp(intent.amountCents / 100)}
+          onCompleted={() => window.location.assign('/order/success')}
+          onError={(message) => setError(message)}
+        />
+        {error && (
+          <p
+            role="alert"
+            className="rounded-lg bg-red-50 p-3 text-sm text-red-700"
+          >
+            {error}
+          </p>
+        )}
+        <p className="text-xs leading-5 text-muted-foreground">
+          After your bank authenticates the payment you will be returned to
+          Shams. Your order is confirmed only once your payment is verified —
+          never close this page before that happens.
+        </p>
+      </div>
+    )
+
   return (
     <div>
       <form
@@ -132,6 +211,7 @@ export function CheckoutForm() {
                 false,
               )}
             </div>
+            {field('postcode', 'Postal code', 'text', 'postal-code')}
           </div>
         </section>
         <button
@@ -180,8 +260,19 @@ export function CheckoutForm() {
       )}
       <section className="mt-6 border-t pt-6">
         <h2 className="mb-3 text-lg font-semibold">Payment</h2>
+        {config.data?.paymob && (
+          <label className="mb-3 flex min-h-14 items-center gap-3 rounded-lg border p-3 text-sm">
+            <input
+              type="radio"
+              name="payment"
+              checked={method === CARD_METHOD}
+              onChange={() => setMethod(CARD_METHOD)}
+            />
+            Credit / debit card
+          </label>
+        )}
         {config.data?.enabled ? (
-          methods.map((id) => (
+          wooMethods.map((id) => (
             <label
               key={id}
               className="mb-3 flex min-h-14 items-center gap-3 rounded-lg border p-3 text-sm"
@@ -196,10 +287,12 @@ export function CheckoutForm() {
             </label>
           ))
         ) : (
-          <p className="rounded-lg bg-muted/40 p-4 text-sm leading-6 text-muted-foreground">
-            Online checkout is being prepared. Your cart is saved while you
-            continue exploring.
-          </p>
+          !config.data?.paymob && (
+            <p className="rounded-lg bg-muted/40 p-4 text-sm leading-6 text-muted-foreground">
+              Online checkout is being prepared. Your cart is saved while you
+              continue exploring.
+            </p>
+          )
         )}
       </section>
       {error && (
@@ -221,48 +314,22 @@ export function CheckoutForm() {
       <button
         disabled={
           uncertain ||
-          !config.data?.enabled ||
           !method ||
-          !saved ||
+          !deliveryReady ||
           pending ||
           cartPending ||
-          (cart?.needsShipping && !cart.rates.some((r) => r.selected))
+          (method === CARD_METHOD
+            ? !config.data?.paymob
+            : !config.data?.enabled)
         }
-        onClick={async () => {
-          if (submitting.current) return
-          submitting.current = true
-          setPending(true)
-          setError('')
-          try {
-            const result = await commerceFetch<CheckoutResult>(
-              '/api/commerce/checkout',
-              {
-                method: 'POST',
-                body: JSON.stringify({ address, paymentMethod: method }),
-              },
-            )
-            window.location.assign(result.redirectUrl ?? '/order/success')
-          } catch (e) {
-            setError(
-              e instanceof Error
-                ? e.message
-                : 'We could not confirm your order.',
-            )
-            setPending(false)
-            if (
-              e instanceof BrowserCommerceError &&
-              ['NETWORK_ERROR', 'SERVER_ERROR', 'UNKNOWN'].includes(e.code)
-            ) {
-              setUncertain(true)
-              setError(
-                'We could not confirm the result. Contact Shams before trying again to avoid a duplicate order.',
-              )
-            } else submitting.current = false
-          }
-        }}
+        onClick={startPayment}
         className="mt-6 min-h-12 w-full rounded-lg bg-brand px-6 text-sm font-semibold text-brand-foreground disabled:bg-muted disabled:text-muted-foreground"
       >
-        {pending ? 'Confirming your order…' : 'Place order'}
+        {pending
+          ? 'Preparing secure payment…'
+          : method === CARD_METHOD
+            ? `Pay ${formatEgp(cart?.total ?? 0)}`
+            : 'Place order'}
       </button>
     </div>
   )

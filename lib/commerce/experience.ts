@@ -22,8 +22,8 @@ export const homeCollections: PageExperienceConfig[] = [
   {
     id: 'new',
     kind: 'new',
-    title: 'Fresh perspectives.',
-    eyebrow: 'New arrivals',
+    title: 'New arrivals',
+    eyebrow: 'Just landed',
     description: 'The latest additions to the Shams catalog.',
     href: '/new',
     query: { pageSize: 8, sort: 'newest' },
@@ -42,8 +42,8 @@ export const homeCollections: PageExperienceConfig[] = [
   {
     id: 'best-sellers',
     kind: 'best-sellers',
-    title: 'In good company.',
-    eyebrow: 'Chosen by our customers',
+    title: 'Best sellers',
+    eyebrow: 'Popular in the Shams catalog',
     description: 'Popular purchases from across the Shams catalog.',
     href: '/best-sellers',
     query: { pageSize: 8, sort: 'best-selling' },

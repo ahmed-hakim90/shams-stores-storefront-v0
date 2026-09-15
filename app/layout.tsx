@@ -5,6 +5,7 @@ import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import { InteractionShell } from '@/components/shams/interaction-provider'
+import { LiveFooter } from '@/components/shams/live-footer'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -53,11 +54,15 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const liveMode = commerceProvider() === 'woocommerce'
   return (
     <html lang="en" className={`light ${inter.variable}`}>
       <body className="antialiased">
         <CommerceQueryProvider>
-          <InteractionShell liveMode={commerceProvider() === 'woocommerce'}>
+          <InteractionShell
+            liveMode={liveMode}
+            footer={liveMode ? <LiveFooter /> : undefined}
+          >
             {children}
           </InteractionShell>
         </CommerceQueryProvider>

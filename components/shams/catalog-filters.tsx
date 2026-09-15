@@ -7,6 +7,32 @@ import { useQuery } from '@tanstack/react-query'
 import type { FacetResult, FilterDefinition } from '@/lib/commerce/types'
 import { commerceFetch } from '@/lib/commerce/browser'
 
+export function activeCatalogFilterKeys(
+  params: URLSearchParams,
+  facets: FacetResult,
+  lockedFilters: string[] = [],
+) {
+  const keys = new Set([
+    'minPrice',
+    'maxPrice',
+    'onSale',
+    ...facets.groups.map((group) => group.key),
+  ])
+  return [...keys].filter(
+    (key) => params.has(key) && !lockedFilters.includes(key),
+  )
+}
+
+export function clearCatalogFilters(
+  params: URLSearchParams,
+  facets: FacetResult,
+  lockedFilters: string[] = [],
+) {
+  activeCatalogFilterKeys(params, facets, lockedFilters).forEach((key) =>
+    params.delete(key),
+  )
+}
+
 export function FilterFields({
   facets,
   values,
@@ -194,6 +220,13 @@ export function MobileFilterDrawer({
     enabled: open,
     staleTime: 30000,
   })
+  const availableFacets = previewFacets.data ?? facets
+  const visibleFacets = {
+    ...availableFacets,
+    groups: availableFacets.groups.filter(
+      (group) => !lockedFilters.includes(group.key),
+    ),
+  }
   const change = (key: string, value: string) => {
     const p = new URLSearchParams(draft)
     if (value) p.set(key, value)
@@ -201,15 +234,10 @@ export function MobileFilterDrawer({
     p.delete('cursor')
     setDraft(p.toString())
   }
-  const selected = [
-    'category',
-    'brand',
-    'stock',
-    'minPrice',
-    'maxPrice',
-    'onSale',
-  ].filter(
-    (k) => new URLSearchParams(draft).has(k) && !lockedFilters.includes(k),
+  const selected = activeCatalogFilterKeys(
+    new URLSearchParams(draft),
+    availableFacets,
+    lockedFilters,
   ).length
   return (
     <Drawer.Root
@@ -241,12 +269,7 @@ export function MobileFilterDrawer({
             </header>
             <Drawer.Content className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-5">
               <FilterFields
-                facets={{
-                  ...(previewFacets.data ?? facets),
-                  groups: (previewFacets.data ?? facets).groups.filter(
-                    (g) => !lockedFilters.includes(g.key),
-                  ),
-                }}
+                facets={visibleFacets}
                 values={new URLSearchParams(draft)}
                 change={change}
               />
@@ -268,15 +291,7 @@ export function MobileFilterDrawer({
               <button
                 onClick={() => {
                   const p = new URLSearchParams(draft)
-                  for (const k of [
-                    'category',
-                    'brand',
-                    'stock',
-                    'minPrice',
-                    'maxPrice',
-                    'onSale',
-                  ])
-                    if (!lockedFilters.includes(k)) p.delete(k)
+                  clearCatalogFilters(p, availableFacets, lockedFilters)
                   setDraft(p.toString())
                 }}
                 className="min-h-12 rounded-lg border px-4 text-sm"

@@ -89,32 +89,42 @@ export async function LiveCatalogPage({
         {title !== 'Shop all gear' && ` / ${title}`}
       </nav>
       <header
-        className={`relative overflow-hidden border-b pb-5 ${hub ? 'rounded-3xl border bg-card p-5 sm:p-7 md:pr-52' : ''}`}
+        className={`relative border-b pb-5 ${hub ? 'grid gap-5 rounded-2xl border bg-[#edeae3] p-5 sm:p-7 md:grid-cols-[1fr_220px]' : ''}`}
       >
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[.16em] text-brand-ink">
+            {hub?.kind === 'brand'
+              ? 'Inside the brand'
+              : hub
+                ? 'Find your perspective'
+                : 'Shams Stores'}
+          </p>
+          <h1 className="shams-title mt-2 max-w-3xl">
+            {q.query ? `Results for “${q.query}”` : title}
+          </h1>
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">
+            {description.slice(0, 280)}
+          </p>
+          {hub && (
+            <a
+              href="#catalog-results"
+              className="mt-4 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-brand-ink"
+            >
+              Shop the collection ↓
+            </a>
+          )}
+        </div>
         {hub?.term.image && (
-          <div className="absolute inset-y-4 right-5 hidden w-40 overflow-hidden rounded-xl bg-white md:block">
+          <div className="relative hidden min-h-36 overflow-hidden rounded-xl bg-white md:block">
             <ProductImage
               src={hub.term.image}
-              alt=""
+              alt={hub.term.name}
               fill
-              sizes="160px"
+              sizes="220px"
               className="object-contain p-3"
             />
           </div>
         )}
-        <p className="text-xs font-semibold uppercase tracking-[.16em] text-brand-ink">
-          {hub?.kind === 'brand'
-            ? 'The brand collection'
-            : hub
-              ? 'Find your perspective'
-              : 'Shams Stores'}
-        </p>
-        <h1 className="shams-title mt-2 max-w-3xl">
-          {q.query ? `Results for “${q.query}”` : title}
-        </h1>
-        <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">
-          {description.slice(0, 280)}
-        </p>
       </header>
       {scope.category &&
       (!categories.some((t) => t.slug === scope.category) ||

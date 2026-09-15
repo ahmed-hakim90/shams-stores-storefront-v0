@@ -643,7 +643,13 @@ export function RouteProgress() {
   ) : null
 }
 
-function ShellFrame({ children }: { children: React.ReactNode }) {
+function ShellFrame({
+  children,
+  footer,
+}: {
+  children: React.ReactNode
+  footer?: React.ReactNode
+}) {
   const pathname = usePathname()
   const variant: ShellVariant =
     pathname === '/checkout' || pathname === '/order/success'
@@ -691,6 +697,7 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
       >
         {children}
       </div>
+      {variant === 'store' && footer}
       <RouteProgress />
       <CartDrawer showTrigger={false} />
       {variant === 'store' && (
@@ -706,15 +713,17 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
 }
 export function InteractionShell({
   children,
+  footer,
   liveMode = false,
 }: {
   children: React.ReactNode
+  footer?: React.ReactNode
   liveMode?: boolean
 }) {
   return (
     <InteractionProvider liveMode={liveMode}>
       <ShellPolicyProvider>
-        <ShellFrame>{children}</ShellFrame>
+        <ShellFrame footer={footer}>{children}</ShellFrame>
       </ShellPolicyProvider>
     </InteractionProvider>
   )

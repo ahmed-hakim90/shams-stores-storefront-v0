@@ -6,6 +6,7 @@ import {
 import { request } from '@/lib/commerce/live/client'
 import { array, record, text } from '@/lib/commerce/live/normalize'
 import { errorResponse } from '@/lib/commerce/live/errors'
+import { paymobEnabled } from '@/lib/payments/paymob/config'
 export async function GET() {
   try {
     const r = await request('/wc/v3/data/countries/EG', {
@@ -15,6 +16,7 @@ export async function GET() {
     return Response.json(
       {
         enabled: checkoutEnabled(),
+        paymob: paymobEnabled(),
         verifiedMethods: (process.env.COMMERCE_VERIFIED_PAYMENT_METHODS ?? '')
           .split(',')
           .filter(Boolean),

@@ -11,7 +11,12 @@ import { catalogParams, type CatalogScope } from '@/lib/commerce/experience'
 import { CatalogDiscovery } from './contextual-discovery'
 import type { TaxonomyTerm } from '@/lib/commerce/types'
 import { ProductCard } from './product-card'
-import { FilterFields, MobileFilterDrawer } from './catalog-filters'
+import {
+  activeCatalogFilterKeys,
+  clearCatalogFilters,
+  FilterFields,
+  MobileFilterDrawer,
+} from './catalog-filters'
 import { commerceFetch } from '@/lib/commerce/browser'
 import type {
   CatalogPage,
@@ -161,14 +166,7 @@ export function ShopFeed({
     else next.delete(key)
     apply(next)
   }
-  const active = [
-    'category',
-    'brand',
-    'stock',
-    'minPrice',
-    'maxPrice',
-    'onSale',
-  ].filter((k) => p.has(k) && !lockedFilters.includes(k))
+  const active = activeCatalogFilterKeys(p, availableFacets, lockedFilters)
   return (
     <section
       onClickCapture={rememberPosition}
@@ -183,7 +181,7 @@ export function ShopFeed({
           change={change}
         />
       )}
-      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+      <div id="catalog-results" className="mb-5 flex scroll-mt-[calc(var(--shell-header-height)+16px)] flex-wrap items-center justify-between gap-3">
         <MobileFilterDrawer
           params={params}
           lockedFilters={lockedFilters}
@@ -216,7 +214,7 @@ export function ShopFeed({
               <button
                 onClick={() => {
                   const n = new URLSearchParams(search)
-                  active.forEach((k) => n.delete(k))
+                  clearCatalogFilters(n, availableFacets, lockedFilters)
                   apply(n)
                 }}
                 className="min-h-11 text-xs text-brand-ink"
@@ -293,7 +291,7 @@ export function ShopFeed({
                   className="shams-button mt-5"
                   onClick={() => {
                     const n = new URLSearchParams(params)
-                    active.forEach((k) => n.delete(k))
+                    clearCatalogFilters(n, availableFacets, lockedFilters)
                     n.delete('q')
                     apply(n)
                   }}

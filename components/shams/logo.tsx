@@ -5,7 +5,7 @@ export function ShamsLogo({ className }: { className?: string }) {
   return (
     <span
       className={cn(
-        'inline-flex w-[180px] shrink-0 overflow-hidden rounded-lg bg-black align-middle',
+        'inline-flex w-[180px] shrink-0 overflow-hidden rounded-lg  align-middle',
         className,
       )}
     >
