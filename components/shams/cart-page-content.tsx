@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { useInteractions } from './interaction-provider'
 import { ProductImage } from './product-image'
+import { CartLineOptions } from './cart-line-options'
 import { formatEgp } from '@/lib/commerce'
 import { CheckoutForm } from './checkout-form'
 export function CartPageContent({ checkout = false }: { checkout?: boolean }) {
@@ -82,6 +83,7 @@ export function CartPageContent({ checkout = false }: { checkout?: boolean }) {
                       <h2 className="text-sm font-semibold">
                         {line.productName}
                       </h2>
+                      <CartLineOptions options={line.selectedOptions} />
                       <p className="mt-2 font-semibold">
                         {formatEgp(line.total ?? line.quantity * line.price)}
                       </p>

@@ -32,10 +32,10 @@ export function ProductCard({
   return (
     <article
       className={cn(
-        'group shams-product-card min-w-0 border border-border bg-card transition-[border-color,box-shadow,transform] duration-180 hover:border-brand/40 hover:shadow-[0_1px_0_rgba(0,0,0,0.02),0_12px_30px_-18px_rgba(21,63,112,0.35)]',
+        'group shams-panel shams-product-card min-w-0 overflow-hidden transition-[border-color,box-shadow,transform] duration-180 hover:border-brand/40 hover:shadow-[0_1px_0_rgba(0,0,0,0.02),0_12px_30px_-18px_rgba(21,63,112,0.35)]',
         horizontal
-          ? 'relative grid min-h-[210px] grid-cols-[minmax(96px,34%)_minmax(0,1fr)] overflow-hidden rounded-xl sm:min-h-[210px] sm:grid-cols-[200px_minmax(0,1fr)]'
-          : 'flex flex-col rounded-xl',
+          ? 'relative grid min-h-[210px] grid-cols-[minmax(96px,34%)_minmax(0,1fr)] sm:min-h-[210px] sm:grid-cols-[200px_minmax(0,1fr)]'
+          : 'flex flex-col',
         !horizontal && 'mobile-product-card-grid',
         view === 'compact-related' &&
           'grid-cols-[160px_minmax(0,1fr)] sm:grid-cols-[160px_minmax(0,1fr)]',
@@ -131,7 +131,10 @@ export function ProductCard({
         <div className="min-h-0">
           <Link
             href={productHref}
-            className="line-clamp-3 break-words text-base font-semibold leading-[1.4] text-foreground transition-colors hover:text-brand-ink sm:text-lg"
+            className={cn(
+              'line-clamp-3 break-words text-base font-semibold leading-[1.4] text-foreground transition-colors hover:text-brand-ink',
+              view === 'rail' ? 'sm:text-base' : 'sm:text-lg',
+            )}
           >
             {product.name}
           </Link>

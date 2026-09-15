@@ -89,7 +89,11 @@ export async function LiveCatalogPage({
         {title !== 'Shop all gear' && ` / ${title}`}
       </nav>
       <header
-        className={`relative border-b pb-5 ${hub ? 'grid gap-5 rounded-2xl border bg-[#edeae3] p-5 sm:p-7 md:grid-cols-[1fr_220px]' : ''}`}
+        className={
+          hub
+            ? 'shams-panel grid gap-5 bg-surface-subtle p-5 sm:p-7 md:grid-cols-[1fr_220px]'
+            : 'relative border-b pb-5'
+        }
       >
         <div>
           <p className="text-xs font-semibold uppercase tracking-[.16em] text-brand-ink">

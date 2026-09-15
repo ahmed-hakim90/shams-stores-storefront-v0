@@ -167,6 +167,7 @@ export function ShopFeed({
     apply(next)
   }
   const active = activeCatalogFilterKeys(p, availableFacets, lockedFilters)
+  const resultCount = feed.data?.pages[0]?.total ?? total
   return (
     <section
       onClickCapture={rememberPosition}
@@ -189,14 +190,15 @@ export function ShopFeed({
           apply={apply}
         />
         <p className="hidden text-sm text-muted-foreground lg:block">
-          Find the right gear for your next project
+          {resultCount} {resultCount === 1 ? 'product' : 'products'} · Find the
+          right gear for your next project
         </p>
         <label className="flex items-center gap-2 text-sm">
           <span className="sr-only sm:not-sr-only">Sort</span>
           <select
             value={p.get('sort') ?? 'newest'}
             onChange={(e) => change('sort', e.target.value)}
-            className="min-h-11 max-w-[160px] rounded-lg border bg-background px-3"
+            className="min-h-11 max-w-[160px] rounded-[var(--radius-control)] border border-border bg-surface-raised px-3"
           >
             {query && <option value="relevance">Best match</option>}
             <option value="newest">Newest</option>
@@ -207,7 +209,7 @@ export function ShopFeed({
         </label>
       </div>
       <div className="shams-catalog-layout">
-        <aside className="shams-sidebar hidden pr-3 lg:block">
+        <aside className="shams-sidebar shams-panel hidden p-4 lg:block">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="font-semibold">Refine your search</h2>
             {active.length > 0 && (

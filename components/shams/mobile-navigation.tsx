@@ -49,7 +49,7 @@ export function MobileHeader() {
   return (
     <header
       ref={header}
-      className="border-b border-border/70 bg-background/0.5 backdrop-blur sticky top-0 z-50 px-3 pt-[max(0.375rem,env(safe-area-inset-top))] md:hidden"
+      className="sticky top-0 z-50 border-b border-border bg-background/95 px-3 pt-[max(0.375rem,env(safe-area-inset-top))] shadow-[0_10px_30px_-28px_rgb(17_17_17_/_0.6)] backdrop-blur md:hidden"
     >
       <div className="relative flex h-14 items-center justify-between px-0">
         <MobileMenu />
@@ -65,7 +65,7 @@ export function MobileHeader() {
             type="button"
             onClick={openWishlist}
             aria-label="Open wishlist"
-            className="relative inline-flex size-11 items-center justify-center rounded-full border border-white/45 bg-white/20 text-foreground/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.95)] transition-colors hover:bg-white/40 hover:text-brand-ink"
+            className="shams-icon-control relative size-11 text-foreground/80 hover:border-brand/30 hover:text-brand-ink"
           >
             <Heart className="size-5" />
             <CountBadge count={wishlistCount} />
@@ -74,7 +74,7 @@ export function MobileHeader() {
             type="button"
             onClick={openCart}
             aria-label="Open cart"
-            className="relative inline-flex size-11 items-center justify-center rounded-full border border-white/45 bg-white/20 text-foreground/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.65)] transition-colors hover:bg-white/40 hover:text-brand-ink"
+            className="shams-icon-control relative size-11 text-foreground/80 hover:border-brand/30 hover:text-brand-ink"
           >
             <ShoppingBag className="size-5" />
             <CountBadge count={cartCount} />

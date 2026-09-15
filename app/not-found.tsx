@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import { Search, ArrowRight } from 'lucide-react'
-import { LiveFooter } from '@/components/shams/live-footer'
 
 const links = [
   { label: 'Shop Cameras', href: '/c/cameras' },
@@ -27,7 +26,6 @@ export default function NotFound() {
           ))}
         </div>
       </main>
-      <LiveFooter />
     </div>
   )
 }

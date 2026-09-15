@@ -4,6 +4,7 @@ import { Dialog } from '@base-ui/react/dialog'
 import { ShoppingCart, X } from 'lucide-react'
 import { useInteractions } from './interaction-provider'
 import { ProductImage } from './product-image'
+import { CartLineOptions } from './cart-line-options'
 import { formatEgp } from '@/lib/commerce'
 export function CartDrawer({ showTrigger = true }: { showTrigger?: boolean }) {
   const {
@@ -78,6 +79,7 @@ export function CartDrawer({ showTrigger = true }: { showTrigger?: boolean }) {
                   </div>
                   <div className="min-w-0">
                     <h3 className="text-sm font-medium">{l.productName}</h3>
+                    <CartLineOptions options={l.selectedOptions} />
                     <p className="mt-2 text-sm font-semibold">
                       {formatEgp(l.total ?? l.price * l.quantity)}
                     </p>

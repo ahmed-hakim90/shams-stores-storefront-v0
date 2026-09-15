@@ -33,7 +33,7 @@ function IconAction({
   return (
     <Link
       href={href}
-      className="group relative flex size-11 shrink-0 items-center justify-center rounded-lg text-foreground/80 transition-colors hover:text-brand lg:size-11"
+      className="shams-icon-control group relative size-11 shrink-0 text-foreground/80 hover:border-brand/30 hover:text-brand-ink"
     >
       <span className="relative">
         <Icon className="size-5.5" />
@@ -105,11 +105,11 @@ export function Header() {
 
       <header
         ref={header}
-        className="sticky top-0 z-50 hidden bg-background/95 backdrop-blur md:block"
+        className="sticky top-0 z-50 hidden border-b border-border bg-background/95 shadow-[0_10px_30px_-28px_rgb(17_17_17_/_0.6)] backdrop-blur md:block"
       >
         {/* Main row */}
         <div className="border-b border-border">
-          <div className="mx-auto flex min-w-0 max-w-[1440px] items-center gap-2 px-4 py-3 sm:gap-4 sm:px-6 lg:gap-5">
+          <div className="shams-container flex min-w-0 items-center gap-2 py-3 sm:gap-4 lg:gap-5">
             <div className="flex min-w-0 shrink-0 h-11 items-center gap-1">
               <MobileMenu />
               <Link
@@ -138,7 +138,7 @@ export function Header() {
                 type="button"
                 onClick={openWishlist}
                 aria-label="Open wishlist"
-                className="group relative flex size-11 shrink-0 items-center justify-center rounded-lg text-foreground/80 transition-colors hover:text-brand lg:size-11"
+                className="shams-icon-control group relative size-11 shrink-0 text-foreground/80 hover:border-brand/30 hover:text-brand-ink"
               >
                 <span className="relative">
                   <Heart className="size-5.5" />
@@ -151,7 +151,7 @@ export function Header() {
               <button
                 onClick={openCart}
                 aria-label="Open cart"
-                className="relative flex size-11 items-center justify-center rounded-lg"
+                className="shams-icon-control relative size-11 hover:border-brand/30 hover:text-brand-ink"
               >
                 <ShoppingCart className="size-5.5" />
                 {cartCount > 0 && (
@@ -166,11 +166,11 @@ export function Header() {
 
         {/* Nav row */}
         <div className="hidden border-b border-border lg:block">
-          <div className="mx-auto flex max-w-[1440px] items-center justify-between px-6">
+          <div className="shams-container flex items-center justify-between">
             <MegaMenu />
             <Link
               href="/branches"
-              className="inline-flex items-center gap-1.5 py-2 text-sm font-medium text-foreground/80 transition-colors hover:text-brand-ink"
+              className="inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-foreground/80 transition-colors hover:text-brand-ink"
             >
               <MapPin className="size-4 text-brand-ink" />
               Visit Shams

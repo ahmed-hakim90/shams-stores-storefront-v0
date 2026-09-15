@@ -40,14 +40,14 @@ export function MobileMenu() {
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger
         aria-label="Open menu"
-        className="relative inline-flex size-11 items-center justify-center rounded-full border border-white/45 bg-white/20 text-foreground/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.65)] transition-colors hover:bg-white/40 hover:text-brand lg:hidden"
+        className="shams-icon-control relative size-11 text-foreground/80 hover:border-brand/30 hover:text-brand-ink lg:hidden"
       >
         <Menu className="size-5" />
       </Dialog.Trigger>
 
       <Dialog.Portal>
         <Dialog.Backdrop className="fixed inset-0 z-[140] bg-foreground/40 backdrop-blur-sm" />
-        <Dialog.Popup className="fixed inset-y-0 left-0 z-[141] flex h-dvh w-[88%] max-w-sm flex-col rounded-r-[2rem] bg-background shadow-2xl">
+        <Dialog.Popup className="fixed inset-y-0 left-0 z-[141] flex h-dvh w-[88%] max-w-sm flex-col rounded-r-[var(--radius-editorial)] bg-background shadow-2xl">
           <Dialog.Title className="sr-only">Mobile navigation</Dialog.Title>
           <div className="flex items-center justify-between border-b border-border px-4 py-3">
             <ShamsLogo />
@@ -55,7 +55,7 @@ export function MobileMenu() {
               type="button"
               onClick={() => setOpen(false)}
               aria-label="Close menu"
-              className="inline-flex size-11 items-center justify-center rounded-lg text-foreground hover:bg-muted"
+              className="shams-icon-control size-11 hover:border-brand/30 hover:text-brand-ink"
             >
               <X className="size-5" />
             </button>

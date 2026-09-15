@@ -50,9 +50,9 @@ export async function LiveFooter() {
     },
   ]
   return (
-    <footer className="mt-5 bg-[#181b19] pb-24 text-white md:pb-0">
-      <div className="shams-container py-9 sm:py-12">
-        <div className="mb-9 flex flex-wrap items-center justify-between gap-6 border-b border-white/15 pb-8">
+    <footer className="mt-8 bg-foreground pb-24 text-white md:pb-0">
+      <div className="shams-container py-10 sm:py-14">
+        <div className="mb-10 flex flex-wrap items-center justify-between gap-6 border-b border-white/15 pb-9">
           <div>
             <Link
               href="/"

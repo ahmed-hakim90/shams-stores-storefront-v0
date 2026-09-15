@@ -67,7 +67,7 @@ export function ProductRail({
             aria-controls={id}
             disabled={edges.start}
             onClick={() => move(-1)}
-            className="flex size-11 items-center justify-center rounded-full border bg-card hover:border-brand"
+            className="shams-icon-control size-11 disabled:cursor-not-allowed disabled:opacity-45"
           >
             <ChevronLeft className="size-5" />
           </button>
@@ -76,7 +76,7 @@ export function ProductRail({
             aria-controls={id}
             disabled={edges.end}
             onClick={() => move(1)}
-            className="flex size-11 items-center justify-center rounded-full border bg-card hover:border-brand"
+            className="shams-icon-control size-11 disabled:cursor-not-allowed disabled:opacity-45"
           >
             <ChevronRight className="size-5" />
           </button>

@@ -667,7 +667,7 @@ function ShellFrame({
         Skip to content
       </a>
       {variant === 'checkout' ? (
-        <header className="border-b bg-card">
+        <header className="border-b border-border bg-card shadow-[0_8px_24px_-24px_rgb(17_17_17_/_0.5)]">
           <div className="shams-container flex min-h-20 flex-wrap items-center justify-between gap-3 py-3">
             <Link href="/" aria-label="Shams Stores home">
               <ShamsLogo />

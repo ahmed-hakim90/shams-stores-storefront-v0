@@ -61,7 +61,7 @@ export function FilterFields({
           type="checkbox"
           checked={values.get('onSale') === 'true'}
           onChange={(e) => change('onSale', e.target.checked ? 'true' : '')}
-          className="size-4 accent-orange-500"
+          className="size-4 accent-brand"
         />
         On sale
       </label>
@@ -103,7 +103,7 @@ function PriceField({
         onKeyDown={(e) => {
           if (e.key === 'Enter') e.currentTarget.blur()
         }}
-        className="mt-2 h-11 w-full rounded-lg border px-3 text-base text-foreground"
+        className="mt-2 h-11 w-full rounded-[var(--radius-control)] border border-border bg-surface-raised px-3 text-base text-foreground"
       />
     </label>
   )
@@ -163,7 +163,7 @@ function FilterGroup({
               name={name}
               checked={value === x.id}
               onChange={() => change(x.id)}
-              className="accent-orange-500"
+              className="accent-brand"
             />
             <span className="min-w-0 flex-1">{x.label}</span>
             <span className="text-xs tabular-nums text-muted-foreground">

@@ -57,8 +57,8 @@ export function MegaMenu() {
               href={`/c/${cat.slug}`}
               onFocus={() => open(cat.slug)}
               className={cn(
-                'inline-flex min-h-11 items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium text-foreground/80 transition-colors hover:text-brand-ink',
-                active === cat.slug && 'text-brand-ink',
+                'inline-flex min-h-11 items-center gap-1 rounded-[var(--radius-control)] px-3 py-2 text-sm font-medium text-foreground/80 transition-colors hover:bg-brand-muted hover:text-brand-ink',
+                active === cat.slug && 'bg-brand-muted text-brand-ink',
               )}
               aria-expanded={active === cat.slug}
             >
@@ -114,7 +114,7 @@ function MegaPanel({ category }: { category: Category }) {
     : undefined
 
   return (
-    <div className="max-h-[calc(100dvh-var(--shell-header-height)-32px)] overflow-y-auto overscroll-contain rounded-2xl border border-border bg-popover shadow-2xl">
+    <div className="shams-panel max-h-[calc(100dvh-var(--shell-header-height)-32px)] overflow-y-auto overscroll-contain rounded-[var(--radius-editorial)] bg-popover">
       <div className="grid grid-cols-[1fr_18rem]">
         <div className="p-6">
           <div className="mb-4 flex items-center justify-between">

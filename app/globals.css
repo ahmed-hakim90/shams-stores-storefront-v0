@@ -62,6 +62,10 @@
   --color-info: var(--info);
   --color-info-muted: var(--info-muted);
   --color-warning-muted: var(--warning-muted);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-subtle: var(--surface-subtle);
+  --color-line-strong: var(--line-strong);
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }
@@ -89,16 +93,6 @@
 
   --brand: #f47a20;
   --brand-ink: #a54108;
-  --motion-fast: 140ms;
-  --motion-standard: 220ms;
-  --motion-overlay: 280ms;
-  --motion-editorial: 400ms;
-  --radius-control: 12px;
-  --radius-card: 20px;
-  --radius-editorial: 24px;
-  --shell-header-height: 64px;
-  --shell-gutter: 16px;
-  --shadow-card: 0 12px 32px -24px #20181050;
   --brand-hover: #dc6815;
   --brand-active: #c75a0d;
   --brand-foreground: #211409;
@@ -115,7 +109,26 @@
   --danger-muted: #fcebea;
   --info: #4f6578;
   --info-muted: #eef2f5;
+  --surface: #ffffff;
+  --surface-raised: #ffffff;
+  --surface-subtle: #f2f1ed;
   --surface-dark: #171717;
+  --line-strong: #d5d4cf;
+
+  --space-section: clamp(2.5rem, 5vw, 5.5rem);
+  --space-section-compact: clamp(1.75rem, 3.5vw, 3.5rem);
+  --radius-control: 12px;
+  --radius-card: 18px;
+  --radius-editorial: 24px;
+  --shadow-card: 0 1px 0 rgb(17 17 17 / 0.03), 0 18px 42px -32px rgb(17 17 17 / 0.44);
+  --shadow-raised: 0 18px 46px -34px rgb(17 17 17 / 0.52);
+  --motion-fast: 140ms;
+  --motion-standard: 220ms;
+  --motion-overlay: 280ms;
+  --motion-editorial: 400ms;
+
+  --shell-header-height: 64px;
+  --shell-gutter: 16px;
   --mobile-bottom-nav-height: 5rem;
   --sticky-purchase-height: 4.5rem;
   --compare-tray-height: 3.5rem;
@@ -151,7 +164,8 @@
     scrollbar-gutter: stable;
     scroll-padding-top: calc(var(--shell-header-height) + 24px);
     scroll-padding-bottom: calc(
-      var(--fixed-stack-bottom) + var(--sticky-purchase-offset) + 24px
+      var(--fixed-stack-bottom) + var(--sticky-purchase-offset) +
+        var(--compare-tray-offset) + 24px
     );
   }
   body {
@@ -263,21 +277,11 @@
     line-height: 1.08;
   }
 
-  .mobile-product-card {
-    overflow: hidden;
-    border-radius: var(--mobile-section-radius);
-    box-shadow: 0 8px 24px -20px rgba(17, 17, 17, 0.35);
+  .shams-product-card {
+    box-shadow: 0 8px 24px -20px rgb(17 17 17 / 0.35);
   }
 
-  .mobile-product-results {
-    grid-template-columns: minmax(0, 1fr) !important;
-  }
-
-  .mobile-view-toggle {
-    display: none;
-  }
-
-  .mobile-product-card > div:first-child {
+  .shams-product-card > div:first-child {
     background: linear-gradient(
       145deg,
       #ffffff 0%,
@@ -285,11 +289,11 @@
     );
   }
 
-  .mobile-product-card > div:last-child {
+  .shams-product-card > div:last-child {
     min-width: 0;
   }
 
-  .mobile-product-card a {
+  .shams-product-card a {
     -webkit-tap-highlight-color: transparent;
   }
 
@@ -373,22 +377,51 @@
   margin-inline: auto;
   padding-inline: var(--shell-gutter);
 }
+.shams-page {
+  min-width: 0;
+}
 .shams-section {
-  padding-block: clamp(36px, 5vw, 72px);
+  padding-block: var(--space-section);
+}
+.shams-section-compact {
+  padding-block: var(--space-section-compact);
 }
 .shams-eyebrow {
   color: var(--brand-ink);
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 650;
   letter-spacing: 0.16em;
   text-transform: uppercase;
 }
 .shams-title {
-  font-size: clamp(28px, 3.6vw, 48px);
-  line-height: 1.12;
+  max-width: 18ch;
+  font-size: clamp(1.75rem, 3.6vw, 3rem);
+  line-height: 1.08;
   font-weight: 600;
   letter-spacing: -0.035em;
   text-wrap: balance;
+}
+.shams-panel {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface-raised);
+  box-shadow: var(--shadow-card);
+}
+.shams-icon-control {
+  display: inline-flex;
+  min-width: 44px;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--surface-raised);
+  color: var(--foreground);
+  transition: background-color var(--motion-fast), border-color var(--motion-fast), color var(--motion-fast);
+}
+.shams-icon-control:hover {
+  border-color: var(--line-strong);
+  background: var(--surface-subtle);
 }
 .shams-button {
   display: inline-flex;
@@ -396,23 +429,37 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 12px 20px;
   border-radius: var(--radius-control);
-  font-size: 14px;
-  font-weight: 600;
+  padding: 10px 18px;
+  font-size: 0.875rem;
+  font-weight: 650;
   background: var(--brand);
   color: var(--brand-foreground);
+  box-shadow: 0 1px 0 rgb(17 17 17 / 0.1);
+  transition: background-color var(--motion-fast), box-shadow var(--motion-fast), transform var(--motion-fast);
 }
 .shams-button:hover {
-  background: #ee8b40;
+  background: var(--brand-hover);
+  box-shadow: 0 4px 12px -8px rgb(165 65 8 / 0.7);
+}
+.shams-button:active {
+  background: var(--brand-active);
+  transform: translateY(1px);
 }
 .shams-button-secondary {
-  background: var(--card);
   border: 1px solid var(--border);
+  background: var(--surface-raised);
+  box-shadow: none;
   color: var(--foreground);
 }
 .shams-button-secondary:hover {
-  background: var(--muted);
+  border-color: var(--line-strong);
+  background: var(--surface-subtle);
+  box-shadow: none;
+}
+.shams-button-success {
+  background: var(--success);
+  color: white;
 }
 .shams-shell-content {
   padding-bottom: calc(
@@ -440,7 +487,12 @@
 .shams-catalog-layout {
   display: grid;
   align-items: start;
-  gap: 28px;
+  gap: clamp(1.25rem, 2.5vw, 2rem);
+}
+.shams-product-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
 }
 .shams-scroll-region {
   overflow: auto;
@@ -451,9 +503,14 @@
   display: flex;
   gap: 16px;
   overflow-x: auto;
-  overscroll-behavior-x: none;
+  overscroll-behavior-x: contain;
   scroll-snap-type: x proximity;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
   padding-bottom: 12px;
+}
+.shams-rail::-webkit-scrollbar {
+  display: none;
 }
 .shams-rail > article {
   width: min(78vw, 292px);
@@ -461,11 +518,12 @@
   scroll-snap-align: start;
 }
 .shams-product-card {
-  border-radius: var(--radius-card);
   overflow: hidden;
+  border-radius: var(--radius-card);
+  box-shadow: 0 1px 0 rgb(17 17 17 / 0.02);
 }
 .shams-product-card:hover {
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--shadow-raised);
 }
 .shams-product-card [data-purchase] {
   transition: opacity var(--motion-fast);
@@ -491,6 +549,12 @@
     --shell-gutter: 24px;
   }
 }
+@media (min-width: 640px) {
+  .shams-product-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+}
 @media (min-width: 768px) {
   :root {
     --fixed-stack-bottom: 16px;
@@ -503,6 +567,10 @@
 @media (min-width: 1024px) {
   .shams-catalog-layout {
     grid-template-columns: 240px minmax(0, 1fr);
+  }
+  .shams-product-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 20px;
   }
   :root {
     --sticky-purchase-height: 0px;
@@ -522,11 +590,6 @@
   }
 }
 
-.shams-button-success {
-  background: var(--success);
-  color: white;
-}
-
 /* Editorial discovery: compact mosaics, product rails, and campaign intervals. */
 .merch-section,
 .merch-home .shams-section {
@@ -544,9 +607,14 @@
   display: flex;
   gap: 12px;
   overflow-x: auto;
-  overscroll-behavior-x: none;
+  overscroll-behavior-x: contain;
   scroll-snap-type: x proximity;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
   padding-bottom: 12px;
+}
+.merch-discovery-rail::-webkit-scrollbar {
+  display: none;
 }
 @media (min-width: 768px) {
   .merch-category-grid {
