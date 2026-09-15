@@ -236,6 +236,7 @@ export function CheckoutForm() {
               >
                 <input
                   type="radio"
+                  className="size-4 accent-brand"
                   name={`shipping-${rate.packageId}`}
                   checked={rate.selected}
                   onChange={() =>
@@ -264,6 +265,7 @@ export function CheckoutForm() {
           <label className="mb-3 flex min-h-14 items-center gap-3 rounded-lg border p-3 text-sm">
             <input
               type="radio"
+              className="size-4 accent-brand"
               name="payment"
               checked={method === CARD_METHOD}
               onChange={() => setMethod(CARD_METHOD)}
@@ -279,6 +281,7 @@ export function CheckoutForm() {
             >
               <input
                 type="radio"
+                className="size-4 accent-brand"
                 name="payment"
                 checked={method === id}
                 onChange={() => setMethod(id)}

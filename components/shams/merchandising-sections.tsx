@@ -22,6 +22,7 @@ import {
 } from '@/lib/commerce/live/merchandising'
 import { ProductImage } from './product-image'
 import { PriceDisplay } from './price-display'
+import { StockStatus } from './stock-status'
 import { ProductCard } from './product-card'
 
 export function MerchSectionHeading({
@@ -105,6 +106,7 @@ export async function ProductSpotlight() {
                 <PriceDisplay
                   price={product.price}
                   previousPrice={product.previousPrice}
+                  installmentFrom={product.installmentFrom}
                   className="text-2xl"
                 />
               </div>
@@ -139,7 +141,7 @@ export async function ProductSpotlight() {
               <ProductVisual product={product} priority />
               <span className="absolute bottom-4 left-5 right-5 flex items-center justify-between gap-3 border-t border-border bg-white/95 pt-3 text-xs font-medium text-muted-foreground">
                 <span>{product.brand || 'Shams selection'}</span>
-                <span className="text-success">In stock at Shams</span>
+                <StockStatus status={product.stock} className="text-xs" />
               </span>
             </Link>
           )}
@@ -414,7 +416,7 @@ export async function SetupDiscovery() {
         action="Plan my setup"
       />
       <div
-        className="flex gap-3 overflow-x-auto overscroll-x-contain pb-3"
+        className="shams-scrollbar-none flex snap-x gap-3 overflow-x-auto overscroll-x-contain pb-3"
         role="region"
         aria-label="Setup planning categories"
         tabIndex={0}
@@ -422,7 +424,7 @@ export async function SetupDiscovery() {
         {steps.map((t, i) => (
           <div
             key={t.id}
-            className="flex min-w-0 shrink-0 items-center gap-3 lg:flex-1"
+            className="flex min-w-0 shrink-0 snap-start items-center gap-3 lg:flex-1"
           >
             <Link
               href={`/c/${t.slug}`}

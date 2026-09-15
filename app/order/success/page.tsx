@@ -16,7 +16,7 @@ export default async function Page() {
   const ownership = await readOwnershipCookie()
   if (!ownership)
     return (
-      <main className="mobile-storefront-page mx-auto max-w-2xl px-4 py-12">
+      <main className="shams-container max-w-2xl py-12">
         <h1 className="text-3xl font-semibold">Your order</h1>
         <p className="mt-6 text-sm leading-6 text-muted-foreground">
           No recent order was found on this device. For an earlier order, use

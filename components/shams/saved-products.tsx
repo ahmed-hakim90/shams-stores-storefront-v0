@@ -50,7 +50,7 @@ export function SavedProducts({
       className={
         compact
           ? 'py-3'
-          : 'mobile-storefront-page shams-container shams-section'
+          : 'shams-container shams-section'
       }
     >
       <h1 className="text-2xl font-semibold">
@@ -84,7 +84,7 @@ export function SavedProducts({
         </div>
       )}
       {unavailable.length > 0 && (
-        <div className="mt-5 rounded-xl border bg-card p-4 text-sm">
+        <div className="shams-panel mt-5 p-4 text-sm">
           <p>Some saved gear is no longer available in the catalog.</p>
           <button
             className="mt-2 min-h-11 text-brand-ink"

@@ -22,7 +22,7 @@ export function CartPageContent({ checkout = false }: { checkout?: boolean }) {
   const total =
     cart?.total ?? cartLines.reduce((sum, l) => sum + l.quantity * l.price, 0)
   return (
-    <main className="mobile-storefront-page mx-auto max-w-[1200px] px-4 py-8 sm:px-6 sm:py-12">
+    <main className="shams-container max-w-[1200px] py-8 sm:py-12">
       {!checkout && (
         <Link href="/shop" className="text-sm text-brand-ink">
           ← Continue shopping
@@ -135,7 +135,7 @@ export function CartPageContent({ checkout = false }: { checkout?: boolean }) {
               </div>
             )}
           </div>
-          <aside className="rounded-2xl border bg-card p-5 lg:sticky lg:top-[calc(var(--shell-header-height)+24px)]">
+          <aside className="shams-panel p-5 lg:sticky lg:top-[calc(var(--shell-header-height)+24px)]">
             <h2 className="text-lg font-semibold">Order summary</h2>
             {checkout && (
               <details className="mt-4 border-b pb-3">

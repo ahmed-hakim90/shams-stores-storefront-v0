@@ -21,9 +21,9 @@ export function PaymentResult({ orderId }: { orderId: string }) {
 
   const state = q.data?.state
   return (
-    <main className="mobile-storefront-page mx-auto max-w-2xl px-4 py-12">
+    <main className="shams-container max-w-2xl py-12">
       {q.isLoading || (!state && !q.isError) ? (
-        <div className="rounded-xl border p-8 text-center">
+        <div className="shams-panel p-8 text-center">
           <h1 className="text-2xl font-semibold">Confirming your payment…</h1>
           <p className="mt-3 text-sm leading-6 text-muted-foreground">
             We are waiting for your bank to confirm. This usually takes a few
@@ -32,7 +32,7 @@ export function PaymentResult({ orderId }: { orderId: string }) {
           <div className="mx-auto mt-6 size-8 animate-spin rounded-full border-2 border-brand border-t-transparent" />
         </div>
       ) : state === 'paid' ? (
-        <div className="rounded-xl border bg-card p-8 text-center">
+        <div className="shams-panel p-8 text-center">
           <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-green-50 text-2xl text-green-700">
             ✓
           </div>
@@ -51,6 +51,17 @@ export function PaymentResult({ orderId }: { orderId: string }) {
               <div className="flex justify-between">
                 <dt className="text-muted-foreground">Paid by</dt>
                 <dd className="capitalize">{q.data.method}</dd>
+              </div>
+            )}
+            {q.data?.paidAt && (
+              <div className="flex justify-between gap-3">
+                <dt className="text-muted-foreground">Paid at</dt>
+                <dd>
+                  {new Date(q.data.paidAt).toLocaleString('en-EG', {
+                    dateStyle: 'medium',
+                    timeStyle: 'short',
+                  })}
+                </dd>
               </div>
             )}
             {q.data?.transactionId && (

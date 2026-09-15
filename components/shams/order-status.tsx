@@ -16,12 +16,12 @@ export function OrderStatus() {
     retry: false,
   })
   return (
-    <main className="mobile-storefront-page mx-auto max-w-2xl px-4 py-12">
+    <main className="shams-container max-w-2xl py-12">
       <h1 className="text-3xl font-semibold">Your order</h1>
       {q.isLoading ? (
         <p className="mt-6">Checking your order…</p>
       ) : q.data ? (
-        <div className="mt-6 rounded-xl border p-6">
+        <div className="shams-panel mt-6 p-6">
           <h2 className="font-semibold">Order #{q.data.id}</h2>
           <p className="mt-2 capitalize">
             {q.data.status.replaceAll('-', ' ')}

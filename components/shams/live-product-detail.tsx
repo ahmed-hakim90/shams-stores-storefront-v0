@@ -11,6 +11,7 @@ import { StockStatus } from './stock-status'
 import { AddToCartButton } from './add-to-cart-button'
 import { WishlistAction } from './wishlist-action'
 import { CompareAction } from './compare-action'
+import { ProductBadge } from './product-badge'
 import { RatingStars } from './rating-stars'
 import { useInteractions } from './interaction-provider'
 import { RecordViewed } from './saved-products'
@@ -80,11 +81,16 @@ export function LiveProductDetail({ product }: { product: ProductDetail }) {
           <h1 className="mt-3 text-2xl font-semibold leading-tight tracking-tight sm:text-4xl">
             {product.name}
           </h1>
-          {product.sku && (
-            <p className="mt-3 text-xs text-muted-foreground">
-              SKU {product.sku}
-            </p>
-          )}
+          <div className="mt-3 flex flex-wrap items-center gap-1.5">
+            {product.badges.map((b) => (
+              <ProductBadge key={b} badge={b} />
+            ))}
+            {product.sku && (
+              <span className="text-xs text-muted-foreground">
+                SKU {product.sku}
+              </span>
+            )}
+          </div>
           {product.reviewCount > 0 && (
             <RatingStars
               rating={product.rating}
@@ -95,6 +101,7 @@ export function LiveProductDetail({ product }: { product: ProductDetail }) {
             <PriceDisplay
               price={product.price}
               previousPrice={product.previousPrice}
+              installmentFrom={product.installmentFrom}
               size="lg"
             />
           </div>
@@ -151,7 +158,7 @@ export function LiveProductDetail({ product }: { product: ProductDetail }) {
             Need help choosing? Talk to Shams →
           </Link>
           {product.warranty && (
-            <div className="mt-6 rounded-xl border p-4">
+            <div className="shams-panel mt-6 p-4">
               <h2 className="text-sm font-semibold">Warranty</h2>
               <p className="mt-2 text-sm text-muted-foreground">
                 {product.warranty}
@@ -159,17 +166,24 @@ export function LiveProductDetail({ product }: { product: ProductDetail }) {
             </div>
           )}
           {stock.data?.branches.length ? (
-            <section className="mt-6 rounded-xl border p-4">
+            <section className="shams-panel mt-6 p-4">
               <h2 className="font-semibold">Branch availability</h2>
-              {stock.data.branches.map((b) => (
-                <div
-                  key={b.id}
-                  className="mt-3 flex justify-between gap-3 text-sm"
-                >
-                  <span>{b.name}</span>
-                  <span>{b.status}</span>
-                </div>
-              ))}
+              {stock.data.message && (
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {stock.data.message}
+                </p>
+              )}
+              <ul className="mt-3 divide-y divide-border">
+                {stock.data.branches.map((b) => (
+                  <li
+                    key={b.id}
+                    className="flex items-center justify-between gap-3 py-2 text-sm"
+                  >
+                    <span className="min-w-0 truncate">{b.name}</span>
+                    <span className="shrink-0 font-medium">{b.status}</span>
+                  </li>
+                ))}
+              </ul>
             </section>
           ) : null}
         </section>
@@ -210,7 +224,7 @@ export function LiveProductDetail({ product }: { product: ProductDetail }) {
             className="grid gap-5 lg:grid-cols-[240px_1fr]"
           >
             <h2 className="mb-4 text-2xl font-semibold">Overview</h2>
-            <p className="max-w-4xl whitespace-pre-line text-sm leading-7 text-muted-foreground">
+            <p className="max-w-4xl whitespace-pre-line break-words text-sm leading-7 text-muted-foreground">
               {product.description}
             </p>
           </section>

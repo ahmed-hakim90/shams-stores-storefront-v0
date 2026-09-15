@@ -176,7 +176,7 @@ export default async function StorefrontRoute({
     if (section === 'brands' || section === 'categories') {
       const ts = await terms(section === 'brands' ? 'brands' : 'categories')
       return (
-        <main className="mobile-storefront-page mx-auto max-w-[1400px] px-4 py-10 sm:px-6">
+        <main className="shams-container max-w-[1400px] py-10">
           <h1 className="mb-6 text-3xl font-semibold">
             Shop by {section === 'brands' ? 'brand' : 'category'}
           </h1>
@@ -211,7 +211,7 @@ export default async function StorefrontRoute({
       )
     if (section === 'account')
       return (
-        <main className="mobile-storefront-page mx-auto max-w-3xl px-4 py-12">
+        <main className="shams-container max-w-3xl py-12">
           <h1 className="text-3xl font-semibold">My Shams</h1>
           <p className="mt-4 text-sm text-muted-foreground">
             Your saved gear and recent order on this device.
@@ -230,7 +230,7 @@ export default async function StorefrontRoute({
       )
     if (['support', 'branches'].includes(section))
       return (
-        <main className="mobile-storefront-page mx-auto max-w-3xl px-4 py-12">
+        <main className="shams-container max-w-3xl py-12">
           <h1 className="text-3xl font-semibold">
             {section === 'branches' ? 'Visit Shams Stores' : 'Talk to Shams'}
           </h1>

@@ -32,9 +32,9 @@ async function Feed({ config }: { config: PageExperienceConfig }) {
         >
           <div className="shams-container merch-section">
             <MerchSectionHeading
-              eyebrow="More room for your next idea"
-              title="Deals worth a closer look"
-              description="Current offers on equipment from the Shams catalog."
+              eyebrow={config.eyebrow}
+              title={config.title}
+              description={config.description}
               href={config.href}
               action="View all deals"
             />
