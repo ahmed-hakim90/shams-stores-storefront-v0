@@ -11,7 +11,7 @@ import { catalogParams, type CatalogScope } from '@/lib/commerce/experience'
 import { CatalogDiscovery } from '@/components/shams/marketing'
 import { Reveal } from '@/components/shams/shared'
 import type { TaxonomyTerm } from '@/lib/commerce/types'
-import { ProductCard } from '@/components/shams/product'
+import { ProductCard, ProductScrollRow } from '@/components/shams/product'
 import {
   activeCatalogFilterKeys,
   clearCatalogFilters,
@@ -36,6 +36,7 @@ export function ShopFeed({
   discovery,
   initialFacets = emptyFacets,
   lockedFilters = [],
+  categoryGroups = [],
 }: {
   initialProducts: ProductSummary[]
   initialCursor?: string
@@ -50,6 +51,7 @@ export function ShopFeed({
   }
   lockedFilters?: string[]
   initialFacets?: FacetResult
+  categoryGroups?: { category: TaxonomyTerm; products: ProductSummary[] }[]
 }) {
   const search = useSearchParams(),
     pathname = usePathname(),
@@ -169,6 +171,7 @@ export function ShopFeed({
   }
   const active = activeCatalogFilterKeys(p, availableFacets, lockedFilters)
   const resultCount = feed.data?.pages[0]?.total ?? total
+  const showGroups = categoryGroups.length > 0 && !scope.category
   return (
     <section
       onClickCapture={rememberPosition}
@@ -238,111 +241,132 @@ export function ShopFeed({
           <FilterFields facets={availableFacets} values={p} change={change} />
         </aside>
         <div className="min-w-0">
-          <div className="mb-2 flex flex-wrap gap-1.5">
-            {active.map((k) => (
-              <button
-                key={k}
-                onClick={() => change(k, '')}
-                className="inline-flex h-6 items-center border border-border bg-surface-subtle px-2 text-[11px] text-foreground hover:border-brand"
-              >
-                {k === 'onSale' ? 'On sale' : p.get(k)?.replaceAll('-', ' ')} ×
-              </button>
-            ))}
-          </div>
-          <div
-            role="status"
-            className="mb-3 text-sm text-muted-foreground"
-            aria-live="polite"
-          >
-            {feed.isPlaceholderData
-              ? 'Updating your selection… Previous results are shown below.'
-              : feed.isError && !feed.isFetchNextPageError
-                ? 'We could not update these results.'
-                : ''}
-          </div>
-          {feed.isError && !feed.isFetchNextPageError && (
-            <button
-              className="shams-button shams-button-secondary mb-4"
-              onClick={() => feed.refetch()}
-            >
-              Retry results
-            </button>
-          )}
-          <div
-            className="shams-product-grid"
-            data-results-pending={feed.isPlaceholderData}
-            aria-busy={feed.isFetching && !feed.isFetchingNextPage}
-          >
-            {items.map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                purchaseDisabled={feed.isPlaceholderData}
-              />
-            ))}
-          </div>
-          {items.length === 0 && !feed.isPending && !feed.isError && (
-            <div className="rounded-(--radius-card) border border-dashed p-10 text-center">
-              <h2 className="text-lg font-semibold">
-                No gear matches these filters
-              </h2>
-              <p className="mt-2 text-sm text-muted-foreground">
-                Try removing a filter or searching for another model.
-              </p>
-              {active.length || query ? (
-                <button
-                  className="shams-button mt-5"
-                  onClick={() => {
-                    const n = new URLSearchParams(params)
-                    clearCatalogFilters(n, availableFacets, lockedFilters)
-                    n.delete('q')
-                    apply(n)
-                  }}
-                >
-                  Reset your search
-                </button>
-              ) : (
-                <Link href="/shop" className="shams-button mt-5">
-                  Explore all gear →
-                </Link>
-              )}
+          {showGroups ? (
+            <div className="space-y-6">
+              {categoryGroups.map((group) => (
+                <section key={group.category.slug}>
+                  <div className="mb-2 flex items-center justify-between">
+                    <h2 className="text-sm font-semibold">{group.category.name}</h2>
+                    <Link
+                      href={`/c/${group.category.slug}`}
+                      className="text-xs text-brand-ink"
+                    >
+                      View all →
+                    </Link>
+                  </div>
+                  <ProductScrollRow products={group.products} />
+                </section>
+              ))}
             </div>
-          )}
-          <div ref={sentinel} className="py-6" aria-live="polite">
-            {(feed.isFetchingNextPage || feed.isPending) && (
-              <div className="space-y-4" aria-label="Loading more products">
-                {[0, 1, 2].map((x) => (
-                  <div
-                    key={x}
-                    className="h-52 animate-pulse rounded-(--radius-card) border bg-muted/40 motion-reduce:animate-none"
+          ) : (
+            <>
+              <div className="mb-2 flex flex-wrap gap-1.5">
+                {active.map((k) => (
+                  <button
+                    key={k}
+                    onClick={() => change(k, '')}
+                    className="inline-flex h-6 items-center border border-border bg-surface-subtle px-2 text-[11px] text-foreground hover:border-brand"
+                  >
+                    {k === 'onSale' ? 'On sale' : p.get(k)?.replaceAll('-', ' ')} ×
+                  </button>
+                ))}
+              </div>
+              <div
+                role="status"
+                className="mb-3 text-sm text-muted-foreground"
+                aria-live="polite"
+              >
+                {feed.isPlaceholderData
+                  ? 'Updating your selection… Previous results are shown below.'
+                  : feed.isError && !feed.isFetchNextPageError
+                    ? 'We could not update these results.'
+                    : ''}
+              </div>
+              {feed.isError && !feed.isFetchNextPageError && (
+                <button
+                  className="shams-button shams-button-secondary mb-4"
+                  onClick={() => feed.refetch()}
+                >
+                  Retry results
+                </button>
+              )}
+              <div
+                className="shams-product-grid"
+                data-results-pending={feed.isPlaceholderData}
+                aria-busy={feed.isFetching && !feed.isFetchingNextPage}
+              >
+                {items.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    purchaseDisabled={feed.isPlaceholderData}
                   />
                 ))}
               </div>
-            )}
-            {feed.isFetchNextPageError && (
-              <div className="text-center text-sm">
-                <p>
-                  Your results are still here. The next page could not load.
-                </p>
-                <button
-                  onClick={() => feed.fetchNextPage()}
-                  className="mt-3 min-h-11 rounded-(--radius-control) border px-5"
-                >
-                  Retry
-                </button>
-              </div>
-            )}
-            {feed.hasNextPage &&
-              !feed.isFetchingNextPage &&
-              !feed.isFetchNextPageError && (
-                <button
-                  onClick={() => feed.fetchNextPage()}
-                  className="mx-auto block min-h-11 rounded-(--radius-control) border px-5 text-sm"
-                >
-                  Load more
-                </button>
+              {items.length === 0 && !feed.isPending && !feed.isError && (
+                <div className="rounded-(--radius-card) border border-dashed p-10 text-center">
+                  <h2 className="text-lg font-semibold">
+                    No gear matches these filters
+                  </h2>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    Try removing a filter or searching for another model.
+                  </p>
+                  {active.length || query ? (
+                    <button
+                      className="shams-button mt-5"
+                      onClick={() => {
+                        const n = new URLSearchParams(params)
+                        clearCatalogFilters(n, availableFacets, lockedFilters)
+                        n.delete('q')
+                        apply(n)
+                      }}
+                    >
+                      Reset your search
+                    </button>
+                  ) : (
+                    <Link href="/shop" className="shams-button mt-5">
+                      Explore all gear →
+                    </Link>
+                  )}
+                </div>
               )}
-          </div>
+              <div ref={sentinel} className="py-6" aria-live="polite">
+                {(feed.isFetchingNextPage || feed.isPending) && (
+                  <div className="space-y-4" aria-label="Loading more products">
+                    {[0, 1, 2].map((x) => (
+                      <div
+                        key={x}
+                        className="h-52 animate-pulse rounded-(--radius-card) border bg-muted/40 motion-reduce:animate-none"
+                      />
+                    ))}
+                  </div>
+                )}
+                {feed.isFetchNextPageError && (
+                  <div className="text-center text-sm">
+                    <p>
+                      Your results are still here. The next page could not load.
+                    </p>
+                    <button
+                      onClick={() => feed.fetchNextPage()}
+                      className="mt-3 min-h-11 rounded-(--radius-control) border px-5"
+                    >
+                      Retry
+                    </button>
+                  </div>
+                )}
+                {feed.hasNextPage &&
+                  !feed.isFetchingNextPage &&
+                  !feed.isFetchNextPageError && (
+                    <button
+                      onClick={() => feed.fetchNextPage()}
+                      className="mx-auto block min-h-11 rounded-(--radius-control) border px-5 text-sm"
+                    >
+                      Load more
+                    </button>
+                  )}
+              </div>
+            </>
+          )}
         </div>
       </div>
     </section>

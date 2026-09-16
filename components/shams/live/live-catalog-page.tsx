@@ -79,6 +79,20 @@ export async function LiveCatalogPage({
       .slice(0, 8)
     brandTerms = []
   }
+  const categoryGroups = !hub
+    ? (
+        await Promise.all(
+          primaryCategories(categories).map(async (cat) => {
+            const p = await listProducts({
+              category: cat.slug,
+              pageSize: 6,
+              sort: 'best-selling',
+            }).catch(() => ({ items: [], total: 0, hasNextPage: false }))
+            return { category: cat, products: p.items }
+          }),
+        )
+      ).filter((g) => g.products.length > 0)
+    : []
   return (
     <main className="shams-container py-3 pb-[calc(2rem+var(--mobile-bottom-nav-height))] sm:py-4 sm:pb-4">
       <nav
@@ -177,6 +191,7 @@ export async function LiveCatalogPage({
           initialHasNext={page.hasNextPage}
           total={page.total}
           initialFacets={facetData}
+          categoryGroups={categoryGroups}
         />
       )}
     </main>
