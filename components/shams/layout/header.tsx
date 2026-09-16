@@ -17,7 +17,11 @@ import {
 import { ShamsLogo, MobileMenu } from '@/components/shams/shared'
 import { SearchTrigger } from '@/components/shams/overlays'
 import { MegaMenu } from './mega-menu'
-import { useInteractions, useAuth } from '@/components/shams/providers'
+import {
+  preloadCartDrawer,
+  useInteractions,
+  useAuth,
+} from '@/components/shams/providers'
 import { MobileHeader } from './mobile-navigation'
 
 function IconAction({
@@ -206,6 +210,8 @@ export function Header() {
               </button>
               <button
                 onClick={openCart}
+                onPointerEnter={preloadCartDrawer}
+                onFocus={preloadCartDrawer}
                 aria-label="Open cart"
                 className="shams-icon-control relative size-10 hover:border-brand/30 hover:text-brand-ink"
               >

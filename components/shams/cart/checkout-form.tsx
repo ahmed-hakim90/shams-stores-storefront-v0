@@ -8,7 +8,7 @@ import type { Address, CheckoutResult } from '@/lib/commerce/types'
 import type { PaymentIntentClient } from '@/lib/payments/paymob/types'
 import { formatEgp } from '@/lib/commerce'
 import { PaymobPixel, preloadPaymobPixel } from '@/components/shams/payments'
-import { Plus, User, Lock, Eye, EyeOff, X, Mail, ArrowRight } from 'lucide-react'
+import { Plus, User, Lock, Eye, EyeOff, X, Mail, ArrowRight, Banknote, Building2, CreditCard, Calendar } from 'lucide-react'
 
 const CARD_METHOD = 'paymob-card'
 const empty: Address = {
@@ -165,6 +165,15 @@ export function CheckoutForm() {
         : id.includes('installment')
           ? 'Bank installments'
           : 'Pay securely by card'
+
+  const paymentIcon = (id: string) =>
+    id === 'cod'
+      ? Banknote
+      : id === 'bacs'
+        ? Building2
+        : id.includes('installment')
+          ? Calendar
+          : CreditCard
 
   const inputClass = (key: keyof Address) =>
     `mt-1 min-h-9 w-full rounded-(--radius-control) border bg-background px-2.5 text-sm font-normal transition-colors ${
@@ -533,31 +542,34 @@ export function CheckoutForm() {
       )}
 
       {saved && cart?.rates.length ? (
-        <div className="flex flex-wrap gap-1.5">
-          {cart.rates.map((rate) => (
-            <label
-              key={rate.id}
-              className={`flex cursor-pointer items-center gap-1.5 rounded-(--radius-control) border px-2.5 py-1.5 text-xs transition-colors ${
-                rate.selected ? 'border-brand bg-brand/5' : 'hover:border-brand'
-              }`}
-            >
-              <input
-                type="radio"
-                className="size-3 accent-brand"
-                name={`shipping-${rate.packageId}`}
-                checked={rate.selected}
-                onChange={() =>
-                  void mutateCart({
-                    action: 'shipping',
-                    rateId: rate.id,
-                    packageId: rate.packageId,
-                  }).catch((e) => setError(e.message))
-                }
-              />
-              <span>{rate.name}</span>
-              <span className="font-semibold">{formatEgp(rate.price)}</span>
-            </label>
-          ))}
+        <div className="space-y-2">
+          <p className="text-xs font-medium">Delivery method</p>
+          <div className="flex flex-col gap-1.5 sm:flex-row sm:flex-wrap">
+            {cart.rates.map((rate) => (
+              <label
+                key={rate.id}
+                className={`flex cursor-pointer items-center gap-2 rounded-(--radius-control) border px-3 py-2 text-xs transition-colors ${
+                  rate.selected ? 'border-brand bg-brand/5' : 'hover:border-brand'
+                }`}
+              >
+                <input
+                  type="radio"
+                  className="size-3.5 accent-brand"
+                  name={`shipping-${rate.packageId}`}
+                  checked={rate.selected}
+                  onChange={() =>
+                    void mutateCart({
+                      action: 'shipping',
+                      rateId: rate.id,
+                      packageId: rate.packageId,
+                    }).catch((e) => setError(e.message))
+                  }
+                />
+                <span>{rate.name}</span>
+                <span className="font-semibold">{formatEgp(rate.price)}</span>
+              </label>
+            ))}
+          </div>
         </div>
       ) : saved && !cart?.rates.length ? (
         <p className="text-xs text-muted-foreground">
@@ -566,45 +578,53 @@ export function CheckoutForm() {
         </p>
       ) : null}
 
-      <div className="flex flex-wrap gap-1.5">
-        {config.data?.paymob && (
-          <label
-            className={`flex cursor-pointer items-center gap-1.5 rounded-(--radius-control) border px-2.5 py-1.5 text-xs transition-colors ${
-              method === CARD_METHOD ? 'border-brand bg-brand/5' : 'hover:border-brand'
-            }`}
-          >
-            <input
-              type="radio"
-              className="size-3 accent-brand"
-              name="payment"
-              checked={method === CARD_METHOD}
-              onChange={() => { setMethod(CARD_METHOD); preloadPaymobPixel() }}
-            />
-            Card
-          </label>
-        )}
-        {config.data?.enabled && wooMethods.map((id) => (
-          <label
-            key={id}
-            className={`flex cursor-pointer items-center gap-1.5 rounded-(--radius-control) border px-2.5 py-1.5 text-xs transition-colors ${
-              method === id ? 'border-brand bg-brand/5' : 'hover:border-brand'
-            }`}
-          >
-            <input
-              type="radio"
-              className="size-3 accent-brand"
-              name="payment"
-              checked={method === id}
-              onChange={() => setMethod(id)}
-            />
-            {names(id)}
-          </label>
-        ))}
-        {!config.data?.paymob && !config.data?.enabled && (
-          <p className="text-xs text-muted-foreground">
-            Online checkout is being prepared.
-          </p>
-        )}
+      <div className="space-y-2">
+        <p className="text-xs font-medium">Payment method</p>
+        <div className="flex flex-col gap-1.5 sm:flex-row sm:flex-wrap">
+          {config.data?.paymob && (
+            <label
+              className={`flex cursor-pointer items-center gap-2 rounded-(--radius-control) border px-3 py-2 text-xs transition-colors ${
+                method === CARD_METHOD ? 'border-brand bg-brand/5' : 'hover:border-brand'
+              }`}
+            >
+              <input
+                type="radio"
+                className="size-3.5 accent-brand"
+                name="payment"
+                checked={method === CARD_METHOD}
+                onChange={() => { setMethod(CARD_METHOD); preloadPaymobPixel() }}
+              />
+              <CreditCard className="size-4 shrink-0" />
+              <span>Card</span>
+            </label>
+          )}
+          {config.data?.enabled && wooMethods.map((id) => {
+            const Icon = paymentIcon(id)
+            return (
+              <label
+                key={id}
+                className={`flex cursor-pointer items-center gap-2 rounded-(--radius-control) border px-3 py-2 text-xs transition-colors ${
+                  method === id ? 'border-brand bg-brand/5' : 'hover:border-brand'
+                }`}
+              >
+                <input
+                  type="radio"
+                  className="size-3.5 accent-brand"
+                  name="payment"
+                  checked={method === id}
+                  onChange={() => setMethod(id)}
+                />
+                <Icon className="size-4 shrink-0" />
+                <span>{names(id)}</span>
+              </label>
+            )
+          })}
+          {!config.data?.paymob && !config.data?.enabled && (
+            <p className="text-xs text-muted-foreground">
+              Online checkout is being prepared.
+            </p>
+          )}
+        </div>
       </div>
 
       {error && (

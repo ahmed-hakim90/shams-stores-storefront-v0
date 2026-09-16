@@ -11,7 +11,7 @@ import { catalogParams, type CatalogScope } from '@/lib/commerce/experience'
 import { CatalogDiscovery } from '@/components/shams/marketing'
 import { Reveal } from '@/components/shams/shared'
 import type { TaxonomyTerm } from '@/lib/commerce/types'
-import { ProductCard, ProductScrollRow } from '@/components/shams/product'
+import { ProductCard } from '@/components/shams/product'
 import {
   activeCatalogFilterKeys,
   clearCatalogFilters,
@@ -36,7 +36,6 @@ export function ShopFeed({
   discovery,
   initialFacets = emptyFacets,
   lockedFilters = [],
-  categoryGroups = [],
 }: {
   initialProducts: ProductSummary[]
   initialCursor?: string
@@ -51,7 +50,6 @@ export function ShopFeed({
   }
   lockedFilters?: string[]
   initialFacets?: FacetResult
-  categoryGroups?: { category: TaxonomyTerm; products: ProductSummary[] }[]
 }) {
   const search = useSearchParams(),
     pathname = usePathname(),
@@ -171,7 +169,6 @@ export function ShopFeed({
   }
   const active = activeCatalogFilterKeys(p, availableFacets, lockedFilters)
   const resultCount = feed.data?.pages[0]?.total ?? total
-  const showGroups = categoryGroups.length > 0 && !scope.category
   return (
     <section
       onClickCapture={rememberPosition}
@@ -241,26 +238,8 @@ export function ShopFeed({
           <FilterFields facets={availableFacets} values={p} change={change} />
         </aside>
         <div className="min-w-0">
-          {showGroups ? (
-            <div className="space-y-6">
-              {categoryGroups.map((group) => (
-                <section key={group.category.slug}>
-                  <div className="mb-2 flex items-center justify-between">
-                    <h2 className="text-sm font-semibold">{group.category.name}</h2>
-                    <Link
-                      href={`/c/${group.category.slug}`}
-                      className="text-xs text-brand-ink"
-                    >
-                      View all →
-                    </Link>
-                  </div>
-                  <ProductScrollRow products={group.products} />
-                </section>
-              ))}
-            </div>
-          ) : (
-            <>
-              <div className="mb-2 flex flex-wrap gap-1.5">
+          <>
+            <div className="mb-2 flex flex-wrap gap-1.5">
                 {active.map((k) => (
                   <button
                     key={k}
@@ -365,8 +344,7 @@ export function ShopFeed({
                     </button>
                   )}
               </div>
-            </>
-          )}
+          </>
         </div>
       </div>
     </section>

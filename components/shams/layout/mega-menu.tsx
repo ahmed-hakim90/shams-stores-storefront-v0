@@ -74,6 +74,8 @@ export function MegaMenu() {
           >
             <Link
               href={`/c/${cat.slug}`}
+              prefetch={false}
+              data-prefetch-on-intent
               onFocus={() => open(cat.slug)}
               className={cn(
                 'inline-flex h-9 items-center gap-1 px-3 text-xs font-medium text-on-dark-muted transition-colors hover:bg-on-dark-border hover:text-on-dark',
@@ -98,6 +100,8 @@ export function MegaMenu() {
           <li key={link.href}>
             <Link
               href={link.href}
+              prefetch={false}
+              data-prefetch-on-intent
               aria-current={pathname === link.href ? 'page' : undefined}
               className={cn(
                 'inline-flex h-9 items-center gap-1 px-3 text-xs font-medium transition-colors',
@@ -150,6 +154,8 @@ function MegaPanel({ category }: { category: Category }) {
               </div>
               <Link
                 href={`/c/${category.slug}`}
+                prefetch={false}
+                data-prefetch-on-intent
                 className="inline-flex items-center gap-1 text-xs font-medium text-brand-ink hover:underline"
               >
                 Shop all {category.itemCount}{' '}
@@ -167,6 +173,8 @@ function MegaPanel({ category }: { category: Category }) {
                       <li key={link.label}>
                         <Link
                           href={link.href}
+                          prefetch={false}
+                          data-prefetch-on-intent
                           className="block py-1 text-sm text-foreground/80 transition-colors hover:text-brand-ink"
                         >
                           {link.label}
@@ -182,6 +190,8 @@ function MegaPanel({ category }: { category: Category }) {
           {featured && (
             <Link
               href={`/p/${featured.slug}`}
+              prefetch={false}
+              data-prefetch-on-intent
               className="group flex flex-col justify-between border border-border bg-surface-tint p-5"
             >
               <div>

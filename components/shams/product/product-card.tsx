@@ -75,6 +75,8 @@ export function ProductCard({
         )}
         <Link
           href={productHref}
+          prefetch={false}
+          data-prefetch-on-intent
           className="relative block min-h-[120px] w-full flex-1 overflow-hidden"
         >
           <Image
@@ -132,6 +134,8 @@ export function ProductCard({
         <div className="min-h-0">
           <Link
             href={productHref}
+            prefetch={false}
+            data-prefetch-on-intent
             className={cn(
               'line-clamp-2 break-words text-sm font-medium leading-[1.35] text-foreground transition-colors duration-fast hover:text-brand-ink',
               view === 'rail' ? 'sm:text-sm' : 'sm:text-base',
@@ -186,6 +190,8 @@ export function ProductCard({
             ) : (
               <Link
                 href={productHref}
+                prefetch={false}
+                data-prefetch-on-intent
                 className={cn(
                   'inline-flex h-9 items-center justify-center rounded-(--radius-control) border border-brand/30 px-3 text-xs font-medium text-brand-ink transition-colors duration-fast hover:bg-brand-muted',
                   horizontal ? 'basis-full sm:basis-auto sm:flex-1' : 'w-full',

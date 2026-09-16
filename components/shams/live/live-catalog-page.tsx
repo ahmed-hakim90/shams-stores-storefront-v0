@@ -6,7 +6,7 @@ import {
   terms,
   parseQuery,
 } from '@/lib/commerce/live/catalog'
-import { ShopFeed } from '@/components/shams/catalog'
+import { CatalogLanding, ShopFeed } from '@/components/shams/catalog'
 import { ProductImage } from '@/components/shams/product'
 import { catalogParams, type CatalogScope } from '@/lib/commerce/experience'
 import type { TaxonomyTerm } from '@/lib/commerce/types'
@@ -23,6 +23,12 @@ export async function LiveCatalogPage({
   discovery?: boolean
   hub?: { kind: 'category' | 'brand'; term: TaxonomyTerm }
 }) {
+  const hasBrowseInput =
+    ['category', 'brand', 'q', 'stock', 'minPrice', 'maxPrice', 'onSale', 'tag'].some(
+      (key) => input[key] !== undefined && input[key] !== '',
+    ) ||
+    (typeof input.sort === 'string' && input.sort !== 'newest')
+  const isLanding = !hub && title === 'Shop all gear' && !hasBrowseInput
   const [categories, brands] = await Promise.all([
     terms('categories'),
     terms('brands'),
@@ -48,15 +54,38 @@ export async function LiveCatalogPage({
   )
   const initialParams = catalogParams(raw, scope)
   const q = parseQuery(Object.fromEntries(new URLSearchParams(initialParams)))
-  const [page, facetData, baseFacets] = await Promise.all([
-    listProducts({ ...q, pageSize: 24 }),
-    facets(q).catch(() => ({ groups: [] })),
-    hub
-      ? facets({ category: scope.category, brand: scope.brand }).catch(() => ({
-          groups: [],
-        }))
-      : Promise.resolve({ groups: [] }),
-  ])
+  const categoryGroups = isLanding
+    ? (
+        await Promise.all(
+          primaryCategories(categories).map(async (cat) => {
+            const p = await listProducts({
+              category: cat.slug,
+              pageSize: 6,
+              sort: 'best-selling',
+            }).catch(() => ({ items: [], total: 0, hasNextPage: false }))
+            return { category: cat, products: p.items }
+          }),
+        )
+      ).filter((g) => g.products.length > 0)
+    : []
+  const emptyPage = {
+    items: [],
+    total: 0,
+    hasNextPage: false,
+    nextCursor: undefined,
+  }
+  const emptyFacets = { groups: [] }
+  const [page, facetData, baseFacets] = isLanding
+    ? [emptyPage, emptyFacets, emptyFacets]
+    : await Promise.all([
+        listProducts({ ...q, pageSize: 24 }),
+        facets(q).catch(() => emptyFacets),
+        hub
+          ? facets({ category: scope.category, brand: scope.brand }).catch(
+              () => emptyFacets,
+            )
+          : Promise.resolve(emptyFacets),
+      ])
   let categoryTerms = primaryCategories(categories),
     brandTerms = [...brands].sort((a, b) => b.count - a.count).slice(0, 6)
   if (hub?.kind === 'category') {
@@ -79,20 +108,6 @@ export async function LiveCatalogPage({
       .slice(0, 8)
     brandTerms = []
   }
-  const categoryGroups = !hub
-    ? (
-        await Promise.all(
-          primaryCategories(categories).map(async (cat) => {
-            const p = await listProducts({
-              category: cat.slug,
-              pageSize: 6,
-              sort: 'best-selling',
-            }).catch(() => ({ items: [], total: 0, hasNextPage: false }))
-            return { category: cat, products: p.items }
-          }),
-        )
-      ).filter((g) => g.products.length > 0)
-    : []
   return (
     <main className="shams-container py-3 pb-[calc(2rem+var(--mobile-bottom-nav-height))] sm:py-4 sm:pb-4">
       <nav
@@ -172,6 +187,13 @@ export async function LiveCatalogPage({
             </Link>
           </div>
         </section>
+      ) : isLanding ? (
+        <CatalogLanding
+          params={initialParams}
+          categories={categoryTerms}
+          brands={brandTerms}
+          categoryGroups={categoryGroups}
+        />
       ) : (
         <ShopFeed
           initialParams={initialParams}
@@ -191,7 +213,6 @@ export async function LiveCatalogPage({
           initialHasNext={page.hasNextPage}
           total={page.total}
           initialFacets={facetData}
-          categoryGroups={categoryGroups}
         />
       )}
     </main>

@@ -1,7 +1,7 @@
 'use client'
 import { useOverlayPresence } from './shell-policy'
 
-import { useState } from 'react'
+import { useState, type ComponentProps } from 'react'
 import Link from 'next/link'
 import {
   ChevronDown,
@@ -55,6 +55,10 @@ const helpLinks = [
   { label: 'Cookie policy', href: '/cookies', icon: Info, desc: 'How we use cookies' },
 ]
 
+function MenuLink(props: ComponentProps<typeof Link>) {
+  return <Link {...props} prefetch={false} data-prefetch-on-intent />
+}
+
 export function MobileMenu() {
   const { categories, liveMode } = useCatalogNavigation()
   const { user } = useAuth()
@@ -93,27 +97,27 @@ export function MobileMenu() {
           <div className="flex-1 overflow-y-auto overscroll-contain">
             {/* Shop by Category */}
             <nav aria-label="Categories" className="p-2">
-              <Link
+              <MenuLink
                 href="/categories"
                 onClick={() => setOpen(false)}
                 className="flex items-center justify-between px-3 pb-1 pt-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground hover:text-brand-ink"
               >
                 Shop by category
                 <ChevronRight className="size-3.5" />
-              </Link>
+              </MenuLink>
               <ul>
                 {categories.map((cat) => {
                   const isOpen = expanded === cat.slug
                   return (
                     <li key={cat.slug} className="border-b border-border/60">
                       <div className="flex items-center">
-                        <Link
+                        <MenuLink
                           href={`/c/${cat.slug}`}
                           onClick={() => setOpen(false)}
                           className="flex-1 py-3 pl-3 text-sm font-medium text-foreground"
                         >
                           {cat.name}
-                        </Link>
+                        </MenuLink>
                         <button
                           type="button"
                           aria-label={`Expand ${cat.name}`}
@@ -134,14 +138,14 @@ export function MobileMenu() {
                           {cat.columns
                             .flatMap((col) => col.links)
                             .map((link) => (
-                              <Link
+                              <MenuLink
                                 key={link.label + link.href}
                                 href={link.href}
                                 onClick={() => setOpen(false)}
                                 className="truncate py-1.5 text-sm text-muted-foreground hover:text-brand-ink"
                               >
                                 {link.label}
-                              </Link>
+                              </MenuLink>
                             ))}
                         </div>
                       )}
@@ -153,14 +157,14 @@ export function MobileMenu() {
 
             {/* Shop by Brand */}
             <div className="p-2">
-              <Link
+              <MenuLink
                 href="/brands"
                 onClick={() => setOpen(false)}
                 className="flex items-center justify-between px-3 pb-1 pt-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground hover:text-brand-ink"
               >
                 Shop by brand
                 <ChevronRight className="size-3.5" />
-              </Link>
+              </MenuLink>
               <button
                 type="button"
                 onClick={() => setShowBrands((v) => !v)}
@@ -170,16 +174,16 @@ export function MobileMenu() {
               </button>
               {showBrands && (
                 <div className="px-3 pb-2">
-                  <Link
+                  <MenuLink
                     href="/brands"
                     onClick={() => setOpen(false)}
                     className="mb-2 block rounded-(--radius-control) bg-brand-muted px-3 py-2 text-sm font-semibold text-brand-ink"
                   >
                     View all brands
-                  </Link>
+                  </MenuLink>
                   <div className="grid grid-cols-2 gap-x-3 gap-y-0.5">
                     {allBrands.map((brand) => (
-                      <Link
+                      <MenuLink
                         key={brand.slug}
                         href={`/b/${brand.slug}`}
                         onClick={() => setOpen(false)}
@@ -187,7 +191,7 @@ export function MobileMenu() {
                       >
                         <span className="truncate">{brand.name}</span>
                         <span className="ml-2 text-xs text-muted-foreground">{brand.productCount}</span>
-                      </Link>
+                      </MenuLink>
                     ))}
                   </div>
                 </div>
@@ -202,14 +206,14 @@ export function MobileMenu() {
                 </p>
                 <div className="flex flex-wrap gap-2 px-3 pb-2">
                   {useCases.map((u) => (
-                    <Link
+                    <MenuLink
                       key={u.slug}
                       href={`/w/${u.slug}`}
                       onClick={() => setOpen(false)}
                       className="rounded-full border border-border px-3 py-1.5 text-sm text-foreground hover:border-brand hover:text-brand-ink"
                     >
                       {u.name}
-                    </Link>
+                    </MenuLink>
                   ))}
                 </div>
               </div>
@@ -227,14 +231,14 @@ export function MobileMenu() {
                 {discoverLinks
                   .map((item) => (
                     <li key={item.href}>
-                      <Link
+                      <MenuLink
                         href={item.href}
                         onClick={() => setOpen(false)}
                         className="flex items-center gap-3 rounded-(--radius-control) px-4 py-2.5 text-sm text-foreground hover:bg-muted"
                       >
                         <item.icon className="size-4 text-muted-foreground" />
                         {item.label}
-                      </Link>
+                      </MenuLink>
                     </li>
                   ))}
               </ul>
@@ -259,14 +263,14 @@ export function MobileMenu() {
                   <ul>
                     {accountLinks.map((item) => (
                       <li key={item.href}>
-                        <Link
+                        <MenuLink
                           href={item.href}
                           onClick={() => setOpen(false)}
                           className="flex items-center gap-3 rounded-(--radius-control) px-4 py-2.5 text-sm text-foreground hover:bg-muted"
                         >
                           <item.icon className="size-4 text-muted-foreground" />
                           {item.label}
-                        </Link>
+                        </MenuLink>
                       </li>
                     ))}
                   </ul>
@@ -278,34 +282,34 @@ export function MobileMenu() {
                   </p>
                   <ul>
                     <li>
-                      <Link
+                      <MenuLink
                         href="/account/login"
                         onClick={() => setOpen(false)}
                         className="flex items-center gap-3 rounded-(--radius-control) bg-brand px-4 py-2.5 text-sm font-semibold text-brand-foreground"
                       >
                         <User className="size-4" />
                         Sign in
-                      </Link>
+                      </MenuLink>
                     </li>
                     <li>
-                      <Link
+                      <MenuLink
                         href="/account/register"
                         onClick={() => setOpen(false)}
                         className="mt-1 flex items-center gap-3 rounded-(--radius-control) border border-brand px-4 py-2.5 text-sm font-semibold text-brand-ink"
                       >
                         Create account
-                      </Link>
+                      </MenuLink>
                     </li>
                     {accountLinks.map((item, i) => (
                       <li key={item.href} className={i === 0 ? 'mt-2' : undefined}>
-                        <Link
+                        <MenuLink
                           href={item.href}
                           onClick={() => setOpen(false)}
                           className="flex items-center gap-3 rounded-(--radius-control) px-4 py-2.5 text-sm text-foreground hover:bg-muted"
                         >
                           <item.icon className="size-4 text-muted-foreground" />
                           {item.label}
-                        </Link>
+                        </MenuLink>
                       </li>
                     ))}
                   </ul>
@@ -324,7 +328,7 @@ export function MobileMenu() {
               <ul>
                 {helpLinks.map((item) => (
                   <li key={item.href}>
-                    <Link
+                    <MenuLink
                       href={item.href}
                       onClick={() => setOpen(false)}
                       className="flex items-start gap-3 rounded-(--radius-control) px-4 py-2.5 text-sm hover:bg-muted"
@@ -336,7 +340,7 @@ export function MobileMenu() {
                           <span className="text-xs text-muted-foreground">{item.desc}</span>
                         )}
                       </span>
-                    </Link>
+                    </MenuLink>
                   </li>
                 ))}
               </ul>

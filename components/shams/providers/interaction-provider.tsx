@@ -11,7 +11,7 @@ import {
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { commerceFetch } from '@/lib/commerce/browser'
 import type { Cart } from '@/lib/commerce/types'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { Check, Info, X, AlertTriangle, ArrowLeft } from 'lucide-react'
 import type { Product } from '@/lib/commerce'
 import { commerce } from '@/lib/commerce'
@@ -21,7 +21,6 @@ import { MobileBottomNav as GlassMobileBottomNav } from '../layout/mobile-naviga
 import { Header } from '../layout/header'
 import Link from 'next/link'
 import { ShamsLogo } from '../shared/logo'
-import { CartDrawer } from '../cart/cart-drawer'
 import {
   ShellPolicyProvider,
   useOverlayPresence,
@@ -41,6 +40,26 @@ const CompareTray = dynamic(
   () => import('../overlays/compare-tray').then((mod) => mod.CompareTray),
   { ssr: false },
 )
+const loadCartDrawer = () =>
+  import('../cart/cart-drawer').then((mod) => mod.CartDrawer)
+const CartDrawer = dynamic(loadCartDrawer, { ssr: false })
+
+function allowsIntentPrefetch() {
+  const connection = (
+    navigator as Navigator & {
+      connection?: { effectiveType?: string; saveData?: boolean }
+    }
+  ).connection
+  return !(
+    connection?.saveData ||
+    connection?.effectiveType === 'slow-2g' ||
+    connection?.effectiveType === '2g'
+  )
+}
+
+export function preloadCartDrawer() {
+  if (allowsIntentPrefetch()) void loadCartDrawer()
+}
 
 function safePersist(key: string, value: unknown) {
   try {
@@ -687,6 +706,65 @@ export function InteractionProvider({
   )
 }
 
+function useIntentPrefetch() {
+  const router = useRouter()
+  useEffect(() => {
+    if (!allowsIntentPrefetch()) return
+    const timers = new Map<HTMLAnchorElement, number>()
+    const prefetched = new Set<string>()
+    const anchorFor = (target: EventTarget | null) =>
+      target instanceof Element
+        ? target.closest<HTMLAnchorElement>('a[data-prefetch-on-intent]')
+        : null
+    const cancel = (anchor: HTMLAnchorElement | null) => {
+      if (!anchor) return
+      const timer = timers.get(anchor)
+      if (timer === undefined) return
+      window.clearTimeout(timer)
+      timers.delete(anchor)
+    }
+    const schedule = (anchor: HTMLAnchorElement | null) => {
+      if (!anchor || timers.has(anchor)) return
+      const href = anchor.getAttribute('href')
+      if (!href || !href.startsWith('/') || href.startsWith('//') || prefetched.has(href))
+        return
+      timers.set(
+        anchor,
+        window.setTimeout(() => {
+          timers.delete(anchor)
+          prefetched.add(href)
+          router.prefetch(href)
+        }, 120),
+      )
+    }
+    const pointerEnter = (event: PointerEvent) => {
+      const anchor = anchorFor(event.target)
+      if (anchor && event.relatedTarget instanceof Node && anchor.contains(event.relatedTarget))
+        return
+      schedule(anchor)
+    }
+    const pointerLeave = (event: PointerEvent) => {
+      const anchor = anchorFor(event.target)
+      if (anchor && event.relatedTarget instanceof Node && anchor.contains(event.relatedTarget))
+        return
+      cancel(anchor)
+    }
+    const focusEnter = (event: FocusEvent) => schedule(anchorFor(event.target))
+    const focusLeave = (event: FocusEvent) => cancel(anchorFor(event.target))
+    document.addEventListener('pointerover', pointerEnter)
+    document.addEventListener('pointerout', pointerLeave)
+    document.addEventListener('focusin', focusEnter)
+    document.addEventListener('focusout', focusLeave)
+    return () => {
+      document.removeEventListener('pointerover', pointerEnter)
+      document.removeEventListener('pointerout', pointerLeave)
+      document.removeEventListener('focusin', focusEnter)
+      document.removeEventListener('focusout', focusLeave)
+      timers.forEach((timer) => window.clearTimeout(timer))
+    }
+  }, [router])
+}
+
 export function RouteProgress() {
   const pathname = usePathname()
   const [loading, setLoading] = useState(false)
@@ -725,6 +803,7 @@ function ShellFrame({
   footer?: React.ReactNode
 }) {
   const pathname = usePathname()
+  useIntentPrefetch()
   const variant: ShellVariant =
     pathname === '/checkout' || pathname === '/order/success'
       ? 'checkout'
@@ -773,7 +852,7 @@ function ShellFrame({
       </div>
       {variant === 'store' && footer}
       <RouteProgress />
-      <CartDrawer showTrigger={false} />
+      {cartOpen && <CartDrawer showTrigger={false} />}
       {variant === 'store' && (
         <>
           <GlobalSearchOverlay />

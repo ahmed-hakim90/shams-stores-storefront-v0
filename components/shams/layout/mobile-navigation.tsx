@@ -16,7 +16,11 @@ import { usePathname } from 'next/navigation'
 import { SearchTrigger } from '@/components/shams/overlays'
 
 import { MobileMenu, ShamsLogo } from '@/components/shams/shared'
-import { useInteractions, useAuth } from '@/components/shams/providers'
+import {
+  preloadCartDrawer,
+  useInteractions,
+  useAuth,
+} from '@/components/shams/providers'
 
 function CountBadge({ count }: { count: number }) {
   if (!count) return null
@@ -70,6 +74,8 @@ export function MobileHeader() {
           <button
             type="button"
             onClick={openCart}
+            onPointerEnter={preloadCartDrawer}
+            onFocus={preloadCartDrawer}
             aria-label="Open cart"
             className="relative flex size-9 items-center justify-center border border-border text-foreground/80 hover:border-brand/30 hover:text-brand-ink"
           >
@@ -87,7 +93,7 @@ export function MobileHeader() {
 
 const items = [
   { label: 'Home', href: '/', icon: Home },
-  { label: 'Shop', href: '/categories', icon: Grid2X2 },
+  { label: 'Shop', href: '/shop', icon: Grid2X2 },
   { label: 'Search', href: '/search', icon: Search },
   { label: 'Offers', href: '/deals', icon: Tag },
   { label: 'Account', href: '/account', icon: User },
@@ -134,7 +140,9 @@ export function MobileBottomNav() {
               : label === 'Home'
                 ? pathname === '/'
                 : label === 'Shop'
-                  ? pathname.startsWith('/c/') || pathname === '/categories'
+                  ? pathname.startsWith('/shop') ||
+                    pathname.startsWith('/c/') ||
+                    pathname === '/categories'
                   : label === 'Offers'
                     ? pathname.startsWith('/deals')
                     : pathname.startsWith('/account')
