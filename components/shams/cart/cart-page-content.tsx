@@ -1,8 +1,8 @@
 'use client'
 import Link from 'next/link'
 import { useState } from 'react'
-import { useInteractions } from '../providers/interaction-provider'
-import { ProductImage } from '../product/product-image'
+import { useInteractions } from '@/components/shams/providers'
+import { ProductImage } from '@/components/shams/product'
 import { CartLineOptions } from './cart-line-options'
 import { formatEgp } from '@/lib/commerce'
 import { CheckoutForm } from './checkout-form'
@@ -72,7 +72,7 @@ export function CartPageContent({ checkout = false }: { checkout?: boolean }) {
                     key={line.id}
                     className="flex gap-3 rounded-(--radius-card) border bg-card p-4 sm:gap-5"
                   >
-                    <div className="relative size-20 shrink-0 sm:size-24 bg-white">
+                    <div className="relative size-20 shrink-0 sm:size-24 bg-surface-raised">
                       <ProductImage
                         src={line.productImage || '/placeholder.svg'}
                         alt={line.productName}
@@ -135,7 +135,7 @@ export function CartPageContent({ checkout = false }: { checkout?: boolean }) {
                 <ul className="space-y-3 border-t px-4 py-3">
                   {cartLines.map((line) => (
                     <li key={line.id} className="flex items-center gap-3">
-                      <div className="relative size-14 shrink-0 overflow-hidden rounded-(--radius-control) bg-white ring-1 ring-border">
+                      <div className="relative size-14 shrink-0 overflow-hidden rounded-(--radius-control) bg-surface-raised ring-1 ring-border">
                         <ProductImage
                           src={line.productImage || '/placeholder.svg'}
                           alt={line.productName}
@@ -162,7 +162,7 @@ export function CartPageContent({ checkout = false }: { checkout?: boolean }) {
                 <dd className="font-medium tabular-nums">{formatEgp(cart?.subtotal ?? total)}</dd>
               </div>
               {!!cart?.discount && (
-                <div className="flex justify-between text-green-700 dark:text-green-500">
+                <div className="flex justify-between text-success">
                   <dt>Discount</dt>
                   <dd className="font-medium tabular-nums">−{formatEgp(cart.discount)}</dd>
                 </div>
@@ -221,10 +221,10 @@ export function CartPageContent({ checkout = false }: { checkout?: boolean }) {
                           (e) => notify(e.message, 'error'),
                         )
                       }
-                      className="inline-flex items-center gap-1.5 rounded-full bg-green-100 dark:bg-green-900/30 px-3 py-1 text-xs font-medium text-green-800 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-900/50 transition-colors"
+                      className="inline-flex items-center gap-1.5 rounded-full bg-success-muted px-3 py-1 text-xs font-medium text-success hover:bg-success-muted/80 transition-colors"
                     >
                       <span>{code}</span>
-                      <span className="text-green-600 dark:text-green-500">×</span>
+                      <span className="text-success">×</span>
                     </button>
                   ))}
                 </div>

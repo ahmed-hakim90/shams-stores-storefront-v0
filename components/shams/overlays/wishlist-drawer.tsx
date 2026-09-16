@@ -2,8 +2,8 @@
 
 import { Dialog } from '@base-ui/react/dialog'
 import { X } from 'lucide-react'
-import { SavedProducts } from '../product/saved-products'
-import { useInteractions } from '../providers/interaction-provider'
+import { SavedProducts } from '@/components/shams/product'
+import { useInteractions } from '@/components/shams/providers'
 
 export function WishlistDrawer() {
   const { wishlistOpen, closeWishlist } = useInteractions()

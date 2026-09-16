@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Check, ShoppingCart } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { Bundle, Product } from '@/lib/commerce'
-import { useInteractions } from '../providers/interaction-provider'
+import { useInteractions } from '@/components/shams/providers'
 
 export function AddBundleButton({
   bundleName,
@@ -31,7 +31,7 @@ export function AddBundleButton({
       className={cn(
         'inline-flex h-11 items-center justify-center gap-2 rounded-(--radius-control) px-5 text-sm font-semibold transition-colors duration-fast',
         added
-          ? 'bg-success text-white'
+          ? 'bg-success text-on-dark'
           : 'bg-brand text-brand-foreground hover:bg-brand/90',
         className,
       )}

@@ -34,7 +34,7 @@ export function PaymentResult({ orderId }: { orderId: string }) {
       ) : state === 'paid' ? (
         <div className="space-y-3">
           <div className="shams-panel p-4 text-center">
-            <div className="mx-auto flex size-10 items-center justify-center rounded-full bg-green-50 text-lg text-green-700">
+            <div className="mx-auto flex size-10 items-center justify-center rounded-full bg-success-muted text-lg text-success">
               ✓
             </div>
             <h1 className="mt-3 text-lg font-semibold">Order confirmed</h1>
@@ -136,11 +136,11 @@ export function PaymentResult({ orderId }: { orderId: string }) {
           </div>
         </div>
       ) : state === 'failed' ? (
-        <div className="rounded-(--radius-card) border border-red-200 bg-red-50 p-6 text-center">
-          <h1 className="text-lg font-semibold text-red-800">
+        <div className="rounded-(--radius-card) border border-danger bg-danger-muted p-6 text-center">
+          <h1 className="text-lg font-semibold text-danger">
             Payment failed
           </h1>
-          <p className="mt-2 text-xs leading-5 text-red-700">
+          <p className="mt-2 text-xs leading-5 text-danger">
             {q.data?.reason ??
               'Your payment was not completed. No amount was captured.'}
           </p>

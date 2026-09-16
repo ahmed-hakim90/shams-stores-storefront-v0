@@ -48,7 +48,7 @@ function getStepIndex(status: string): number {
 
 export function TrackOrderForm() {
   const [orderId, setOrderId] = useState('')
-  const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
   const [error, setError] = useState('')
   const [pending, setPending] = useState(false)
   const [result, setResult] = useState<TrackOrderResult | null>(null)
@@ -62,15 +62,15 @@ export function TrackOrderForm() {
       setError('Enter your order number')
       return
     }
-    if (!email.trim()) {
-      setError('Enter the email address used for this order')
+    if (!phone.trim()) {
+      setError('Enter the phone number used for this order')
       return
     }
 
     setPending(true)
     try {
       const res = await fetch(
-        `/api/customer/track-order?order_id=${encodeURIComponent(orderId.trim())}&email=${encodeURIComponent(email.trim())}`,
+        `/api/customer/track-order?order_id=${encodeURIComponent(orderId.trim())}&phone=${encodeURIComponent(phone.trim())}`,
       )
       const data = await res.json()
 
@@ -95,7 +95,7 @@ export function TrackOrderForm() {
 
       <h1 className="mt-6 text-3xl font-semibold">Track your order</h1>
       <p className="mt-3 text-sm text-muted-foreground">
-        Enter your order number and the email address used when placing the
+        Enter your order number and the phone number used when placing the
         order.
       </p>
 
@@ -104,7 +104,7 @@ export function TrackOrderForm() {
           {error && (
             <div
               role="alert"
-              className="rounded-(--radius-control) bg-red-50 p-3 text-sm text-red-700"
+              className="rounded-(--radius-control) bg-danger-muted p-3 text-sm text-danger"
             >
               {error}
             </div>
@@ -126,13 +126,13 @@ export function TrackOrderForm() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium">Email address</label>
+            <label className="block text-sm font-medium">Phone number</label>
             <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              autoComplete="email"
-              placeholder="The email you used at checkout"
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              autoComplete="tel"
+              placeholder="The phone number you used at checkout"
               className="min-h-12 w-full rounded-(--radius-control) border bg-background px-4 py-3 text-base"
               required
             />
@@ -156,7 +156,7 @@ export function TrackOrderForm() {
             onClick={() => {
               setResult(null)
               setOrderId('')
-              setEmail('')
+              setPhone('')
             }}
             className="inline-flex items-center gap-1 text-sm text-brand-ink"
           >
@@ -248,7 +248,7 @@ function OrderTimeline({ status }: { status: string }) {
 
   if (isCancelled) {
     return (
-      <div className="mt-5 rounded-(--radius-control) bg-red-50 p-4 text-sm text-red-700">
+      <div className="mt-5 rounded-(--radius-control) bg-danger-muted p-4 text-sm text-danger">
         <p className="font-medium">This order has been {status}.</p>
         <p className="mt-1">Contact Shams support if you have questions.</p>
       </div>

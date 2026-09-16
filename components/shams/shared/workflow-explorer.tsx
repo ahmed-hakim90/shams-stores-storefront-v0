@@ -39,10 +39,10 @@ export function WorkflowExplorer() {
                 className="object-cover transition-transform duration-standard group-hover:scale-[1.04]"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-surface-overlay/90 via-surface-overlay/45 to-transparent" />
-              <div className="relative space-y-3 p-5 text-white">
+              <div className="relative space-y-3 p-5 text-on-dark">
                 <div>
                   <p className="text-lg font-semibold tracking-tight">{u.name}</p>
-                  <p className="mt-1 line-clamp-2 text-xs text-white/75">
+                  <p className="mt-1 line-clamp-2 text-xs text-on-dark-muted">
                     {u.description}
                   </p>
                 </div>
@@ -50,7 +50,7 @@ export function WorkflowExplorer() {
                   {u.gear.slice(0, 4).map((g) => (
                     <span
                       key={g}
-                      className="rounded-full bg-white/15 px-2 py-0.5 text-[0.7rem] font-medium text-white/90 backdrop-blur"
+                      className="rounded-full bg-on-dark-border px-2 py-0.5 text-[0.7rem] font-medium text-on-dark-muted backdrop-blur"
                     >
                       {g}
                     </span>

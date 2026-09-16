@@ -45,7 +45,7 @@ export function ProductCard({
     >
       <div
         className={cn(
-          'relative min-w-0 shrink-0 overflow-hidden bg-white',
+          'relative min-w-0 shrink-0 overflow-hidden bg-surface-raised',
           horizontal
             ? 'flex h-full flex-col border-r border-border p-2.5 sm:p-4'
             : view === 'rail'

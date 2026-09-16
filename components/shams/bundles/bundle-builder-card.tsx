@@ -38,7 +38,7 @@ export function BundleBuilderCard({
         )}
       </div>
 
-      <div className="flex items-center justify-between gap-1 bg-white px-4 py-6">
+      <div className="flex items-center justify-between gap-1 bg-surface-raised px-4 py-6">
         {bundle.products.map((p, i) => (
           <div key={p.id} className="flex flex-1 items-center">
             <div className="flex min-w-0 flex-1 flex-col items-center gap-1.5 text-center">

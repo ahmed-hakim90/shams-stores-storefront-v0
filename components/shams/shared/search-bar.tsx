@@ -84,7 +84,7 @@ export function SearchBar({ className }: { className?: string }) {
                     onMouseDown={(e) => e.preventDefault()}
                     onClick={() => setOpen(false)}
                   >
-                    <span className="relative size-11 shrink-0 overflow-hidden rounded-(--radius-control) border border-border bg-white">
+                    <span className="relative size-11 shrink-0 overflow-hidden rounded-(--radius-control) border border-border bg-surface-raised">
                       <Image
                         src={p.image || '/placeholder.svg'}
                         alt=""

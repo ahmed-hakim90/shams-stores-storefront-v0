@@ -109,7 +109,7 @@ export function ReviewsSection({ productName }: { productName: string }) {
       )}
 
       {submitted && (
-        <p className="mt-6 rounded-(--radius-control) bg-green-50 p-3 text-sm text-green-700">
+        <p className="mt-6 rounded-(--radius-control) bg-success-muted p-3 text-sm text-success">
           Thank you for your review! It will appear after moderation.
         </p>
       )}
@@ -164,7 +164,7 @@ export function ReviewsSection({ productName }: { productName: string }) {
               {review.verified && (
                 <>
                   <span>·</span>
-                  <span className="font-medium text-green-700">Verified purchase</span>
+                  <span className="font-medium text-success">Verified purchase</span>
                 </>
               )}
             </div>

@@ -5,7 +5,7 @@ import { useMemo, useState } from 'react'
 import { cn } from '@/lib/utils'
 import { ChevronDown, SlidersHorizontal, X } from 'lucide-react'
 import type { Category, Product } from '@/lib/commerce'
-import { ProductCard } from '../product/product-card'
+import { ProductCard } from '@/components/shams/product'
 import { Button } from '@/components/ui/button'
 import { MobileListingHeader } from './mobile-listing-header'
 

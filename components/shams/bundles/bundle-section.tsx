@@ -1,5 +1,5 @@
 import { commerce } from '@/lib/commerce'
-import { SectionHeading } from '../shared/section-heading'
+import { SectionHeading } from '@/components/shams/shared'
 import { BundleBuilderCard } from './bundle-builder-card'
 
 export function BundleSection() {

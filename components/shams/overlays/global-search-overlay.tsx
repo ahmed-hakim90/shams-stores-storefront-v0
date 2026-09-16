@@ -4,13 +4,13 @@ import { Dialog } from '@base-ui/react/dialog'
 import { useQuery } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import { Search, X, Clock, TrendingUp } from 'lucide-react'
-import { useInteractions } from '../providers/interaction-provider'
+import { useInteractions } from '@/components/shams/providers'
 import { commerceFetch } from '@/lib/commerce/browser'
 import type { SearchSuggestion } from '@/lib/commerce/types'
-import { ProductImage } from '../product/product-image'
+import { ProductImage } from '@/components/shams/product'
 import { formatMoney } from '@/lib/commerce'
 import { cn } from '@/lib/utils'
-import { useCatalogNavigation } from '../catalog/catalog-navigation'
+import { useCatalogNavigation } from '@/components/shams/catalog'
 export function GlobalSearchOverlay() {
   const { searchOpen, closeSearch } = useInteractions(),
     router = useRouter(),
@@ -261,7 +261,7 @@ export function GlobalSearchOverlay() {
                     )}
                   >
                     {item.image && (
-                      <span className="relative size-14 shrink-0 bg-white">
+                      <span className="relative size-14 shrink-0 bg-surface-raised">
                         <ProductImage
                           src={item.image}
                           alt=""

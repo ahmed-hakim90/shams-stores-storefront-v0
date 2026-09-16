@@ -4,23 +4,26 @@ import { useEffect, useRef, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import type { ProductDetail, BranchAvailability, ProductSummary } from '@/lib/commerce/types'
 import { commerceFetch } from '@/lib/commerce/browser'
-import { ProductGallery } from '../product/product-gallery'
-import { ProductCard } from '../product/product-card'
-import { PriceDisplay } from '../product/price-display'
-import { StockStatus } from '../product/stock-status'
-import { AddToCartButton } from '../product/add-to-cart-button'
-import { VariantSelector, type SelectedVariant } from '../product/variant-selector'
-import { WishlistAction } from '../product/wishlist-action'
-import { CompareAction } from '../product/compare-action'
-import { ProductBadge } from '../product/product-badge'
-import { RatingStars } from '../product/rating-stars'
-import { Reveal } from '../shared/reveal'
-import { ReviewsSection } from '../product/reviews-section'
-import { RecentlyViewed } from '../product/recently-viewed'
-import { ProductBundleAddonCard } from '../product/product-bundle-addon'
+import {
+  ProductGallery,
+  ProductCard,
+  PriceDisplay,
+  StockStatus,
+  AddToCartButton,
+  VariantSelector,
+  type SelectedVariant,
+  WishlistAction,
+  CompareAction,
+  ProductBadge,
+  RatingStars,
+  ReviewsSection,
+  RecentlyViewed,
+  ProductBundleAddonCard,
+  RecordViewed,
+} from '@/components/shams/product'
+import { Reveal } from '@/components/shams/shared'
 import DOMPurify from 'dompurify'
-import { useInteractions } from '../providers/interaction-provider'
-import { RecordViewed } from '../product/saved-products'
+import { useInteractions } from '@/components/shams/providers'
 export function LiveProductDetail({ product }: { product: ProductDetail }) {
   const [quantity, setQuantity] = useState(1)
   const [selectedVariant, setSelectedVariant] = useState<SelectedVariant | null>(null)

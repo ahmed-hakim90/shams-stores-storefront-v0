@@ -13,12 +13,10 @@ import {
   User,
 } from 'lucide-react'
 import { usePathname } from 'next/navigation'
-import { SearchTrigger } from '../overlays/global-search-overlay'
+import { SearchTrigger } from '@/components/shams/overlays'
 
-import { MobileMenu } from '../shared/mobile-menu'
-import { ShamsLogo } from '../shared/logo'
-import { useInteractions } from '../providers/interaction-provider'
-import { useAuth } from '../providers/auth-provider'
+import { MobileMenu, ShamsLogo } from '@/components/shams/shared'
+import { useInteractions, useAuth } from '@/components/shams/providers'
 
 function CountBadge({ count }: { count: number }) {
   if (!count) return null

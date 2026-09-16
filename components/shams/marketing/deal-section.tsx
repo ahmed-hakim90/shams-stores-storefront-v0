@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { ArrowRight, Tag } from 'lucide-react'
 import { commerce } from '@/lib/commerce'
-import { ProductRail } from '../product/product-rail'
+import { ProductRail } from '@/components/shams/product'
 
 export function DealSection() {
   const deals = commerce.collections.get('deals')?.products ?? []
@@ -24,7 +24,7 @@ export function DealSection() {
           </div>
           <Link
             href="/deals"
-            className="group hidden shrink-0 items-center gap-1.5 rounded-(--radius-control) bg-sale px-4 py-2.5 text-sm font-semibold text-white transition-transform duration-fast hover:-translate-y-0.5 sm:inline-flex"
+            className="group hidden shrink-0 items-center gap-1.5 rounded-(--radius-control) bg-sale px-4 py-2.5 text-sm font-semibold text-on-dark transition-transform duration-fast hover:-translate-y-0.5 sm:inline-flex"
           >
             Shop all deals
             <ArrowRight className="size-4 transition-transform duration-fast group-hover:translate-x-0.5" />

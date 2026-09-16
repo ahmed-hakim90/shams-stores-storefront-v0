@@ -5,11 +5,11 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     const orderId = searchParams.get('order_id')
-    const email = searchParams.get('email')
+    const phone = searchParams.get('phone')
 
-    if (!orderId || !email) {
+    if (!orderId || !phone) {
       return NextResponse.json(
-        { error: 'Order ID and email are required' },
+        { error: 'Order ID and phone are required' },
         { status: 400 },
       )
     }
@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
       .replace(/([^:]\/)\/+/g, '$1')
 
     const res = await fetch(
-      `${wpRoot}/shams/v1/track-order?order_id=${encodeURIComponent(orderId)}&email=${encodeURIComponent(email)}`,
+      `${wpRoot}/shams/v1/track-order?order_id=${encodeURIComponent(orderId)}&phone=${encodeURIComponent(phone)}`,
       { headers: { 'Content-Type': 'application/json' } },
     )
 

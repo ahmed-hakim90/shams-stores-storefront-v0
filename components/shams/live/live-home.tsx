@@ -19,7 +19,7 @@ import {
   GearGuides,
   BuyingQuestions,
   MerchSectionHeading,
-} from '@/components/shams/marketing'
+} from '@/components/shams/marketing/merchandising-sections'
 
 async function Feed({ config }: { config: PageExperienceConfig }) {
   try {

@@ -1,7 +1,7 @@
 export function CookiesPage() {
   return (
     <main className="pb-[calc(2rem+var(--mobile-bottom-nav-height))] sm:pb-0">
-      <section className="relative overflow-hidden bg-foreground text-white">
+      <section className="relative overflow-hidden bg-foreground text-on-dark">
         <div
           aria-hidden
           className="absolute inset-0 opacity-30"
@@ -12,18 +12,18 @@ export function CookiesPage() {
         />
         <div className="shams-container relative py-16 sm:py-20">
           <div className="max-w-2xl space-y-4">
-            <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide">
-              <CookieIcon className="size-3.5 text-orange-300" />
+            <span className="inline-flex items-center gap-2 rounded-full bg-on-dark-border px-3 py-1 text-xs font-semibold uppercase tracking-wide">
+              <CookieIcon className="size-3.5 text-brand" />
               Legal
             </span>
             <h1 className="text-balance text-4xl font-semibold leading-[1.1] tracking-tight sm:text-5xl">
               Cookie policy
             </h1>
-            <p className="max-w-lg text-pretty text-base leading-7 text-white/70">
+            <p className="max-w-lg text-pretty text-base leading-7 text-on-dark-muted">
               This policy explains what cookies are, how Shams Stores uses them,
               and how you can manage your preferences.
             </p>
-            <p className="text-xs text-white/40">Last updated: September 2026</p>
+            <p className="text-xs text-on-dark-subtle">Last updated: September 2026</p>
           </div>
         </div>
       </section>

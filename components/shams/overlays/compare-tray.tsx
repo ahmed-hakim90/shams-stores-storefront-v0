@@ -6,9 +6,9 @@ import { X, Scale } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import { SavedProducts } from '../product/saved-products'
-import { useInteractions } from '../providers/interaction-provider'
-import { useOverlayPresence } from '../shared/shell-policy'
+import { SavedProducts } from '@/components/shams/product'
+import { useInteractions } from '@/components/shams/providers'
+import { useOverlayPresence } from '@/components/shams/shared'
 
 export function CompareTray() {
   const { compareItems, stickyPurchaseVisible } = useInteractions()

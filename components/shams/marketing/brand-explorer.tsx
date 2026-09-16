@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { commerce } from '@/lib/commerce'
-import { SectionHeading } from '../shared/section-heading'
+import { SectionHeading } from '@/components/shams/shared'
 
 export function BrandExplorer() {
   const brands = commerce.brands.list()

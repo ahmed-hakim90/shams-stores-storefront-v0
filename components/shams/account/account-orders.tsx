@@ -75,7 +75,7 @@ export function OrdersSection() {
                   <p className="text-sm font-semibold">Order #{order.id}</p>
                   <p className="mt-1 text-xs text-muted-foreground">{new Date(order.date).toLocaleDateString('en-EG')}</p>
                 </div>
-                <span className={`rounded-full px-3 py-1 text-xs font-medium ${order.status === 'completed' || order.status === 'Delivered' ? 'bg-green-50 text-green-700' : 'bg-brand-muted text-brand-ink'}`}>
+                <span className={`rounded-full px-3 py-1 text-xs font-medium ${order.status === 'completed' || order.status === 'Delivered' ? 'bg-success-muted text-success' : 'bg-brand-muted text-brand-ink'}`}>
                   {order.status}
                 </span>
               </div>

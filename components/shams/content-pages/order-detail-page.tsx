@@ -90,7 +90,7 @@ export function OrderDetailPage({ orderId }: { orderId: string }) {
 
   const statusColor =
     order.status === 'completed' || order.status === 'delivered'
-      ? 'bg-green-50 text-green-700'
+      ? 'bg-success-muted text-success'
       : 'bg-brand-muted text-brand-ink'
 
   return (
@@ -168,7 +168,7 @@ export function OrderDetailPage({ orderId }: { orderId: string }) {
             {order.discountTotal && (
               <div className="flex justify-between">
                 <dt className="text-muted-foreground">Discount</dt>
-                <dd className="font-medium text-green-700">
+                <dd className="font-medium text-success">
                   -{parseFloat(order.discountTotal).toLocaleString('en-EG')} EGP
                 </dd>
               </div>

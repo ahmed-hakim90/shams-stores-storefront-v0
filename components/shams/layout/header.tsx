@@ -14,12 +14,10 @@ import {
   ShoppingCart,
   User,
 } from 'lucide-react'
-import { ShamsLogo } from '../shared/logo'
-import { SearchTrigger } from '../overlays/global-search-overlay'
+import { ShamsLogo, MobileMenu } from '@/components/shams/shared'
+import { SearchTrigger } from '@/components/shams/overlays'
 import { MegaMenu } from './mega-menu'
-import { MobileMenu } from '../shared/mobile-menu'
-import { useInteractions } from '../providers/interaction-provider'
-import { useAuth } from '../providers/auth-provider'
+import { useInteractions, useAuth } from '@/components/shams/providers'
 import { MobileHeader } from './mobile-navigation'
 
 function IconAction({
@@ -86,7 +84,7 @@ export function Header() {
       <MobileHeader />
 
       {/* Utility bar */}
-      <div className="hidden border-b border-border bg-foreground text-white lg:block">
+      <div className="hidden border-b border-border bg-foreground text-on-dark lg:block">
         <div className="mx-auto flex h-8 max-w-[1440px] items-center justify-between px-4 text-[11px]">
           <p className="inline-flex items-center gap-1.5">
             <ShieldCheck className="size-3" />
@@ -111,7 +109,7 @@ export function Header() {
             >
               <Phone className="size-3" /> 212-444-6615
             </Link>
-            <span className="text-white/40">|</span>
+            <span className="text-on-dark-subtle">|</span>
             <span>EGP · English</span>
           </div>
         </div>
@@ -180,7 +178,7 @@ export function Header() {
                       <Pencil className="size-4 text-muted-foreground" /> Personal info
                     </Link>
                     <div className="my-1 h-px bg-border" />
-                    <button type="button" onClick={() => { setAccountOpen(false); logout() }} className="flex w-full items-center gap-2.5 rounded-(--radius-control) px-3 py-2 text-sm text-red-600 hover:bg-muted">
+                    <button type="button" onClick={() => { setAccountOpen(false); logout() }} className="flex w-full items-center gap-2.5 rounded-(--radius-control) px-3 py-2 text-sm text-danger hover:bg-muted">
                       <LogOut className="size-4" /> Sign out
                     </button>
                   </div>
@@ -228,7 +226,7 @@ export function Header() {
             <MegaMenu />
             <Link
               href="/branches"
-              className="inline-flex h-9 items-center gap-1.5 text-xs font-medium text-white/90 transition-colors hover:text-white"
+              className="inline-flex h-9 items-center gap-1.5 text-xs font-medium text-on-dark-muted transition-colors hover:text-on-dark"
             >
               <MapPin className="size-3.5" />
               Visit Shams

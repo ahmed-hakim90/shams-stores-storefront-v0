@@ -1,6 +1,7 @@
 export * from './product-card'
 export * from './product-detail'
 export * from './product-gallery'
+export * from './product-image'
 export * from './product-rail'
 export * from './product-rail-section'
 export * from './product-scroll-row'

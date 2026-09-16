@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import type { Category, Brand } from '@/lib/commerce/types'
-import { ProductImage } from '../product/product-image'
+import { ProductImage } from '@/components/shams/product'
 
 interface CategoryWithMeta extends Category {
   productCount: number

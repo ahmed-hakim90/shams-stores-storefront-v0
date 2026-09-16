@@ -6,8 +6,8 @@ import {
   terms,
   parseQuery,
 } from '@/lib/commerce/live/catalog'
-import { ShopFeed } from '../catalog/shop-feed'
-import { ProductImage } from '../product/product-image'
+import { ShopFeed } from '@/components/shams/catalog'
+import { ProductImage } from '@/components/shams/product'
 import { catalogParams, type CatalogScope } from '@/lib/commerce/experience'
 import type { TaxonomyTerm } from '@/lib/commerce/types'
 export async function LiveCatalogPage({
@@ -119,7 +119,7 @@ export async function LiveCatalogPage({
           )}
         </div>
         {hub?.term.image && (
-          <div className="relative hidden min-h-28 overflow-hidden bg-white md:block">
+          <div className="relative hidden min-h-28 overflow-hidden bg-surface-raised md:block">
             <ProductImage
               src={hub.term.image}
               alt={hub.term.name}

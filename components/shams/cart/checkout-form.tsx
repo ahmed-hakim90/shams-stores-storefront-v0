@@ -2,13 +2,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { useQuery } from '@tanstack/react-query'
-import { useInteractions } from '../providers/interaction-provider'
-import { useAuth, type SavedAddress } from '../providers/auth-provider'
+import { useInteractions, useAuth, type SavedAddress } from '@/components/shams/providers'
 import { BrowserCommerceError, commerceFetch } from '@/lib/commerce/browser'
 import type { Address, CheckoutResult } from '@/lib/commerce/types'
 import type { PaymentIntentClient } from '@/lib/payments/paymob/types'
 import { formatEgp } from '@/lib/commerce'
-import { PaymobPixel, preloadPaymobPixel } from '../payments/paymob-pixel'
+import { PaymobPixel, preloadPaymobPixel } from '@/components/shams/payments'
 import { Plus, User, Lock, Eye, EyeOff, X, Mail, ArrowRight } from 'lucide-react'
 
 const CARD_METHOD = 'paymob-card'
@@ -170,7 +169,7 @@ export function CheckoutForm() {
   const inputClass = (key: keyof Address) =>
     `mt-1 min-h-9 w-full rounded-(--radius-control) border bg-background px-2.5 text-sm font-normal transition-colors ${
       fieldErrors[key] && touched.has(key)
-        ? 'border-red-400 focus:border-red-500'
+        ? 'border-danger focus:border-danger'
         : 'focus:border-brand'
     }`
 
@@ -184,7 +183,7 @@ export function CheckoutForm() {
     <label className="block text-xs font-medium">
       <span className="flex items-center gap-0.5">
         {label}
-        {required && <span className="text-red-500">*</span>}
+        {required && <span className="text-danger">*</span>}
       </span>
       <input
         required={required}
@@ -196,7 +195,7 @@ export function CheckoutForm() {
         className={inputClass(key)}
       />
       {fieldErrors[key] && touched.has(key) && (
-        <span className="mt-0.5 block text-[11px] text-red-600">{fieldErrors[key]}</span>
+        <span className="mt-0.5 block text-[11px] text-danger">{fieldErrors[key]}</span>
       )}
     </label>
   )
@@ -317,7 +316,7 @@ export function CheckoutForm() {
         {error && (
           <p
             role="alert"
-            className="rounded-(--radius-control) bg-red-50 p-3 text-sm text-red-700"
+            className="rounded-(--radius-control) bg-danger-muted p-3 text-sm text-danger"
           >
             {error}
           </p>
@@ -352,7 +351,7 @@ export function CheckoutForm() {
             </button>
           </div>
           {loginError && (
-            <p role="alert" className="rounded-(--radius-control) bg-red-50 p-2 text-[11px] text-red-700">{loginError}</p>
+            <p role="alert" className="rounded-(--radius-control) bg-danger-muted p-2 text-[11px] text-danger">{loginError}</p>
           )}
           <label className="block text-xs font-medium">
             Email or phone
@@ -427,7 +426,7 @@ export function CheckoutForm() {
         {field('phone', 'Phone', 'tel', 'tel')}
         <label className="text-xs font-medium">
           <span className="flex items-center gap-0.5">
-            Governorate <span className="text-red-500">*</span>
+            Governorate <span className="text-danger">*</span>
           </span>
           <select
             required
@@ -442,7 +441,7 @@ export function CheckoutForm() {
             ))}
           </select>
           {fieldErrors.state && touched.has('state') && (
-            <span className="mt-0.5 block text-[11px] text-red-600">{fieldErrors.state}</span>
+            <span className="mt-0.5 block text-[11px] text-danger">{fieldErrors.state}</span>
           )}
         </label>
         {field('city', 'City', 'text', 'address-level2')}
@@ -610,7 +609,7 @@ export function CheckoutForm() {
 
       {error && (
         <div className="space-y-2">
-          <p role="alert" className="rounded-(--radius-control) bg-red-50 p-2.5 text-xs text-red-700">
+          <p role="alert" className="rounded-(--radius-control) bg-danger-muted p-2.5 text-xs text-danger">
             {error}
           </p>
           <div className="flex flex-wrap gap-2">

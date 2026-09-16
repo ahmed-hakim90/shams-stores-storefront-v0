@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useQuery } from '@tanstack/react-query'
-import { useInteractions } from '../providers/interaction-provider'
+import { useInteractions } from '@/components/shams/providers'
 import { commerceFetch } from '@/lib/commerce/browser'
 import type { ProductSummary } from '@/lib/commerce/types'
 import { ProductCard } from './product-card'

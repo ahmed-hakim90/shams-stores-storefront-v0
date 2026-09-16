@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Bell, Check, LoaderCircle, ShoppingCart } from 'lucide-react'
-import { useInteractions } from '../providers/interaction-provider'
+import { useInteractions } from '@/components/shams/providers'
 import { cn } from '@/lib/utils'
 import type { Product } from '@/lib/commerce'
 import type { SelectedVariant } from './variant-selector'
@@ -81,7 +81,7 @@ export function AddToCartButton({
         outOfStock
           ? 'border border-border bg-background text-foreground hover:border-brand hover:text-brand-ink'
           : 'bg-brand text-brand-foreground hover:bg-brand/90',
-        added && 'bg-success text-white hover:bg-success',
+        added && 'bg-success text-on-dark hover:bg-success',
         className,
       )}
     >

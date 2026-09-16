@@ -75,7 +75,7 @@ export function RegisterForm() {
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-5">
         {error && (
-          <div role="alert" className="rounded-(--radius-control) bg-red-50 p-3 text-sm text-red-700">
+          <div role="alert" className="rounded-(--radius-control) bg-danger-muted p-3 text-sm text-danger">
             {error}
           </div>
         )}

@@ -133,7 +133,7 @@ function OverviewSection({ user, logout }: { user: NonNullable<ReturnType<typeof
                   <p className="text-xs text-muted-foreground">{new Date(order.date).toLocaleDateString('en-EG')} · {order.items} {order.items === 1 ? 'item' : 'items'}</p>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${order.status === 'completed' || order.status === 'Delivered' ? 'bg-green-50 text-green-700' : 'bg-brand-muted text-brand-ink'}`}>
+                  <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${order.status === 'completed' || order.status === 'Delivered' ? 'bg-success-muted text-success' : 'bg-brand-muted text-brand-ink'}`}>
                     {order.status}
                   </span>
                   <span className="text-sm font-semibold">{order.total.toLocaleString('en-EG')} EGP</span>

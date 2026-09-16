@@ -8,10 +8,10 @@ import {
   keepPreviousData,
 } from '@tanstack/react-query'
 import { catalogParams, type CatalogScope } from '@/lib/commerce/experience'
-import { CatalogDiscovery } from '../marketing/contextual-discovery'
-import { Reveal } from '../shared/reveal'
+import { CatalogDiscovery } from '@/components/shams/marketing'
+import { Reveal } from '@/components/shams/shared'
 import type { TaxonomyTerm } from '@/lib/commerce/types'
-import { ProductCard } from '../product/product-card'
+import { ProductCard } from '@/components/shams/product'
 import {
   activeCatalogFilterKeys,
   clearCatalogFilters,

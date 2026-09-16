@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ArrowRight, ChevronDown, Tag } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { useCatalogNavigation } from '../catalog/catalog-navigation'
+import { useCatalogNavigation } from '@/components/shams/catalog'
 import { commerce, formatMoney } from '@/lib/commerce'
 import type { Category } from '@/lib/commerce'
 
@@ -76,8 +76,8 @@ export function MegaMenu() {
               href={`/c/${cat.slug}`}
               onFocus={() => open(cat.slug)}
               className={cn(
-                'inline-flex h-9 items-center gap-1 px-3 text-xs font-medium text-white/85 transition-colors hover:bg-white/15 hover:text-white',
-                active === cat.slug && 'bg-white/15 text-white',
+                'inline-flex h-9 items-center gap-1 px-3 text-xs font-medium text-on-dark-muted transition-colors hover:bg-on-dark-border hover:text-on-dark',
+                active === cat.slug && 'bg-on-dark-border text-on-dark',
               )}
               aria-expanded={active === cat.slug}
             >
@@ -92,7 +92,7 @@ export function MegaMenu() {
           </li>
         ))}
 
-        <li aria-hidden className="mx-1 h-4 w-px bg-white/30" />
+        <li aria-hidden className="mx-1 h-4 w-px bg-on-dark-border-strong" />
 
         {extraLinks.map((link) => (
           <li key={link.href}>
@@ -102,8 +102,8 @@ export function MegaMenu() {
               className={cn(
                 'inline-flex h-9 items-center gap-1 px-3 text-xs font-medium transition-colors',
                 link.accent
-                  ? 'text-yellow-200 hover:text-yellow-100'
-                  : 'text-white/85 hover:bg-white/15 hover:text-white',
+                  ? 'text-brand hover:text-brand-hover'
+                  : 'text-on-dark-muted hover:bg-on-dark-border hover:text-on-dark',
               )}
             >
               {link.accent && <Tag className="size-3" />}
@@ -135,7 +135,7 @@ function MegaPanel({ category }: { category: Category }) {
     : undefined
 
   return (
-    <div className="-mt-px max-h-[calc(100dvh-var(--shell-header-height)-32px)] overflow-y-auto overscroll-contain bg-white shadow-[0_8px_24px_rgba(0,0,0,0.08)]">
+    <div className="-mt-px max-h-[calc(100dvh-var(--shell-header-height)-32px)] overflow-y-auto overscroll-contain bg-surface-raised shadow-lg">
       <div className="shams-container py-5">
         <div className="grid grid-cols-[1fr_18rem] gap-6">
           <div>
@@ -195,7 +195,7 @@ function MegaPanel({ category }: { category: Category }) {
                   {featured.configuration}
                 </p>
               </div>
-              <div className="relative my-3 h-28 bg-white">
+              <div className="relative my-3 h-28 bg-surface-raised">
                 <Image
                   src={featured.image || '/placeholder.svg'}
                   alt={featured.name}

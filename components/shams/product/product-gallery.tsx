@@ -11,7 +11,7 @@ import {
 } from 'lucide-react'
 import type { ProductImage as ImageModel } from '@/lib/commerce/types'
 import { ProductImage } from './product-image'
-import { useOverlayPresence } from '../shared/shell-policy'
+import { useOverlayPresence } from '@/components/shams/shared'
 export function ProductGallery({
   images,
   name,
@@ -48,7 +48,7 @@ export function ProductGallery({
     >
       <div
         ref={mainRef}
-        className="relative aspect-square overflow-hidden rounded-(--radius-editorial) border bg-white"
+        className="relative aspect-square overflow-hidden rounded-(--radius-editorial) border bg-surface-raised"
         onMouseEnter={() => setHoverZoom(true)}
         onMouseLeave={() => setHoverZoom(false)}
         onMouseMove={handleMouseMove}
@@ -87,7 +87,7 @@ export function ProductGallery({
             }
           />
           {!hoverZoom && (
-            <span className="absolute bottom-4 right-4 flex size-11 items-center justify-center rounded-full border bg-white">
+            <span className="absolute bottom-4 right-4 flex size-11 items-center justify-center rounded-full border bg-surface-raised">
               <Expand className="size-4" />
             </span>
           )}
@@ -118,7 +118,7 @@ export function ProductGallery({
                 }}
                 aria-label={`View image ${i + 1}`}
                 aria-pressed={i === selected}
-                className={`relative size-16 shrink-0 overflow-hidden rounded-(--radius-control) border bg-white ${i === selected ? 'border-brand-ink ring-1 ring-brand-ink' : ''}`}
+                className={`relative size-16 shrink-0 overflow-hidden rounded-(--radius-control) border bg-surface-raised ${i === selected ? 'border-brand-ink ring-1 ring-brand-ink' : ''}`}
               >
                 <ProductImage
                   src={img.url}

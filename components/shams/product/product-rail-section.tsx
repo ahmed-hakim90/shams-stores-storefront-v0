@@ -1,5 +1,5 @@
 import type { Product } from '@/lib/commerce'
-import { SectionHeading } from '../shared/section-heading'
+import { SectionHeading } from '@/components/shams/shared'
 import { ProductRail } from './product-rail'
 
 export function ProductRailSection({

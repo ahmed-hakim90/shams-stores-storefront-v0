@@ -2,8 +2,8 @@
 import Link from 'next/link'
 import { Dialog } from '@base-ui/react/dialog'
 import { ShoppingCart, X } from 'lucide-react'
-import { useInteractions } from '../providers/interaction-provider'
-import { ProductImage } from '../product/product-image'
+import { useInteractions } from '@/components/shams/providers'
+import { ProductImage } from '@/components/shams/product'
 import { CartLineOptions } from './cart-line-options'
 import { formatEgp } from '@/lib/commerce'
 export function CartDrawer({ showTrigger = true }: { showTrigger?: boolean }) {
@@ -69,7 +69,7 @@ export function CartDrawer({ showTrigger = true }: { showTrigger?: boolean }) {
             ) : cartLines.length ? (
               cartLines.map((l) => (
                 <article key={l.id} className="flex gap-3 border-b py-4">
-                  <div className="relative size-20 shrink-0 bg-white">
+                  <div className="relative size-20 shrink-0 bg-surface-raised">
                     <ProductImage
                       src={l.productImage || '/placeholder.svg'}
                       alt={l.productName}

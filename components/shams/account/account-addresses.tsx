@@ -111,7 +111,7 @@ function EditAddressForm({ address, updateAddress, onDone, onCancel }: {
           <input type="text" value={form.postcode} onChange={(e) => update('postcode', e.target.value)} className="mt-1 min-h-11 w-full rounded-(--radius-control) border bg-background px-3 text-sm" />
         </div>
       </div>
-      {error && <p role="alert" className="mt-3 rounded-(--radius-control) bg-red-50 p-3 text-sm text-red-700">{error}</p>}
+      {error && <p role="alert" className="mt-3 rounded-(--radius-control) bg-danger-muted p-3 text-sm text-danger">{error}</p>}
       <div className="mt-4 flex gap-2">
         <button type="submit" disabled={pending} className="inline-flex min-h-10 items-center gap-1 rounded-(--radius-control) bg-brand px-4 text-sm font-semibold text-brand-foreground disabled:opacity-60">
           {pending ? 'Saving...' : 'Save changes'}
@@ -212,7 +212,7 @@ function AddAddressForm({ addAddress, onDone }: { addAddress: (address: Omit<Sav
           <input type="text" value={form.postcode} onChange={(e) => update('postcode', e.target.value)} className="mt-1 min-h-11 w-full rounded-(--radius-control) border bg-background px-3 text-sm" />
         </div>
       </div>
-      {error && <p role="alert" className="mt-3 rounded-(--radius-control) bg-red-50 p-3 text-sm text-red-700">{error}</p>}
+      {error && <p role="alert" className="mt-3 rounded-(--radius-control) bg-danger-muted p-3 text-sm text-danger">{error}</p>}
       <div className="mt-4 flex gap-2">
         <button type="submit" disabled={pending} className="inline-flex min-h-10 items-center gap-1 rounded-(--radius-control) bg-brand px-4 text-sm font-semibold text-brand-foreground disabled:opacity-60">
           {pending ? 'Saving...' : 'Save address'}
@@ -283,7 +283,7 @@ export function AddressesSection({ user, removeAddress, setDefaultAddress, addAd
                       </button>
                     )}
                     {addr.id !== 'billing' && (
-                      <button onClick={() => removeAddress(addr.id)} className="text-xs text-red-600" title="Remove address">
+                      <button onClick={() => removeAddress(addr.id)} className="text-xs text-danger" title="Remove address">
                         <Trash2 className="size-4" />
                       </button>
                     )}

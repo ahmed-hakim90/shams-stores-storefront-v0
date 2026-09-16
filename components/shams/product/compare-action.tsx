@@ -1,7 +1,7 @@
 'use client'
 
 import { Scale } from 'lucide-react'
-import { useInteractions } from '../providers/interaction-provider'
+import { useInteractions } from '@/components/shams/providers'
 import { cn } from '@/lib/utils'
 
 export function CompareAction({

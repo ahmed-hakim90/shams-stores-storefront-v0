@@ -18,7 +18,7 @@ export function PageHero({
   lastUpdated,
 }: PageHeroProps) {
   return (
-    <section className="relative overflow-hidden bg-foreground text-white">
+    <section className="relative overflow-hidden bg-foreground text-on-dark">
       <div
         aria-hidden
         className="absolute inset-0 opacity-30"
@@ -31,18 +31,18 @@ export function PageHero({
         className={`shams-container relative ${compact ? 'py-10 sm:py-14' : 'py-16 sm:py-24'}`}
       >
         <div className="max-w-2xl space-y-4">
-          <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide">
-            <Icon className="size-3.5 text-orange-300" />
+          <span className="inline-flex items-center gap-2 rounded-full bg-on-dark-border px-3 py-1 text-xs font-semibold uppercase tracking-wide">
+            <Icon className="size-3.5 text-brand" />
             {eyebrow}
           </span>
           <h1 className="text-balance text-4xl font-semibold leading-[1.1] tracking-tight sm:text-5xl">
             {title}
           </h1>
-          <p className="max-w-lg text-pretty text-base leading-7 text-white/70">
+          <p className="max-w-lg text-pretty text-base leading-7 text-on-dark-muted">
             {description}
           </p>
           {lastUpdated && (
-            <p className="text-xs text-white/40">Last updated: {lastUpdated}</p>
+            <p className="text-xs text-on-dark-subtle">Last updated: {lastUpdated}</p>
           )}
         </div>
       </div>

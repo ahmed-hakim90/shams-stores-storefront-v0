@@ -9,8 +9,7 @@ import type {
   ResolvedHeroStep,
   ProductSummary,
 } from '@/lib/commerce'
-import { ProductImage } from '../product/product-image'
-import { StockStatus } from '../product/stock-status'
+import { ProductImage, StockStatus } from '@/components/shams/product'
 
 const AUTO_ADVANCE_MS = 4000
 
@@ -309,7 +308,7 @@ function DesktopHero({
                   onClick={() => onStepClick(index)}
                   className={`group flex w-full items-center gap-3 border-l-2 px-3 py-2.5 text-left transition-all duration-200 ${
                     isActive
-                      ? 'border-brand bg-accent-warm-muted/40'
+                      ? 'border-brand bg-brand-muted/40'
                       : isPast
                         ? 'border-brand/30 bg-transparent'
                         : 'border-border bg-transparent hover:border-line-strong hover:bg-surface-subtle'
@@ -355,7 +354,7 @@ function DesktopHero({
               onClick={() => onStepClick(completeStepIndex)}
               className={`group flex w-full items-center gap-3 border-l-2 px-3 py-2.5 text-left transition-all duration-200 ${
                 isComplete
-                  ? 'border-brand bg-accent-warm-muted/40'
+                  ? 'border-brand bg-brand-muted/40'
                   : 'border-border bg-transparent hover:border-line-strong hover:bg-surface-subtle'
               }`}
             >

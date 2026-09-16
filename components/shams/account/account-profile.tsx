@@ -113,8 +113,8 @@ export function ProfileSection({ user, logout, updateProfile, changePassword }: 
               <label className="block text-sm font-medium">Phone</label>
               <input type="tel" value={profilePhone} onChange={(e) => setProfilePhone(e.target.value)} className="mt-1 min-h-11 w-full rounded-(--radius-control) border bg-background px-3 text-sm" />
             </div>
-            {profileErr && <p role="alert" className="rounded-(--radius-control) bg-red-50 p-3 text-sm text-red-700">{profileErr}</p>}
-            {profileMsg && <p role="status" className="rounded-(--radius-control) bg-green-50 p-3 text-sm text-green-700">{profileMsg}</p>}
+            {profileErr && <p role="alert" className="rounded-(--radius-control) bg-danger-muted p-3 text-sm text-danger">{profileErr}</p>}
+            {profileMsg && <p role="status" className="rounded-(--radius-control) bg-success-muted p-3 text-sm text-success">{profileMsg}</p>}
             <div className="flex gap-2">
               <button onClick={handleProfileSave} className="inline-flex min-h-10 items-center gap-1 rounded-(--radius-control) bg-brand px-4 text-sm font-semibold text-brand-foreground">
                 <Check className="size-4" /> Save
@@ -169,8 +169,8 @@ export function ProfileSection({ user, logout, updateProfile, changePassword }: 
               className="mt-1 min-h-11 w-full rounded-(--radius-control) border bg-background px-3 text-sm"
             />
           </div>
-          {pwError && <p role="alert" className="rounded-(--radius-control) bg-red-50 p-3 text-sm text-red-700">{pwError}</p>}
-          {pwMessage && <p role="status" className="rounded-(--radius-control) bg-green-50 p-3 text-sm text-green-700">{pwMessage}</p>}
+          {pwError && <p role="alert" className="rounded-(--radius-control) bg-danger-muted p-3 text-sm text-danger">{pwError}</p>}
+          {pwMessage && <p role="status" className="rounded-(--radius-control) bg-success-muted p-3 text-sm text-success">{pwMessage}</p>}
           <button
             onClick={handlePasswordChange}
             disabled={pwPending || !currentPassword || !newPassword || !confirmPassword}
@@ -182,9 +182,9 @@ export function ProfileSection({ user, logout, updateProfile, changePassword }: 
       </section>
 
       <section className="mt-6 rounded-(--radius-card) border bg-card p-5">
-        <h2 className="font-semibold text-red-600">Danger zone</h2>
+        <h2 className="font-semibold text-danger">Danger zone</h2>
         <p className="mt-2 text-sm text-muted-foreground">Sign out of your account on this device.</p>
-        <button onClick={logout} className="mt-3 min-h-11 rounded-(--radius-control) border border-red-200 px-5 text-sm font-medium text-red-600 hover:bg-red-50">
+        <button onClick={logout} className="mt-3 min-h-11 rounded-(--radius-control) border border-danger-muted px-5 text-sm font-medium text-danger hover:bg-danger-muted">
           Sign out
         </button>
       </section>

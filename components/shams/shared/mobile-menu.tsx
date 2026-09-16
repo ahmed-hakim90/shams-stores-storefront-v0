@@ -22,8 +22,8 @@ import {
   X,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { useCatalogNavigation } from '../catalog/catalog-navigation'
-import { useAuth } from '../providers/auth-provider'
+import { useCatalogNavigation } from '@/components/shams/catalog'
+import { useAuth } from '@/components/shams/providers'
 import { commerce } from '@/lib/commerce'
 import { ShamsLogo } from './logo'
 import { Dialog } from '@base-ui/react/dialog'

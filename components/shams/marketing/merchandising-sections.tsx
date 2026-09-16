@@ -26,10 +26,7 @@ import {
   getEnabledGearGuides,
   getEnabledBuyingQuestions,
 } from '@/lib/commerce/home-content'
-import { ProductImage } from '../product/product-image'
-import { PriceDisplay } from '../product/price-display'
-import { StockStatus } from '../product/stock-status'
-import { ProductCard } from '../product/product-card'
+import { ProductImage, PriceDisplay, StockStatus, ProductCard } from '@/components/shams/product'
 
 export function MerchSectionHeading({
   eyebrow,
@@ -142,10 +139,10 @@ export async function ProductSpotlight() {
             <Link
               href={`/p/${product.slug}`}
               aria-label={`View ${product.name}`}
-              className="group relative block min-h-56 bg-white sm:min-h-64 md:min-h-[360px]"
+              className="group relative block min-h-56 bg-surface-raised sm:min-h-64 md:min-h-[360px]"
             >
               <ProductVisual product={product} priority />
-              <span className="absolute bottom-3 left-4 right-4 flex items-center justify-between gap-3 border-t border-border bg-white/95 pt-2 text-[11px] font-medium text-muted-foreground">
+              <span className="absolute bottom-3 left-4 right-4 flex items-center justify-between gap-3 border-t border-border bg-surface-raised/95 pt-2 text-[11px] font-medium text-muted-foreground">
                 <span>{product.brand || 'Shams selection'}</span>
                 <StockStatus status={product.stock} compact className="text-[11px]" />
               </span>
@@ -243,28 +240,28 @@ export async function BrandShowcase() {
       <div className="grid gap-3 lg:grid-cols-2">
         <Link
           href={`/b/${data.brand.slug}`}
-          className="group grid min-h-56 overflow-hidden border bg-surface-editorial-dark text-white sm:grid-cols-[.8fr_1.2fr]"
+          className="group grid min-h-56 overflow-hidden border bg-surface-editorial-dark text-on-dark sm:grid-cols-[.8fr_1.2fr]"
         >
           <div className="flex flex-col justify-between p-5 lg:p-6">
             <div>
-              <p className="text-[10px] uppercase tracking-widest text-orange-300">
+              <p className="text-[10px] uppercase tracking-widest text-brand-muted">
                 Brand spotlight
               </p>
               <h3 className="mt-2 text-2xl font-semibold tracking-tight">
                 {data.brand.name}
               </h3>
-              <p className="mt-3 text-xs leading-5 text-white/75">
+              <p className="mt-3 text-xs leading-5 text-on-dark-muted">
                 Find a new perspective.
                 <br />
                 Explore the {data.brand.name} collection.
               </p>
             </div>
-            <span className="mt-4 inline-flex items-center gap-1.5 text-xs font-semibold text-orange-300">
+            <span className="mt-4 inline-flex items-center gap-1.5 text-xs font-semibold text-brand-muted">
               Explore {data.brand.name}
               <ArrowRight className="size-3" />
             </span>
           </div>
-          <div className="relative grid min-h-44 grid-cols-2 gap-1.5 bg-white p-2">
+          <div className="relative grid min-h-44 grid-cols-2 gap-1.5 bg-surface-raised p-2">
             {data.products.slice(0, 3).map((p, i) => (
               <div
                 key={p.id}
@@ -332,7 +329,7 @@ export async function UseCaseDiscovery() {
             href={`/w/${j.tag}`}
             className="group w-[72vw] max-w-52 shrink-0 snap-start overflow-hidden border bg-card sm:w-44 xl:max-w-none xl:flex-1"
           >
-            <div className="relative aspect-[1.5/1] bg-white">
+            <div className="relative aspect-[1.5/1] bg-surface-raised">
               <ProductImage
                 src={j.image}
                 alt=""
@@ -381,7 +378,7 @@ export async function SetupDiscovery() {
             >
               {setup.anchor.name}
             </Link>
-            <div className="relative mt-3 aspect-[1.4/1] bg-white">
+            <div className="relative mt-3 aspect-[1.4/1] bg-surface-raised">
               <ProductVisual product={setup.anchor} sizes="420px" />
             </div>
             <p className="mt-3 text-xs leading-5 text-muted-foreground">
@@ -493,7 +490,7 @@ export async function BundleStory() {
         </div>
         <Link
           href={`/p/${bundle.slug}`}
-          className="group relative min-h-56 bg-white"
+          className="group relative min-h-56 bg-surface-raised"
         >
           <ProductVisual product={bundle} />
         </Link>
@@ -509,16 +506,16 @@ export async function BrandCampaign() {
     <section className="shams-container py-4 sm:py-5" data-merch="campaign">
       <Link
         href={`/b/${campaign.brand.slug}`}
-        className="group grid overflow-hidden bg-surface-editorial-dark text-white md:grid-cols-[1fr_320px]"
+        className="group grid overflow-hidden bg-surface-editorial-dark text-on-dark md:grid-cols-[1fr_320px]"
       >
         <div className="flex flex-col justify-center p-5 sm:p-6">
-          <p className="text-xs font-semibold uppercase tracking-widest text-orange-300">
+          <p className="text-xs font-semibold uppercase tracking-widest text-brand-muted">
             Explore {campaign.brand.name}
           </p>
           <h2 className="mt-2 text-xl font-semibold tracking-tight sm:text-2xl">
             A different perspective starts here.
           </h2>
-          <p className="mt-2 max-w-xl text-xs leading-5 text-white/75">
+          <p className="mt-2 max-w-xl text-xs leading-5 text-on-dark-muted">
             Discover {campaign.brand.name} equipment in the Shams catalog.
           </p>
           <span className="mt-4 inline-flex items-center gap-1.5 text-xs font-semibold">
@@ -526,7 +523,7 @@ export async function BrandCampaign() {
             <ArrowRight className="size-3" />
           </span>
         </div>
-        <div className="relative min-h-48 bg-white">
+        <div className="relative min-h-48 bg-surface-raised">
           <ProductVisual
             product={campaign.product}
             sizes="(max-width:767px) 80vw, 320px"
@@ -605,21 +602,21 @@ export function GearGuides() {
       <div className="mt-3 grid gap-3 md:grid-cols-[1.4fr_1fr]">
         <Link
           href={featured.destination}
-          className="group flex min-h-48 flex-col overflow-hidden border bg-surface-editorial-dark text-white md:min-h-64"
+          className="group flex min-h-48 flex-col overflow-hidden border bg-surface-editorial-dark text-on-dark md:min-h-64"
         >
           <div className="flex flex-1 flex-col justify-between p-5 sm:p-6">
             <div>
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-orange-300">
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-brand-muted">
                 {featured.eyebrow}
               </p>
               <h3 className="mt-2 text-lg font-semibold tracking-tight sm:text-xl">
                 {featured.title}
               </h3>
-              <p className="mt-2 max-w-md text-xs leading-5 text-white/75">
+              <p className="mt-2 max-w-md text-xs leading-5 text-on-dark-muted">
                 {featured.description}
               </p>
             </div>
-            <span className="mt-4 inline-flex items-center gap-1.5 text-xs font-semibold text-orange-300">
+            <span className="mt-4 inline-flex items-center gap-1.5 text-xs font-semibold text-brand-muted">
               Read the guide
               <ArrowRight className="size-3" />
             </span>

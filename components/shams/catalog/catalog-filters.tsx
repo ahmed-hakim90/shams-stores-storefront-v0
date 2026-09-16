@@ -1,5 +1,5 @@
 'use client'
-import { useOverlayPresence } from '../shared/shell-policy'
+import { useOverlayPresence } from '@/components/shams/shared'
 import { useEffect, useId, useState } from 'react'
 import { Drawer } from '@base-ui/react/drawer'
 import { SlidersHorizontal, X } from 'lucide-react'

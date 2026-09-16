@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { commerce } from '@/lib/commerce'
-import { SectionHeading } from '../shared/section-heading'
+import { SectionHeading } from '@/components/shams/shared'
 
 export function CatalogDiscovery({ compact = false }: { compact?: boolean }) {
   const categories = commerce.categories.list().slice(0, compact ? 6 : 8)

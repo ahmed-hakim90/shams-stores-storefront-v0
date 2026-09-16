@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import type { TaxonomyTerm } from '@/lib/commerce/types'
-import { ProductImage } from '../product/product-image'
+import { ProductImage } from '@/components/shams/product'
 export function TaxonomyCards({
   terms,
   kind = 'category',
@@ -26,7 +26,7 @@ export function TaxonomyCards({
         >
           {t.image ? (
             <div
-              className={`relative shrink-0 bg-white ${compact ? 'size-9' : 'mb-2 aspect-[4/3]'}`}
+              className={`relative shrink-0 bg-surface-raised ${compact ? 'size-9' : 'mb-2 aspect-[4/3]'}`}
             >
               <ProductImage
                 src={t.image}

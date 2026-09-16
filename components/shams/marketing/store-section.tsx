@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { ArrowRight, Headset, PackageCheck, Repeat } from 'lucide-react'
-import { BranchAvailability } from '../product/branch-availability'
+import { BranchAvailability } from '@/components/shams/product'
 
 const perks = [
   { icon: PackageCheck, label: 'Reserve online, collect in-store the same day' },

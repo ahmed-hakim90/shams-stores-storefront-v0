@@ -1,7 +1,7 @@
 'use client'
 import type { TaxonomyTerm } from '@/lib/commerce/types'
 import type { CatalogScope } from '@/lib/commerce/experience'
-import { ProductImage } from '../product/product-image'
+import { ProductImage } from '@/components/shams/product'
 export function CatalogDiscovery({
   categories,
   brands,
@@ -54,7 +54,7 @@ export function CatalogDiscovery({
                     >
                       {t.image && (
                         <span
-                          className={`relative shrink-0 overflow-hidden bg-white ${hub && group.kind === 'category' ? 'h-16 w-full' : 'size-7'}`}
+                          className={`relative shrink-0 overflow-hidden bg-surface-raised ${hub && group.kind === 'category' ? 'h-16 w-full' : 'size-7'}`}
                         >
                           <ProductImage
                             src={t.image}
