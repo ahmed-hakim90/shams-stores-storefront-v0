@@ -1,6 +1,4 @@
 @import 'tailwindcss';
-@import 'tw-animate-css';
-@import 'shadcn/tailwind.css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -211,7 +209,7 @@
 
   --shell-header-height: 64px;
   --shell-gutter: 16px;
-  --mobile-bottom-nav-height: 5rem;
+  --mobile-bottom-nav-height: 3.5rem;
   --sticky-purchase-height: 4.5rem;
   --compare-tray-height: 3.5rem;
   --safe-area-bottom: env(safe-area-inset-bottom, 0px);
@@ -353,8 +351,9 @@
     border: 1px solid var(--border);
   }
 
-  .shams-product-card > div:first-child {
+  .shams-product-grid .shams-product-card > div:first-child {
     background: #ffffff;
+    height: 160px;
   }
 
   .shams-product-card > div:last-child {
@@ -604,12 +603,12 @@
 .shams-product-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
+  gap: 8px;
 }
 .shams-home-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
+  gap: 8px;
 }
 .shams-scroll-region {
   overflow: auto;
@@ -674,6 +673,19 @@
   from {
     opacity: 0;
     transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.shams-mega-panel-enter {
+  animation: shams-mega-slide-down 0.15s ease-out;
+}
+@keyframes shams-mega-slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
   }
   to {
     opacity: 1;
@@ -907,6 +919,53 @@
 [data-overlay='search'][data-ending-style] {
   opacity: 0;
   transform: translateY(-12px);
+}
+
+/* Hero cascade entrance and assembly */
+.hero-cascade-fade-in {
+  animation: hero-cascade-enter 500ms var(--ease-out) both;
+}
+.hero-cascade-fade-in:nth-child(1) { animation-delay: 0ms; }
+.hero-cascade-fade-in:nth-child(2) { animation-delay: 80ms; }
+.hero-cascade-fade-in:nth-child(3) { animation-delay: 160ms; }
+
+@keyframes hero-cascade-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-assembly-piece {
+  animation: hero-assembly-in 400ms var(--ease-spring) both;
+}
+.hero-assembly-piece:nth-child(1) { animation-delay: 0ms; }
+.hero-assembly-piece:nth-child(2) { animation-delay: 120ms; }
+.hero-assembly-piece:nth-child(3) { animation-delay: 240ms; }
+.hero-assembly-piece:nth-child(4) { animation-delay: 360ms; }
+.hero-assembly-piece:nth-child(5) { animation-delay: 480ms; }
+
+@keyframes hero-assembly-in {
+  from {
+    opacity: 0;
+    transform: scale(0.85) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-cascade-fade-in,
+  .hero-assembly-piece {
+    animation: none;
+    opacity: 1;
+  }
 }
 
 /* Scroll-reveal entrance animations */

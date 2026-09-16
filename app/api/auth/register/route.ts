@@ -1,7 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { wooConfig } from '@/lib/commerce/woocommerce'
+import { rateLimit } from '@/lib/rate-limit'
 
 export async function POST(request: NextRequest) {
+  const ip = request.headers.get('x-forwarded-for') ?? request.headers.get('x-real-ip') ?? 'anonymous'
+  const limit = rateLimit(`register:${ip}`, { limit: 3, windowMs: 60_000 })
+  if (!limit.success) {
+    return NextResponse.json(
+      { error: 'Too many registration attempts. Please try again later.' },
+      { status: 429, headers: { 'Retry-After': String(Math.ceil((limit.retryAfterMs ?? 0) / 1000)) } },
+    )
+  }
+
   try {
     const body = await request.json()
     const { name, email, phone, password } = body

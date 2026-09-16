@@ -11,14 +11,12 @@ import {
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { commerceFetch } from '@/lib/commerce/browser'
 import type { Cart } from '@/lib/commerce/types'
-import { Dialog } from '@base-ui/react/dialog'
-import { SavedProducts } from './saved-products'
 import { usePathname } from 'next/navigation'
-import { Check, Info, X, AlertTriangle, Scale, ArrowLeft } from 'lucide-react'
+import { Check, Info, X, AlertTriangle, ArrowLeft } from 'lucide-react'
 import type { Product } from '@/lib/commerce'
 import { commerce } from '@/lib/commerce'
 import { cn } from '@/lib/utils'
-import { GlobalSearchOverlay } from './global-search-overlay'
+import dynamic from 'next/dynamic'
 import { MobileBottomNav as GlassMobileBottomNav } from './mobile-navigation'
 import { Header } from './header'
 import Link from 'next/link'
@@ -30,6 +28,19 @@ import {
   useOverlayActive,
 } from './shell-policy'
 import type { ShellVariant } from '@/lib/commerce/experience'
+
+const GlobalSearchOverlay = dynamic(
+  () => import('./global-search-overlay').then((mod) => mod.GlobalSearchOverlay),
+  { ssr: false },
+)
+const WishlistDrawer = dynamic(
+  () => import('./wishlist-drawer').then((mod) => mod.WishlistDrawer),
+  { ssr: false },
+)
+const CompareTray = dynamic(
+  () => import('./compare-tray').then((mod) => mod.CompareTray),
+  { ssr: false },
+)
 
 function safePersist(key: string, value: unknown) {
   try {
@@ -164,7 +175,7 @@ export function InteractionProvider({
     queryKey: ['cart'],
     queryFn: () => commerceFetch<Cart>('/api/commerce/cart'),
     enabled: liveMode,
-    staleTime: 0,
+    staleTime: 30_000,
     refetchOnWindowFocus: true,
     retry: 1,
   })
@@ -673,85 +684,6 @@ export function InteractionProvider({
         }
       />
     </InteractionContext.Provider>
-  )
-}
-
-export function WishlistDrawer() {
-  const { wishlistOpen, closeWishlist } = useInteractions()
-  return (
-    <Dialog.Root
-      open={wishlistOpen}
-      onOpenChange={(open) => {
-        if (!open) closeWishlist()
-      }}
-    >
-      <Dialog.Portal>
-        <Dialog.Backdrop className="fixed inset-0 z-[130] bg-black/40" />
-        <Dialog.Popup className="fixed inset-y-0 right-0 z-[131] w-full max-w-md overflow-y-auto overscroll-contain bg-background p-5 outline-none">
-          <Dialog.Title className="sr-only">Wishlist</Dialog.Title>
-          <Dialog.Close
-            aria-label="Close wishlist"
-            className="ml-auto block size-11 rounded-full border"
-          >
-            <X className="mx-auto size-5" />
-          </Dialog.Close>
-          <SavedProducts mode="wishlist" compact />
-        </Dialog.Popup>
-      </Dialog.Portal>
-    </Dialog.Root>
-  )
-}
-
-export function CompareTray() {
-  const { compareItems, stickyPurchaseVisible } = useInteractions()
-  const [open, setOpen] = useState(false)
-  useOverlayPresence(open)
-  const pathname = usePathname()
-  if (!compareItems.length || pathname === '/compare') return null
-  return (
-    <>
-      <button
-        data-fixed-bar
-        type="button"
-        onClick={() => setOpen(true)}
-        aria-label={`Compare ${compareItems.length} products`}
-        className={cn(
-          'fixed z-[60] flex min-h-11 items-center gap-2 rounded-full border bg-card px-4 text-sm font-semibold',
-          stickyPurchaseVisible
-            ? 'right-4 top-[calc(var(--shell-header-height)+12px)]'
-            : 'bottom-[var(--fixed-stack-bottom)] right-4',
-        )}
-      >
-        <Scale className="size-4" /> Compare{' '}
-        <span className="rounded-full bg-brand-muted px-2 py-1 text-brand-ink">
-          {compareItems.length}
-        </span>
-      </button>
-      <Dialog.Root open={open} onOpenChange={setOpen}>
-        <Dialog.Portal>
-          <Dialog.Backdrop className="fixed inset-0 z-[140] bg-black/40" />
-          <Dialog.Popup className="shams-overlay fixed inset-y-0 right-0 z-[141] w-full max-w-3xl overflow-y-auto overscroll-contain bg-background p-5 outline-none">
-            <Dialog.Title className="sr-only">
-              Compare your shortlist
-            </Dialog.Title>
-            <Dialog.Close
-              aria-label="Close comparison"
-              className="ml-auto flex size-11 items-center justify-center rounded-full border"
-            >
-              <X className="size-5" />
-            </Dialog.Close>
-            <SavedProducts mode="compare" compact />
-            <Link
-              href="/compare"
-              onClick={() => setOpen(false)}
-              className="shams-button mt-6"
-            >
-              Open full comparison
-            </Link>
-          </Dialog.Popup>
-        </Dialog.Portal>
-      </Dialog.Root>
-    </>
   )
 }
 
