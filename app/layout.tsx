@@ -1,13 +1,11 @@
-import { CommerceQueryProvider } from '@/components/shams/query-provider'
+import { CommerceQueryProvider, CookieConsent } from '@/components/shams/shared'
 import { commerceProvider } from '@/lib/commerce/server'
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
-import { InteractionShell } from '@/components/shams/interaction-provider'
-import { LiveFooter } from '@/components/shams/live-footer'
-import { CookieConsent } from '@/components/shams/cookie-consent'
-import { AuthProvider } from '@/components/shams/auth-provider'
+import { InteractionShell, AuthProvider } from '@/components/shams/providers'
+import { LiveFooter } from '@/components/shams/live'
 
 const inter = Inter({
   subsets: ['latin'],

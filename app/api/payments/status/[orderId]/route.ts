@@ -41,6 +41,13 @@ export async function GET(
       transactionId: text(order.meta._paymob_transaction_id) || undefined,
       paidAt: text(order.meta._payment_date) || undefined,
       reason: text(order.meta._payment_failure_reason) || undefined,
+      items: order.items.map((i) => ({
+        name: i.name,
+        quantity: i.quantity,
+        total: i.amountCents / 100,
+      })),
+      billing: order.billing,
+      shipping: order.shipping,
     }
     return Response.json(view, { headers: { 'Cache-Control': 'no-store' } })
   } catch (e) {

@@ -1,7 +1,17 @@
 import 'server-only'
 import { cache } from 'react'
 import { listProducts, terms, getProduct } from './catalog'
-import { publishedJourneys, setupProducts } from '../merchandising'
+import {
+  heroCampaignShell,
+  heroGearCategories,
+  publishedJourneys,
+  setupProducts,
+} from '../merchandising'
+import type {
+  ProductSummary,
+  ResolvedHeroCampaign,
+  ResolvedHeroStep,
+} from '../types'
 
 export const getSpotlight = cache(async () => {
   const categories = await terms('categories')
@@ -17,6 +27,71 @@ export const getSpotlight = cache(async () => {
     page.items.find((p) => p.image && p.purchasable && p.price.amount > 0) ??
     null
   )
+})
+
+export const getHeroCampaign = cache(async (): Promise<ResolvedHeroCampaign | null> => {
+  const categories = await terms('categories')
+  const available = new Set(categories.map((c) => c.slug))
+
+  const isHeroWorthy = (p: ProductSummary) =>
+    Boolean(p.image) && p.purchasable && p.price.amount > 0
+
+  const resolved = await Promise.all(
+    heroCampaignShell.steps.map(async (step): Promise<ResolvedHeroStep | null> => {
+      for (const categorySlug of step.categorySlugs) {
+        if (!available.has(categorySlug)) continue
+        const page = await listProducts({
+          category: categorySlug,
+          stock: 'instock',
+          sort: 'best-selling',
+          pageSize: 3,
+        }).catch(() => null)
+        const product = page?.items.find(isHeroWorthy)
+        if (!product) continue
+        return {
+          id: step.id,
+          label: step.label,
+          categorySlug,
+          description: step.description,
+          product,
+        }
+      }
+      return null
+    }),
+  )
+
+  const steps = resolved.filter(
+    (step): step is ResolvedHeroStep => step !== null,
+  )
+  if (steps.length < 2) return null
+
+  const stepIds = new Set(steps.map((step) => step.product.id))
+  let compatibleGear: ProductSummary[] = []
+  for (const slug of heroGearCategories) {
+    if (!available.has(slug)) continue
+    if (steps.some((step) => step.categorySlug === slug)) continue
+    const page = await listProducts({
+      category: slug,
+      stock: 'instock',
+      sort: 'best-selling',
+      pageSize: 4,
+    }).catch(() => null)
+    compatibleGear = (page?.items ?? [])
+      .filter((product) => isHeroWorthy(product) && !stepIds.has(product.id))
+      .slice(0, 3)
+    if (compatibleGear.length) break
+  }
+
+  return {
+    id: heroCampaignShell.id,
+    title: heroCampaignShell.title,
+    subtitle: heroCampaignShell.subtitle,
+    badge: heroCampaignShell.badge,
+    steps,
+    compatibleGear,
+    bundleCtaLabel: heroCampaignShell.bundleCtaLabel,
+    bundleCtaHref: heroCampaignShell.bundleCtaHref,
+  }
 })
 
 export const getBrandShowcase = cache(async () => {

@@ -1,34 +1,38 @@
 import { commerceProvider, serverProducts } from '@/lib/commerce/server'
 import { getProduct, terms } from '@/lib/commerce/live/catalog'
-import { LiveCatalogPage } from '@/components/shams/live-catalog-page'
-import { LiveProductDetail } from '@/components/shams/live-product-detail'
-import { TaxonomyCards } from '@/components/shams/taxonomy-cards'
-import { CategoriesIndexPage } from '@/components/shams/categories-index-page'
-import { SavedProducts } from '@/components/shams/saved-products'
-import { OrderStatus } from '@/components/shams/order-status'
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 import { connection } from 'next/server'
-import { CatalogPage } from '@/components/shams/catalog-page'
-import { ProductDetail } from '@/components/shams/product-detail'
-import { ExperiencePage, BundlePage } from '@/components/shams/curated-pages'
+import { commerce } from '@/lib/commerce'
 import {
+  TaxonomyCards,
+  CategoriesIndexPage,
+  OrderStatus,
+  TrackOrderForm,
+  ExperiencePage,
+  BundlePage,
   CartPage,
   CheckoutPage,
   OrderPage,
   WishlistPage,
-} from '@/components/shams/commerce-pages'
-import { AccountDashboard } from '@/components/shams/account-dashboard'
-import { commerce } from '@/lib/commerce'
-import {
-  AboutPage,
-  ContactPage,
-  BranchesPage,
-  SupportPage,
-  TermsPage,
-  PrivacyPage,
   CookiesPage,
-} from '@/components/shams/static-pages'
+  AboutPageV2,
+  ContactPageV2,
+  BranchesPageV2,
+  HelpCenterPage,
+  TermsPageV2,
+  PrivacyPageV2,
+  ShippingPage,
+  ReturnsPage,
+  FaqPage,
+  PaymentPage,
+  WarrantyPage,
+  GuidesPage,
+} from '@/components/shams/content-pages'
+import { LiveCatalogPage, LiveProductDetail } from '@/components/shams/live'
+import { SavedProducts, ProductDetail } from '@/components/shams/product'
+import { CatalogPage } from '@/components/shams/catalog'
+import { AccountDashboard } from '@/components/shams/account'
 
 export const dynamicParams = true
 
@@ -47,6 +51,13 @@ export function generateStaticParams() {
     'bundles',
     'brands',
     'categories',
+    'track-order',
+    'faq',
+    'shipping',
+    'returns',
+    'payment',
+    'warranty',
+    'guides',
   ]
   const accountSlugs = [
     ['account', 'orders'],
@@ -137,6 +148,11 @@ export async function generateMetadata({ params }: PageProps) {
       description:
         'Browse photography, cinema and creator gear by category at Shams Stores.',
     },
+    'track-order': {
+      title: 'Track Your Order · Shams Stores',
+      description:
+        'Look up your Shams Stores order status using your order number and email address.',
+    },
     'best-sellers': {
       title: 'Best Sellers · Shams Stores',
       description:
@@ -145,6 +161,36 @@ export async function generateMetadata({ params }: PageProps) {
     account: {
       title: 'My Account',
       description: 'Manage your orders, addresses and account at Shams Stores.',
+    },
+    faq: {
+      title: 'FAQ · Shams Stores',
+      description:
+        'Answers to common questions about orders, delivery, returns, payments, warranty and shopping at Shams Stores.',
+    },
+    shipping: {
+      title: 'Shipping & Delivery · Shams Stores',
+      description:
+        'Delivery times, shipping costs and store pickup options for Shams Stores orders across Egypt.',
+    },
+    returns: {
+      title: 'Returns & Exchanges · Shams Stores',
+      description:
+        'How to return or exchange gear bought from Shams Stores — eligibility, steps and refund timeline.',
+    },
+    payment: {
+      title: 'Payment Methods · Shams Stores',
+      description:
+        'Payment options at Shams Stores — Visa, Mastercard, InstaPay, ValU, Fawry, cash on delivery and bank installments.',
+    },
+    warranty: {
+      title: 'Warranty · Shams Stores',
+      description:
+        'Manufacturer warranty information for gear purchased at Shams Stores. Coverage, claims and after-sales support.',
+    },
+    guides: {
+      title: 'Guides · Shams Stores',
+      description:
+        'Equipment guides and buying advice from the Shams Stores team — cameras, lenses, audio, lighting and more.',
     },
   }
   if (slug[0] === 'account' && slug[1]) {
@@ -323,14 +369,15 @@ export default async function StorefrontRoute({
     if (section === 'brands') {
       const ts = await terms('brands')
       return (
-        <main className="shams-container max-w-[1400px] py-10">
+        <main className="shams-container max-w-[1400px] py-10 pb-[calc(2.5rem+var(--mobile-bottom-nav-height))] sm:pb-10">
           <h1 className="mb-6 text-3xl font-semibold">Shop by brand</h1>
           <TaxonomyCards terms={ts} kind="brand" />
         </main>
       )
     }
     if (section === 'wishlist') return <SavedProducts mode="wishlist" />
-    if (['orders', 'track-order'].includes(section)) return <OrderStatus />
+    if (section === 'track-order') return <TrackOrderForm />
+    if (section === 'orders') return <OrderStatus />
     if (['deals', 'new', 'trending', 'best-sellers'].includes(section))
       return (
         <LiveCatalogPage
@@ -355,13 +402,19 @@ export default async function StorefrontRoute({
       const accountSection = ['orders', 'addresses', 'profile'].includes(value ?? '') ? value as 'orders' | 'addresses' | 'profile' : 'overview'
       return <AccountDashboard section={accountSection} />
     }
-    if (section === 'support') return <SupportPage />
-    if (section === 'branches') return <BranchesPage />
-    if (section === 'contact') return <ContactPage />
-    if (section === 'about') return <AboutPage />
-    if (section === 'terms') return <TermsPage />
-    if (section === 'privacy') return <PrivacyPage />
+    if (section === 'support') return <HelpCenterPage />
+    if (section === 'branches') return <BranchesPageV2 />
+    if (section === 'contact') return <ContactPageV2 />
+    if (section === 'about') return <AboutPageV2 />
+    if (section === 'terms') return <TermsPageV2 />
+    if (section === 'privacy') return <PrivacyPageV2 />
     if (section === 'cookies') return <CookiesPage />
+    if (section === 'faq') return <FaqPage />
+    if (section === 'shipping') return <ShippingPage />
+    if (section === 'returns') return <ReturnsPage />
+    if (section === 'payment') return <PaymentPage />
+    if (section === 'warranty') return <WarrantyPage />
+    if (section === 'guides') return <GuidesPage />
     if (section === 'w') {
       const tags = await terms('tags')
       const selected = tags.find((t) => t.slug === value)
@@ -399,7 +452,7 @@ export default async function StorefrontRoute({
   if (section === 'w' && !value) {
     const useCases = commerce.useCases.list()
     return (
-      <main className="shams-container max-w-[1400px] py-10">
+      <main className="shams-container max-w-[1400px] py-10 pb-[calc(2.5rem+var(--mobile-bottom-nav-height))] sm:pb-10">
         <h1 className="mb-2 text-3xl font-semibold">Shop by workflow</h1>
         <p className="mb-8 text-muted-foreground">Gear curated for how you create.</p>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -428,7 +481,8 @@ export default async function StorefrontRoute({
     return <AccountDashboard section={accountSection} />
   }
   if (section === 'wishlist') return <WishlistPage />
-  if (section === 'orders' || section === 'track-order') return <OrderPage />
+  if (section === 'track-order') return <TrackOrderForm />
+  if (section === 'orders') return <OrderPage />
   if (section === 'brands' && !value)
     return (
       <CatalogPage

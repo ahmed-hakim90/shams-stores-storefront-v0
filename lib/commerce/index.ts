@@ -1,6 +1,7 @@
 import {
   brands,
   bundles,
+  heroCampaigns,
   productRelationships,
   productSystems,
   categories,
@@ -198,6 +199,10 @@ export const commerce = {
   useCases: {
     list: () => useCases,
     bySlug: (slug: string) => useCases.find((u) => u.slug === slug),
+  },
+  heroCampaigns: {
+    list: () => heroCampaigns,
+    active: () => heroCampaigns[0],
   },
   bundles: {
     list: () => bundles,

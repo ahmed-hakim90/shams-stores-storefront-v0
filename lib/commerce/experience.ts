@@ -20,6 +20,16 @@ export interface PageExperienceConfig {
 }
 export const homeCollections: PageExperienceConfig[] = [
   {
+    id: 'trending',
+    kind: 'best-sellers',
+    title: 'Trending gear',
+    eyebrow: 'Popular right now',
+    description: 'The gear Egyptian creators are adding to cart most this week.',
+    href: '/trending',
+    query: { pageSize: 20, sort: 'best-selling' },
+    presentation: 'rail',
+  },
+  {
     id: 'new',
     kind: 'new',
     title: 'New arrivals',

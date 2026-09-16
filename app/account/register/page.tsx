@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { RegisterForm } from '@/components/shams/register-form'
+import { RegisterForm } from '@/components/shams/account'
 
 export const metadata: Metadata = {
   title: 'Create account',

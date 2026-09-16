@@ -333,6 +333,7 @@
 
   .mobile-storefront-page {
     background: var(--background);
+    padding-bottom: calc(2rem + var(--mobile-bottom-nav-height, 0px));
   }
 
   .mobile-section-header {

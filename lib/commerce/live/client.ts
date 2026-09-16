@@ -48,8 +48,11 @@ export async function request(
   }
   if (!response.ok) {
     let code = ''
+    let message = ''
     try {
-      code = (await response.json()).code ?? ''
+      const body = await response.json()
+      code = body.code ?? ''
+      message = body.message ?? ''
     } catch {}
     const status = response.status
     const kind = /cart.*token|token.*cart/.test(code)
@@ -67,13 +70,15 @@ export async function request(
                 : 'SERVER_ERROR'
     throw new CommerceFault(
       kind,
-      kind === 'OUT_OF_STOCK'
-        ? 'This quantity is no longer available. Please review your cart.'
-        : kind === 'VALIDATION_ERROR'
-          ? 'Please check your selection and try again.'
-          : kind === 'UNAUTHORIZED'
-            ? 'Your session could not be verified. Please refresh and try again.'
-            : 'The store could not complete this request. Please try again.',
+      message || (
+        kind === 'OUT_OF_STOCK'
+          ? 'This quantity is no longer available. Please review your cart.'
+          : kind === 'VALIDATION_ERROR'
+            ? 'Please check your selection and try again.'
+            : kind === 'UNAUTHORIZED'
+              ? 'Your session could not be verified. Please refresh and try again.'
+              : 'The store could not complete this request. Please try again.'
+      ),
       status === 404 ? 404 : status === 400 ? 400 : status === 429 ? 429 : 502,
     )
   }

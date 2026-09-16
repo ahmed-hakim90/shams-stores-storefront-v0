@@ -1,8 +1,8 @@
 import { commerceProvider } from '@/lib/commerce/server'
 import { getProduct } from '@/lib/commerce/live/catalog'
-import { LiveProductDetail } from '@/components/shams/live-product-detail'
+import { LiveProductDetail } from '@/components/shams/live'
 import { notFound } from 'next/navigation'
-import { BundleDetailPage } from '@/components/shams/bundle-detail-page'
+import { BundleDetailPage } from '@/components/shams/bundles'
 import { commerce } from '@/lib/commerce'
 
 export default async function BundleRoute({

@@ -1,4 +1,4 @@
-import { LiveCatalogPage } from '@/components/shams/live-catalog-page'
+import { LiveCatalogPage } from '@/components/shams/live'
 export const metadata = {
   title: 'Search',
   robots: { index: false, follow: true },

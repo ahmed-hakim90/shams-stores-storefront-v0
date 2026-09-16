@@ -42,7 +42,7 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <main className="shams-container max-w-md py-12">
+    <main className="shams-container max-w-md py-12 pb-[calc(3rem+var(--mobile-bottom-nav-height))] sm:pb-12">
       <Link href="/account/login" className="text-sm text-brand-ink">
         &larr; Back to sign in
       </Link>

@@ -1,4 +1,4 @@
-import { SavedProducts } from '@/components/shams/saved-products'
+import { SavedProducts } from '@/components/shams/product'
 export const metadata = {
   title: 'Compare gear',
   robots: { index: false, follow: true },

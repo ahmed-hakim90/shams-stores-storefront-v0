@@ -6,7 +6,7 @@ export const metadata = {
 
 export default function NotFound() {
   return (
-    <main className="shams-container shams-section flex min-h-[60vh] flex-col items-center justify-center text-center">
+    <main className="shams-container shams-section flex min-h-[60vh] flex-col items-center justify-center pb-[calc(3rem+var(--mobile-bottom-nav-height))] text-center sm:pb-0">
       <p className="text-6xl font-bold text-brand">404</p>
       <h1 className="shams-title mt-4">Page not found</h1>
       <p className="mt-3 max-w-md text-muted-foreground">

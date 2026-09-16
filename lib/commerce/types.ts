@@ -152,6 +152,51 @@ export interface UseCase {
   productCount: number
 }
 
+export interface HeroStep {
+  id: string
+  label: string
+  productId: string
+  categorySlug: string
+  /** Short description shown in the commerce panel for this step. */
+  description: string
+}
+
+export interface HeroCampaign {
+  id: string
+  title: string
+  subtitle: string
+  badge?: string
+  steps: HeroStep[]
+  /** Product IDs for secondary gear shown as thumbnails around the hero. */
+  compatibleGearIds: string[]
+  /** CTA label for the final "complete setup" step. */
+  bundleCtaLabel?: string
+  bundleCtaHref?: string
+}
+
+/**
+ * Hero step with its product already resolved. The presentation layer consumes
+ * this shape so mock and live providers render identically.
+ */
+export interface ResolvedHeroStep {
+  id: string
+  label: string
+  categorySlug: string
+  description: string
+  product: ProductSummary
+}
+
+export interface ResolvedHeroCampaign {
+  id: string
+  title: string
+  subtitle: string
+  badge?: string
+  steps: ResolvedHeroStep[]
+  compatibleGear: ProductSummary[]
+  bundleCtaLabel?: string
+  bundleCtaHref?: string
+}
+
 export type BundleAvailability =
   'available' | 'low_stock' | 'partially_available' | 'unavailable' | 'preorder'
 

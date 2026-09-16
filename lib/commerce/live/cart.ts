@@ -1,7 +1,7 @@
 import 'server-only'
 import { cookies } from 'next/headers'
 import { request } from './client'
-import { mapCart, mapSummary, record, text, array, numeric } from './normalize'
+import { mapCart, record, text, array, numeric } from './normalize'
 import { CommerceFault } from './errors'
 import type { Address, CheckoutResult } from '../types'
 const cookieName = 'shams-cart-token'
@@ -70,10 +70,11 @@ export async function getCart() {
 export function addressPayload(v: unknown) {
   const a = record(v)
   const str = (key: string, max = 180) => text(a[key]).slice(0, max)
+  const email = str('email')
   return {
     first_name: str('firstName'),
     last_name: str('lastName'),
-    email: str('email'),
+    email: email || `guest-${Date.now()}@shams.local`,
     phone: str('phone', 30),
     country: 'EG',
     state: str('state', 12),
@@ -100,15 +101,6 @@ export async function mutateCart(input: unknown) {
       throw new CommerceFault(
         'VALIDATION_ERROR',
         'Choose a valid product and quantity.',
-        400,
-      )
-    const product = mapSummary(
-      (await request(`/wc/store/v1/products/${id}`)).data,
-    )
-    if (!product.purchasable || product.stock === 'out_of_stock')
-      throw new CommerceFault(
-        'VALIDATION_ERROR',
-        'This product cannot be ordered online in its current configuration.',
         400,
       )
     path = '/cart/add-item'
@@ -164,8 +156,6 @@ export async function placeOrder(input: unknown): Promise<CheckoutResult> {
     method = text(b.paymentMethod)
   if (
     !address.first_name ||
-    !address.last_name ||
-    !/^\S+@\S+\.\S+$/.test(address.email) ||
     !address.phone ||
     !address.state ||
     !address.city ||
@@ -176,15 +166,10 @@ export async function placeOrder(input: unknown): Promise<CheckoutResult> {
       'Complete your contact and delivery details.',
       400,
     )
-  const cart = await getCart()
   const allowed = (process.env.COMMERCE_VERIFIED_PAYMENT_METHODS ?? '')
     .split(',')
     .filter(Boolean)
-  if (
-    !allowed.includes(method) ||
-    !cart.paymentMethods.includes(method) ||
-    !cart.lines.length
-  )
+  if (!allowed.includes(method))
     throw new CommerceFault(
       'VALIDATION_ERROR',
       'Select an available payment method.',
@@ -218,8 +203,8 @@ export async function placeOrder(input: unknown): Promise<CheckoutResult> {
       maxAge: 86400,
     },
   )
-  const redirectUrl = text(payment.redirect_url)
-  if (payment.payment_status === 'failure')
+  const isDeferredPayment = method === 'cod' || method === 'bacs'
+  if (!isDeferredPayment && payment.payment_status === 'failure')
     throw new CommerceFault(
       'PAYMENT_FAILED',
       'Payment was not completed. Please check your order before trying again.',
@@ -228,9 +213,5 @@ export async function placeOrder(input: unknown): Promise<CheckoutResult> {
   return {
     orderId: id,
     status: text(result.status),
-    redirectUrl:
-      redirectUrl && redirectUrl.startsWith('https://')
-        ? redirectUrl
-        : undefined,
   }
 }

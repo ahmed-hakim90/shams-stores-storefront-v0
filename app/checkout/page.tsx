@@ -1,4 +1,4 @@
-import { CartPageContent } from '@/components/shams/cart-page-content'
+import { CartPageContent } from '@/components/shams/cart'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {

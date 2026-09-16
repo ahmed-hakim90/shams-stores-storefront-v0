@@ -30,6 +30,14 @@ export interface PendingOrder {
     street: string
     postalCode: string
   }
+  shipping: {
+    firstName: string
+    lastName: string
+    city: string
+    state: string
+    street: string
+    postalCode: string
+  }
 }
 
 function cookieOptions() {
@@ -51,28 +59,19 @@ async function readMeta(raw: unknown): Promise<Record<string, unknown>> {
   )
 }
 
-// Read an order straight from WooCommerce v3 (server truth). Never trust a
-// total/status that originated in the browser.
-export async function getWooOrder(id: string): Promise<PendingOrder | null> {
-  if (!/^\d+$/.test(id)) return null
-  let data: unknown
-  try {
-    data = (await request(`/wc/v3/orders/${id}`, { private: true })).data
-  } catch (e) {
-    if (e instanceof CommerceFault && e.code === 'NOT_FOUND') return null
-    throw e
-  }
-  const r = record(data)
+function normalizeWooOrder(raw: unknown): PendingOrder {
+  const r = record(raw)
   const billing = record(r.billing)
+  const shipping = record(r.shipping)
   return {
-    orderId: String(r.id ?? id),
+    orderId: String(r.id ?? ''),
     orderKey: text(r.order_key),
     status: text(r.status),
     total: numeric(r.total),
     amountCents: toAmountCents(numeric(r.total)),
     currency: text(r.currency) || 'EGP',
     email: text(billing.email),
-    meta: await readMeta(r),
+    meta: {},
     items: array(r.line_items).map((li) => {
       const l = record(li)
       return {
@@ -91,7 +90,31 @@ export async function getWooOrder(id: string): Promise<PendingOrder | null> {
       street: text(billing.address_1),
       postalCode: text(billing.postcode),
     },
+    shipping: {
+      firstName: text(shipping.first_name),
+      lastName: text(shipping.last_name),
+      city: text(shipping.city),
+      state: text(shipping.state),
+      street: text(shipping.address_1),
+      postalCode: text(shipping.postcode),
+    },
   }
+}
+
+// Read an order straight from WooCommerce v3 (server truth). Never trust a
+// total/status that originated in the browser.
+export async function getWooOrder(id: string): Promise<PendingOrder | null> {
+  if (!/^\d+$/.test(id)) return null
+  let data: unknown
+  try {
+    data = (await request(`/wc/v3/orders/${id}`, { private: true })).data
+  } catch (e) {
+    if (e instanceof CommerceFault && e.code === 'NOT_FOUND') return null
+    throw e
+  }
+  const order = normalizeWooOrder(data)
+  order.meta = await readMeta(record(data).meta_data)
+  return order
 }
 
 export async function updateWooOrder(
@@ -119,7 +142,6 @@ export async function createPendingOrder(input: {
   if (
     !address.first_name ||
     !address.last_name ||
-    !/^\S+@\S+\.\S+$/.test(address.email) ||
     !address.phone ||
     !address.state ||
     !address.city ||
@@ -201,8 +223,9 @@ export async function createPendingOrder(input: {
   )
   jar.set(sessionCookie, id, cookieOptions())
 
-  const order = await getWooOrder(id)
-  if (!order)
+  const order = normalizeWooOrder(created)
+  order.meta = await readMeta(record(created).meta_data)
+  if (!order.orderId || !order.orderKey)
     throw new CommerceFault(
       'SERVER_ERROR',
       'We could not confirm your order. Please check before trying again.',

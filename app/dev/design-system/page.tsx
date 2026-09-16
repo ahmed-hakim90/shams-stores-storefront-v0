@@ -1,6 +1,5 @@
 import { notFound } from 'next/navigation'
-import { ProductCard } from '@/components/shams/product-card'
-import { PriceDisplay } from '@/components/shams/price-display'
+import { ProductCard, PriceDisplay } from '@/components/shams/product'
 import type { ProductSummary } from '@/lib/commerce/types'
 export const metadata = {
   title: 'Shams design system',

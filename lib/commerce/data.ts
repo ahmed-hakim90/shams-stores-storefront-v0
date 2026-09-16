@@ -3,6 +3,7 @@ import type {
   Bundle,
   Category,
   Collection,
+  HeroCampaign,
   Product,
   ProductRelationship,
   ProductSystem,
@@ -546,6 +547,52 @@ export const useCases: UseCase[] = [
     image: '/workflow/filmmaking.png',
     gear: ['Cinema camera', 'Cine lens', 'Monitor', 'Audio', 'Rig', 'Power'],
     productCount: 118,
+  },
+]
+
+export const heroCampaigns: HeroCampaign[] = [
+  {
+    id: 'campaign-complete-setup',
+    title: 'The Complete Setup',
+    subtitle: 'Camera · Lens · Audio · Support — gear that works as one system.',
+    badge: 'Shams specialist pick',
+    steps: [
+      {
+        id: 'step-camera',
+        label: 'Camera',
+        productId: 'p-hero',
+        categorySlug: 'cameras',
+        description:
+          '61MP full-frame resolution. Built for studio, wedding and commercial work — reserved for creators who never crop twice.',
+      },
+      {
+        id: 'step-lens',
+        label: 'Lens',
+        productId: 'p-lens-zoom',
+        categorySlug: 'lenses',
+        description:
+          'f/2.8 constant aperture across the full zoom range. The workhorse glass for wedding, portrait and commercial shooters.',
+      },
+      {
+        id: 'step-audio',
+        label: 'Audio',
+        productId: 'p-mic',
+        categorySlug: 'audio',
+        description:
+          'Wireless dual-transmitter system with 32-bit float recording. Clean audio wherever the shoot takes you.',
+      },
+      {
+        id: 'step-support',
+        label: 'Support',
+        productId: 'p-tripod',
+        categorySlug: 'accessories',
+        description:
+          'Carbon-fiber video tripod with fluid head. Lightweight enough for run-and-gun, stable enough for controlled setups.',
+      },
+    ],
+    compatibleGearIds: ['p-lens-prime', 'p-gimbal', 'p-light'],
+    bundleCtaLabel: 'Shop complete setup',
+    bundleCtaHref: '/w/filmmaking',
   },
 ]
 

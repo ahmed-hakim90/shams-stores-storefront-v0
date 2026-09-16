@@ -1,4 +1,4 @@
-import { OrderDetailPage } from '@/components/shams/order-detail-page'
+import { OrderDetailPage } from '@/components/shams/content-pages'
 
 export default async function OrderDetailRoute({
   params,

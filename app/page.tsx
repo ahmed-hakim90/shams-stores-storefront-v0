@@ -1,18 +1,12 @@
 import { commerceProvider } from '@/lib/commerce/server'
-import { LiveHome } from '@/components/shams/live-home'
 import { commerce } from '@/lib/commerce'
-import { Hero } from '@/components/shams/hero'
-import { CategoryExplorer } from '@/components/shams/category-explorer'
-import { CatalogDiscovery } from '@/components/shams/catalog-discovery'
-import { ProductRailSection } from '@/components/shams/product-rail-section'
-import { WorkflowExplorer } from '@/components/shams/workflow-explorer'
-import { BundleSection } from '@/components/shams/bundle-section'
-import { DealSection } from '@/components/shams/deal-section'
-import { BrandExplorer } from '@/components/shams/brand-explorer'
-import { StoreSection } from '@/components/shams/store-section'
-import { TrustSection } from '@/components/shams/trust-section'
-import { Newsletter } from '@/components/shams/newsletter'
-import { Footer } from '@/components/shams/footer'
+import { LiveHome } from '@/components/shams/live'
+import { Hero, CategoryExplorer, DealSection, BrandExplorer, StoreSection, TrustSection, Newsletter } from '@/components/shams/marketing'
+import { CatalogDiscovery } from '@/components/shams/catalog'
+import { ProductRailSection } from '@/components/shams/product'
+import { WorkflowExplorer } from '@/components/shams/shared'
+import { BundleSection } from '@/components/shams/bundles'
+import { Footer } from '@/components/shams/layout'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -28,7 +22,7 @@ export default function HomePage() {
   const newArrivals = commerce.collections.get('new-arrivals')?.products ?? []
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-dvh bg-background">
       <main>
         <Hero />
 

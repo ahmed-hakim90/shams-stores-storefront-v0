@@ -105,6 +105,24 @@ export interface PaymentStatusView {
   transactionId?: string
   paidAt?: string
   reason?: string
+  items: { name: string; quantity: number; total: number }[]
+  billing: {
+    firstName: string
+    lastName: string
+    phone: string
+    city: string
+    state: string
+    street: string
+    postalCode: string
+  }
+  shipping: {
+    firstName: string
+    lastName: string
+    city: string
+    state: string
+    street: string
+    postalCode: string
+  }
 }
 
 // Append-only attempt entry persisted in Woo order meta `_paymob_attempts`.

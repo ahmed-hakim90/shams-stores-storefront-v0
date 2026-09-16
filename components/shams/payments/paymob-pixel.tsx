@@ -23,6 +23,10 @@ function loadSdk(): Promise<unknown> {
   return sdkPromise
 }
 
+export function preloadPaymobPixel() {
+  loadSdk()
+}
+
 export function PaymobPixel({
   clientSecret,
   amountLabel,

@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { readOwnershipCookie } from '@/lib/payments/orders'
-import { PaymentResult } from '@/components/shams/payment-result'
+import { PaymentResult } from '@/components/shams/content-pages'
 
 export const dynamic = 'force-dynamic'
 export const metadata = {
@@ -16,15 +16,14 @@ export default async function Page() {
   const ownership = await readOwnershipCookie()
   if (!ownership)
     return (
-      <main className="shams-container max-w-2xl py-12">
-        <h1 className="text-3xl font-semibold">Your order</h1>
-        <p className="mt-6 text-sm leading-6 text-muted-foreground">
-          No recent order was found on this device. For an earlier order, use
-          the confirmation sent by Shams.
+      <main className="shams-container max-w-2xl py-8 pb-[calc(2rem+var(--mobile-bottom-nav-height))] sm:pb-8">
+        <h1 className="text-xl font-semibold">Your order</h1>
+        <p className="mt-3 text-xs leading-5 text-muted-foreground">
+          No recent order was found on this device. Use the confirmation sent by Shams.
         </p>
         <Link
           href="/shop"
-          className="mt-6 inline-flex min-h-11 items-center text-sm text-brand-ink"
+          className="mt-4 inline-flex min-h-9 items-center text-xs text-brand-ink"
         >
           Continue shopping →
         </Link>

@@ -3,7 +3,7 @@
 import { useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { useAuth } from '@/components/shams/auth-provider'
+import { useAuth } from '@/components/shams/providers'
 import { Lock, Eye, EyeOff, ArrowRight, Loader2 } from 'lucide-react'
 
 function ResetPasswordForm() {
@@ -74,7 +74,7 @@ function ResetPasswordForm() {
 
   if (!hasResetParams) {
     return (
-      <main className="shams-container max-w-md py-12">
+      <main className="shams-container max-w-md py-12 pb-[calc(3rem+var(--mobile-bottom-nav-height))] sm:pb-12">
         <Link href="/account/login" className="text-sm text-brand-ink">
           &larr; Back to sign in
         </Link>
@@ -96,7 +96,7 @@ function ResetPasswordForm() {
   }
 
   return (
-    <main className="shams-container max-w-md py-12">
+    <main className="shams-container max-w-md py-12 pb-[calc(3rem+var(--mobile-bottom-nav-height))] sm:pb-12">
       <Link href="/account/login" className="text-sm text-brand-ink">
         &larr; Back to sign in
       </Link>
@@ -179,7 +179,7 @@ export default function ResetPasswordPage() {
   return (
     <Suspense
       fallback={
-        <main className="shams-container flex items-center justify-center py-16">
+        <main className="shams-container flex items-center justify-center py-16 pb-[calc(4rem+var(--mobile-bottom-nav-height))] sm:pb-16">
           <Loader2 className="size-6 animate-spin text-brand-ink" />
         </main>
       }
