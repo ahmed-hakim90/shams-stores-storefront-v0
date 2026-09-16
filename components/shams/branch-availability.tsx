@@ -20,9 +20,9 @@ export function BranchAvailability({ className }: { className?: string }) {
       {branches.map((b) => (
         <li
           key={b.name}
-          className="flex min-w-0 items-center gap-3 rounded-xl border border-border bg-card p-3.5"
+          className="flex min-w-0 items-center gap-3 rounded-(--radius-card) border border-border bg-card p-3.5"
         >
-          <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-lg bg-brand-muted text-brand-ink">
+          <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-(--radius-control) bg-brand-muted text-brand-ink">
             <MapPin className="size-4.5" />
           </span>
           <div className="min-w-0 flex-1">

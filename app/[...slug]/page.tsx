@@ -3,6 +3,7 @@ import { getProduct, terms } from '@/lib/commerce/live/catalog'
 import { LiveCatalogPage } from '@/components/shams/live-catalog-page'
 import { LiveProductDetail } from '@/components/shams/live-product-detail'
 import { TaxonomyCards } from '@/components/shams/taxonomy-cards'
+import { CategoriesIndexPage } from '@/components/shams/categories-index-page'
 import { SavedProducts } from '@/components/shams/saved-products'
 import { OrderStatus } from '@/components/shams/order-status'
 import Link from 'next/link'
@@ -12,15 +13,52 @@ import { CatalogPage } from '@/components/shams/catalog-page'
 import { ProductDetail } from '@/components/shams/product-detail'
 import { ExperiencePage, BundlePage } from '@/components/shams/curated-pages'
 import {
-  AccountPage,
   CartPage,
   CheckoutPage,
   OrderPage,
   WishlistPage,
 } from '@/components/shams/commerce-pages'
+import { AccountDashboard } from '@/components/shams/account-dashboard'
 import { commerce } from '@/lib/commerce'
+import {
+  AboutPage,
+  ContactPage,
+  BranchesPage,
+  SupportPage,
+  TermsPage,
+  PrivacyPage,
+  CookiesPage,
+} from '@/components/shams/static-pages'
 
 export const dynamicParams = true
+
+export function generateStaticParams() {
+  const staticSlugs = [
+    'about',
+    'contact',
+    'branches',
+    'support',
+    'terms',
+    'privacy',
+    'cookies',
+    'deals',
+    'new',
+    'best-sellers',
+    'bundles',
+    'brands',
+    'categories',
+  ]
+  const accountSlugs = [
+    ['account', 'orders'],
+    ['account', 'addresses'],
+    ['account', 'profile'],
+    ['account', 'forgot-password'],
+  ]
+  return [
+    ...staticSlugs.map((slug) => ({ slug: [slug] })),
+    ...accountSlugs.map((slug) => ({ slug })),
+  ]
+}
 
 type PageProps = {
   params: Promise<{ slug: string[] }>
@@ -57,6 +95,75 @@ export async function generateMetadata({ params }: PageProps) {
           canonical: `/${slug[0] === 'c' ? 'c' : 'b'}/${term.slug}`,
         },
       }
+  }
+  const staticMeta: Record<string, { title: string; description: string }> = {
+    about: {
+      title: 'About Shams Stores',
+      description:
+        'Egypt\'s trusted destination for professional photography, cinema and creator equipment. Authorized reseller with showrooms in Downtown Cairo and Heliopolis.',
+    },
+    contact: {
+      title: 'Contact Shams Stores',
+      description:
+        'Get in touch with Shams Stores. Call, WhatsApp or visit our showrooms in Downtown Cairo and Heliopolis. We are here to help.',
+    },
+    branches: {
+      title: 'Our Showrooms · Shams Stores',
+      description:
+        'Visit Shams Stores in Downtown Cairo and Heliopolis. Explore gear hands-on, get expert advice and same-day pickup.',
+    },
+    support: {
+      title: 'Support · Shams Stores',
+      description:
+        'Product advice, order tracking, warranty and returns. Talk to the Shams Stores team by phone, WhatsApp or visit our showrooms.',
+    },
+    terms: {
+      title: 'Terms & Conditions · Shams Stores',
+      description:
+        'Read the terms and conditions for purchasing from Shams Stores — pricing, delivery, returns, warranty and liability.',
+    },
+    privacy: {
+      title: 'Privacy Policy · Shams Stores',
+      description:
+        'How Shams Stores collects, uses and protects your personal data. Your rights and our commitments.',
+    },
+    cookies: {
+      title: 'Cookie Policy · Shams Stores',
+      description:
+        'Learn about the cookies Shams Stores uses and how to manage your cookie preferences.',
+    },
+    categories: {
+      title: 'Shop by Category · Shams Stores',
+      description:
+        'Browse photography, cinema and creator gear by category at Shams Stores.',
+    },
+    'best-sellers': {
+      title: 'Best Sellers · Shams Stores',
+      description:
+        'The most popular photography, cinema and creator gear at Shams Stores.',
+    },
+    account: {
+      title: 'My Account',
+      description: 'Manage your orders, addresses and account at Shams Stores.',
+    },
+  }
+  if (slug[0] === 'account' && slug[1]) {
+    const accountMeta: Record<string, { title: string; description: string }> = {
+      orders: { title: 'My Orders', description: 'Track your orders and purchase history at Shams Stores.' },
+      addresses: { title: 'My Addresses', description: 'Manage your saved delivery addresses at Shams Stores.' },
+      profile: { title: 'Personal Info', description: 'Edit your account details and password at Shams Stores.' },
+      'forgot-password': { title: 'Forgot Password', description: 'Reset your Shams Stores account password.' },
+    }
+    if (accountMeta[slug[1]]) {
+      return { title: accountMeta[slug[1]].title, description: accountMeta[slug[1]].description, robots: { index: false } }
+    }
+  }
+  if (staticMeta[slug[0]]) {
+    return {
+      title: staticMeta[slug[0]].title,
+      description: staticMeta[slug[0]].description,
+      alternates: { canonical: `/${slug[0]}` },
+    }
   }
   const title = slug.join(' / ').replaceAll('-', ' ')
   return {
@@ -173,17 +280,52 @@ export default async function StorefrontRoute({
         />
       )
     }
-    if (section === 'brands' || section === 'categories') {
-      const ts = await terms(section === 'brands' ? 'brands' : 'categories')
+    if (section === 'categories') {
+      const allCats = await terms('categories')
+      const allBrands = await terms('brands')
+      const roots = allCats.filter((t) => !t.parentId)
+      const enriched = roots.map((root) => {
+        const children = allCats.filter((t) => t.parentId === root.id)
+        const topBrands = allBrands
+          .filter((b) => b.count > 0)
+          .sort((a, b) => b.count - a.count)
+          .slice(0, 5)
+        return {
+          id: root.id,
+          slug: root.slug as import('@/lib/commerce/types').Category['slug'],
+          name: root.name,
+          tagline: root.description || '',
+          image: root.image,
+          itemCount: root.count,
+          productCount: root.count,
+          columns: children.length
+            ? [
+                {
+                  heading: 'Subcategories',
+                  links: children.map((c) => ({
+                    label: c.name,
+                    href: `/c/${c.slug}`,
+                  })),
+                },
+                {
+                  heading: 'Top brands',
+                  links: topBrands.map((b) => ({
+                    label: b.name,
+                    href: `/b/${b.slug}`,
+                  })),
+                },
+              ]
+            : [],
+        }
+      })
+      return <CategoriesIndexPage categories={enriched} />
+    }
+    if (section === 'brands') {
+      const ts = await terms('brands')
       return (
         <main className="shams-container max-w-[1400px] py-10">
-          <h1 className="mb-6 text-3xl font-semibold">
-            Shop by {section === 'brands' ? 'brand' : 'category'}
-          </h1>
-          <TaxonomyCards
-            terms={ts}
-            kind={section === 'brands' ? 'brand' : 'category'}
-          />
+          <h1 className="mb-6 text-3xl font-semibold">Shop by brand</h1>
+          <TaxonomyCards terms={ts} kind="brand" />
         </main>
       )
     }
@@ -209,43 +351,17 @@ export default async function StorefrontRoute({
           discovery={false}
         />
       )
-    if (section === 'account')
-      return (
-        <main className="shams-container max-w-3xl py-12">
-          <h1 className="text-3xl font-semibold">My Shams</h1>
-          <p className="mt-4 text-sm text-muted-foreground">
-            Your saved gear and recent order on this device.
-          </p>
-          <div className="mt-7 grid gap-4 sm:grid-cols-2">
-            <Link href="/wishlist" className="flex min-h-32 flex-col justify-between rounded-2xl border bg-card p-6 font-medium">
-              <span className="text-xs uppercase tracking-widest text-brand-ink">Your next idea</span>Wishlist →
-            </Link>
-            <Link href="/orders" className="flex min-h-32 flex-col justify-between rounded-2xl border bg-card p-6 font-medium">
-              <span className="text-xs uppercase tracking-widest text-brand-ink">Keep in touch</span>Recent order →
-            </Link>
-            <Link href="/compare" className="flex min-h-32 flex-col justify-between rounded-2xl border bg-card p-6 font-medium"><span className="text-xs uppercase tracking-widest text-brand-ink">A closer look</span>Compare saved gear →</Link>
-            <Link href="/support" className="flex min-h-32 flex-col justify-between rounded-2xl border bg-card p-6 font-medium"><span className="text-xs uppercase tracking-widest text-brand-ink">Here to help</span>Talk to a specialist →</Link>
-          </div>
-        </main>
-      )
-    if (['support', 'branches'].includes(section))
-      return (
-        <main className="shams-container max-w-3xl py-12">
-          <h1 className="text-3xl font-semibold">
-            {section === 'branches' ? 'Visit Shams Stores' : 'Talk to Shams'}
-          </h1>
-          <p className="mt-4 text-sm leading-6 text-muted-foreground">
-            Our team can help with product availability, selecting gear and your
-            order.
-          </p>
-          <a
-            href="https://www.shams-stores.com/shams-contact-2026/"
-            className="shams-button mt-6"
-          >
-            Contact Shams Stores →
-          </a>
-        </main>
-      )
+    if (section === 'account') {
+      const accountSection = ['orders', 'addresses', 'profile'].includes(value ?? '') ? value as 'orders' | 'addresses' | 'profile' : 'overview'
+      return <AccountDashboard section={accountSection} />
+    }
+    if (section === 'support') return <SupportPage />
+    if (section === 'branches') return <BranchesPage />
+    if (section === 'contact') return <ContactPage />
+    if (section === 'about') return <AboutPage />
+    if (section === 'terms') return <TermsPage />
+    if (section === 'privacy') return <PrivacyPage />
+    if (section === 'cookies') return <CookiesPage />
     if (section === 'w') {
       const tags = await terms('tags')
       const selected = tags.find((t) => t.slug === value)
@@ -272,6 +388,31 @@ export default async function StorefrontRoute({
   if (section === 'cart') return <CartPage />
   if (section === 'checkout') return <CheckoutPage />
   if (section === 'bundles') return <BundlePage />
+  if (section === 'categories' && !value) {
+    const categories = commerce.categories.list()
+    const enriched = categories.map((c) => ({
+      ...c,
+      productCount: commerce.products.byCategory(c.slug).length,
+    }))
+    return <CategoriesIndexPage categories={enriched} />
+  }
+  if (section === 'w' && !value) {
+    const useCases = commerce.useCases.list()
+    return (
+      <main className="shams-container max-w-[1400px] py-10">
+        <h1 className="mb-2 text-3xl font-semibold">Shop by workflow</h1>
+        <p className="mb-8 text-muted-foreground">Gear curated for how you create.</p>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {useCases.map((u) => (
+            <Link key={u.slug} href={`/w/${u.slug}`} className="rounded-(--radius-card) border bg-card p-6 transition-colors hover:border-brand">
+              <p className="font-semibold">{u.name}</p>
+              <p className="mt-1 text-sm text-muted-foreground">{u.description}</p>
+            </Link>
+          ))}
+        </div>
+      </main>
+    )
+  }
   if (section === 'w' && value) {
     const experience = commerce.useCases.bySlug(value)
     if (experience)
@@ -282,7 +423,10 @@ export default async function StorefrontRoute({
         />
       )
   }
-  if (section === 'account') return <AccountPage />
+  if (section === 'account') {
+    const accountSection = ['orders', 'addresses', 'profile'].includes(value ?? '') ? value as 'orders' | 'addresses' | 'profile' : 'overview'
+    return <AccountDashboard section={accountSection} />
+  }
   if (section === 'wishlist') return <WishlistPage />
   if (section === 'orders' || section === 'track-order') return <OrderPage />
   if (section === 'brands' && !value)
@@ -308,7 +452,7 @@ export default async function StorefrontRoute({
       ? commerce.brands.bySlug(value ?? '')
       : undefined
   const isCollection =
-    section === 'deals' || section === 'new' || section === 'trending'
+    section === 'deals' || section === 'new' || section === 'trending' || section === 'best-sellers'
   const hasValidRoute =
     isSearch || isCollection || Boolean(category || useCase || brand)
   if (!hasValidRoute) notFound()
@@ -318,7 +462,7 @@ export default async function StorefrontRoute({
       ? commerce.products.deals()
       : section === 'new'
         ? commerce.products.featured()
-        : section === 'trending'
+        : section === 'trending' || section === 'best-sellers'
           ? commerce.products.trending()
           : category
             ? commerce.products.byCategory(category.slug)
@@ -342,7 +486,9 @@ export default async function StorefrontRoute({
         ? 'Deals worth catching'
         : section === 'new'
           ? 'New arrivals'
-          : 'Trending gear'))
+          : section === 'best-sellers'
+            ? 'Best sellers'
+            : 'Trending gear'))
   const description = isSearch
     ? `Explore products, brands and categories related to “${value ?? ''}”.`
     : (category?.tagline ??

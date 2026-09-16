@@ -13,6 +13,14 @@ import { StoreSection } from '@/components/shams/store-section'
 import { TrustSection } from '@/components/shams/trust-section'
 import { Newsletter } from '@/components/shams/newsletter'
 import { Footer } from '@/components/shams/footer'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Shams Stores — Photography, Cinema & Creator Gear in Egypt',
+  description:
+    'Egypt\'s specialist for photography, cinema and creator equipment. Cameras, lenses, audio, lighting and accessories with expert advice and nationwide delivery.',
+  alternates: { canonical: '/' },
+}
 
 export default function HomePage() {
   if (commerceProvider() === 'woocommerce') return <LiveHome />

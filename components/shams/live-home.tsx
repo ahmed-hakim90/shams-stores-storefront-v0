@@ -5,9 +5,10 @@ import {
   homeCollections,
   type PageExperienceConfig,
 } from '@/lib/commerce/experience'
-import { ProductRailSection } from './product-rail-section'
-import { ProductCard } from './product-card'
+import { ProductScrollRow } from './product-scroll-row'
 import { RecentlyViewed } from './saved-products'
+import { Reveal } from './reveal'
+import { SectionErrorBoundary } from './section-error-boundary'
 import {
   ProductSpotlight,
   CategoryMosaic,
@@ -24,13 +25,16 @@ async function Feed({ config }: { config: PageExperienceConfig }) {
   try {
     const page = await listProducts(config.query)
     if (!page.items.length) return null
+    const mid = Math.ceil(page.items.length / 2)
+    const row1 = page.items.slice(0, mid)
+    const row2 = page.items.slice(mid)
     if (config.presentation === 'feature')
       return (
         <section
-          className="border-y border-border bg-[#efede7]"
+          className="border-y border-border bg-surface-tint"
           data-merch="deals"
         >
-          <div className="shams-container merch-section">
+          <div className="shams-container py-4 sm:py-5">
             <MerchSectionHeading
               eyebrow={config.eyebrow}
               title={config.title}
@@ -38,21 +42,33 @@ async function Feed({ config }: { config: PageExperienceConfig }) {
               href={config.href}
               action="View all deals"
             />
-            <div className="grid gap-4 lg:grid-cols-2">
-              {page.items.map((p) => (
-                <ProductCard key={p.id} product={p} view="compact-related" />
-              ))}
+            <div className="mt-3 flex flex-col gap-3">
+              <ProductScrollRow products={row1} />
+              {row2.length > 0 && <ProductScrollRow products={row2} />}
             </div>
           </div>
         </section>
       )
-    return <ProductRailSection {...config} products={page.items} />
+    return (
+      <section className="shams-container py-4 sm:py-5" data-merch="rail">
+        <MerchSectionHeading
+          eyebrow={config.eyebrow}
+          title={config.title}
+          description={config.description}
+          href={config.href}
+        />
+        <div className="mt-3 flex flex-col gap-3">
+          <ProductScrollRow products={row1} />
+          {row2.length > 0 && <ProductScrollRow products={row2} />}
+        </div>
+      </section>
+    )
   } catch {
     return (
-      <section className="shams-container py-6">
+      <section className="shams-container py-4">
         <Link
           href={config.href}
-          className="inline-flex min-h-11 items-center text-sm font-medium text-brand-ink"
+          className="inline-flex h-7 items-center text-xs font-medium text-brand-ink"
         >
           Explore {config.eyebrow.toLowerCase()} →
         </Link>
@@ -64,12 +80,12 @@ async function Feed({ config }: { config: PageExperienceConfig }) {
 function SectionSkeleton() {
   return (
     <div
-      className="shams-container merch-section"
+      className="shams-container py-4"
       aria-label="Loading collection"
       role="status"
     >
-      <div className="h-7 w-48 animate-pulse rounded bg-muted" />
-      <div className="mt-5 h-52 animate-pulse rounded-xl bg-muted" />
+      <div className="h-5 w-40 animate-pulse rounded bg-muted" />
+      <div className="mt-3 h-44 animate-pulse rounded bg-muted" />
     </div>
   )
 }
@@ -78,38 +94,86 @@ export function LiveHome() {
   return (
     <>
       <main className="merch-home">
-        <Suspense fallback={<SectionSkeleton />}>
-          <ProductSpotlight />
-        </Suspense>
-        <Suspense fallback={<SectionSkeleton />}>
-          <CategoryMosaic />
-        </Suspense>
-        <Suspense fallback={<SectionSkeleton />}>
-          <Feed config={homeCollections[0]} />
-        </Suspense>
-        <Suspense fallback={<SectionSkeleton />}>
-          <BrandShowcase />
-        </Suspense>
-        <Suspense fallback={null}>
-          <UseCaseDiscovery />
-        </Suspense>
-        <Suspense fallback={null}>
-          <SetupDiscovery />
-        </Suspense>
-        <Suspense fallback={<SectionSkeleton />}>
-          <Feed config={homeCollections[1]} />
-        </Suspense>
-        <Suspense fallback={null}>
-          <BundleStory />
-        </Suspense>
-        <Suspense fallback={<SectionSkeleton />}>
-          <Feed config={homeCollections[2]} />
-        </Suspense>
-        <Suspense fallback={null}>
-          <BrandCampaign />
-        </Suspense>
-        <ExpertTrust />
-        <RecentlyViewed />
+        <SectionErrorBoundary label="ProductSpotlight">
+          <Reveal as="fade-up">
+            <Suspense fallback={<SectionSkeleton />}>
+              <ProductSpotlight />
+            </Suspense>
+          </Reveal>
+        </SectionErrorBoundary>
+        <SectionErrorBoundary label="CategoryMosaic">
+          <Reveal as="fade-up" delay={40}>
+            <Suspense fallback={<SectionSkeleton />}>
+              <CategoryMosaic />
+            </Suspense>
+          </Reveal>
+        </SectionErrorBoundary>
+        <SectionErrorBoundary label="FeaturedDeals">
+          <Reveal as="fade-up" delay={80}>
+            <Suspense fallback={<SectionSkeleton />}>
+              <Feed config={homeCollections[0]} />
+            </Suspense>
+          </Reveal>
+        </SectionErrorBoundary>
+        <SectionErrorBoundary label="BrandShowcase">
+          <Reveal as="fade-up" delay={40}>
+            <Suspense fallback={<SectionSkeleton />}>
+              <BrandShowcase />
+            </Suspense>
+          </Reveal>
+        </SectionErrorBoundary>
+        <SectionErrorBoundary label="UseCaseDiscovery">
+          <Reveal as="scale-in">
+            <Suspense fallback={null}>
+              <UseCaseDiscovery />
+            </Suspense>
+          </Reveal>
+        </SectionErrorBoundary>
+        <SectionErrorBoundary label="SetupDiscovery">
+          <Reveal as="scale-in" delay={40}>
+            <Suspense fallback={null}>
+              <SetupDiscovery />
+            </Suspense>
+          </Reveal>
+        </SectionErrorBoundary>
+        <SectionErrorBoundary label="NewArrivals">
+          <Reveal as="fade-up">
+            <Suspense fallback={<SectionSkeleton />}>
+              <Feed config={homeCollections[1]} />
+            </Suspense>
+          </Reveal>
+        </SectionErrorBoundary>
+        <SectionErrorBoundary label="BundleStory">
+          <Reveal as="fade-up" delay={40}>
+            <Suspense fallback={null}>
+              <BundleStory />
+            </Suspense>
+          </Reveal>
+        </SectionErrorBoundary>
+        <SectionErrorBoundary label="BestSellers">
+          <Reveal as="fade-up">
+            <Suspense fallback={<SectionSkeleton />}>
+              <Feed config={homeCollections[2]} />
+            </Suspense>
+          </Reveal>
+        </SectionErrorBoundary>
+        <SectionErrorBoundary label="BrandCampaign">
+          <Reveal as="fade-up" delay={40}>
+            <Suspense fallback={null}>
+              <BrandCampaign />
+            </Suspense>
+          </Reveal>
+        </SectionErrorBoundary>
+        <SectionErrorBoundary label="ExpertTrust">
+          <Reveal as="fade-up">
+            <ExpertTrust />
+          </Reveal>
+        </SectionErrorBoundary>
+        <SectionErrorBoundary label="RecentlyViewed">
+          <Reveal as="fade-up" delay={40}>
+            <RecentlyViewed />
+          </Reveal>
+        </SectionErrorBoundary>
       </main>
     </>
   )

@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Camera, MapPin, Phone, Mail } from 'lucide-react'
+import { MapPin, Phone, Mail } from 'lucide-react'
 import { ShamsLogo } from './logo'
 
 const columns = [
@@ -21,27 +21,18 @@ const columns = [
       { label: 'Bundles', href: '/bundles' },
       { label: 'Brands', href: '/brands' },
       { label: 'Deals', href: '/deals' },
-      { label: 'Used & Refurbished', href: '/used' },
       { label: 'New Arrivals', href: '/new' },
+      { label: 'Best Sellers', href: '/best-sellers' },
     ],
   },
   {
     heading: 'Support',
     links: [
       { label: 'Track your order', href: '/orders' },
-      { label: 'Shipping & delivery', href: '/shipping' },
-      { label: 'Returns & warranty', href: '/returns' },
-      { label: 'Installment plans', href: '/installments' },
-      { label: 'Contact us', href: '/support' },
-    ],
-  },
-  {
-    heading: 'Company',
-    links: [
-      { label: 'About Shams', href: '/about' },
+      { label: 'Contact us', href: '/contact' },
+      { label: 'Talk to Shams', href: '/support' },
       { label: 'Our branches', href: '/branches' },
-      { label: 'The Shams Journal', href: '/journal' },
-      { label: 'Careers', href: '/careers' },
+      { label: 'About Shams', href: '/about' },
     ],
   },
 ]
@@ -50,9 +41,9 @@ export function Footer() {
   return (
     <footer className="border-t border-border bg-card">
       <div className="mx-auto max-w-[1440px] px-4 py-12 sm:px-6">
-        <div className="grid gap-10 lg:grid-cols-[1.4fr_repeat(4,1fr)]">
+        <div className="grid gap-10 lg:grid-cols-[1.4fr_repeat(3,1fr)]">
           <div className="space-y-4">
-            <Link href="/" aria-label="Shams Stores home" className="inline-flex rounded-lg">
+            <Link href="/" aria-label="Shams Stores home" className="inline-flex rounded-(--radius-control)">
               <ShamsLogo className="w-[240px] max-w-full" />
             </Link>
             <p className="max-w-xs text-sm text-muted-foreground">
@@ -71,19 +62,6 @@ export function Footer() {
                 <Mail className="size-4 text-brand-ink" /> hello@shamsstores.com
               </p>
             </div>
-            <div className="flex gap-2 pt-1">
-              {["Instagram", "Facebook", "YouTube"].map((channel) => (
-                <Link
-                  key={channel}
-                  href="#"
-                  aria-label={`Shams ${channel}`}
-                  className="inline-flex size-9 items-center justify-center rounded-lg border border-border text-foreground/70 transition-colors hover:border-brand hover:text-brand-ink"
-                >
-                  <Camera aria-hidden="true" className="size-4.5" />
-                  <span className="sr-only">{channel}</span>
-                </Link>
-              ))}
-            </div>
           </div>
 
           {columns.map((col) => (
@@ -94,7 +72,7 @@ export function Footer() {
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-sm text-muted-foreground transition-colors hover:text-brand-ink"
+                      className="text-sm text-muted-foreground transition-colors duration-fast hover:text-brand-ink"
                     >
                       {link.label}
                     </Link>
@@ -108,8 +86,8 @@ export function Footer() {
 
       <div className="border-t border-border">
         <div className="mx-auto flex max-w-[1440px] flex-col items-center justify-between gap-3 px-4 py-5 text-xs text-muted-foreground sm:flex-row sm:px-6">
-          <p>© 2026 Shams Stores. All rights reserved.</p>
-          <div className="flex items-center gap-4">
+          <p>&copy; 2026 Shams Stores. All rights reserved.</p>
+          <div className="flex flex-wrap items-center gap-4">
             <span>Prices in EGP · Egypt</span>
             <div className="flex items-center gap-1.5">
               {['VISA', 'Mastercard', 'ValU', 'Fawry'].map((m) => (
@@ -120,6 +98,11 @@ export function Footer() {
                   {m}
                 </span>
               ))}
+            </div>
+            <div className="flex items-center gap-4">
+              <Link href="/terms" className="transition-colors hover:text-foreground">Terms & conditions</Link>
+              <Link href="/privacy" className="transition-colors hover:text-foreground">Privacy policy</Link>
+              <Link href="/cookies" className="transition-colors hover:text-foreground">Cookie policy</Link>
             </div>
           </div>
         </div>

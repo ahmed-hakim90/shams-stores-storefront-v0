@@ -20,7 +20,7 @@ export function CatalogDiscovery({
   const selected = new URLSearchParams(params)
   return (
     <div
-      className={`mb-6 grid gap-5 border-b pb-5 ${hub ? '' : 'xl:grid-cols-[1.3fr_1fr]'}`}
+      className={`mb-3 grid gap-3 border-b border-border pb-3 ${hub ? '' : 'xl:grid-cols-[1.3fr_1fr]'}`}
     >
       {(
         [
@@ -35,8 +35,8 @@ export function CatalogDiscovery({
         (group) =>
           group.terms.length > 0 && (
             <section key={group.kind} className="min-w-0">
-              <h2 className="mb-3 text-sm font-semibold">{group.title}</h2>
-              <div className="flex gap-3 overflow-x-auto overscroll-x-contain pb-2 snap-x snap-proximity">
+              <h2 className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide">{group.title}</h2>
+              <div className="flex gap-1.5 overflow-x-auto overscroll-x-contain pb-1 snap-x snap-proximity">
                 {group.terms.map((t) => {
                   const active = selected.get(group.kind) === t.slug
                   return (
@@ -50,11 +50,11 @@ export function CatalogDiscovery({
                           active ? (scope[group.kind] ?? '') : t.slug,
                         )
                       }
-                      className={`group flex shrink-0 snap-start rounded-xl border text-left text-sm transition-colors ${hub && group.kind === 'category' ? 'w-40 flex-col overflow-hidden sm:w-44' : 'min-h-16 w-36 items-center gap-2 px-3 py-2'} ${active ? 'border-brand-ink bg-brand-muted text-brand-ink' : 'bg-card hover:border-brand'}`}
+                      className={`group flex shrink-0 snap-start border text-left text-xs transition-colors duration-fast ${hub && group.kind === 'category' ? 'w-32 flex-col overflow-hidden' : 'h-12 w-28 items-center gap-1.5 px-2'} ${active ? 'border-brand-ink bg-brand-muted text-brand-ink' : 'border-border bg-card hover:border-brand'}`}
                     >
                       {t.image && (
                         <span
-                          className={`relative shrink-0 overflow-hidden bg-white ${hub && group.kind === 'category' ? 'h-24 w-full' : 'size-9 rounded-md'}`}
+                          className={`relative shrink-0 overflow-hidden bg-white ${hub && group.kind === 'category' ? 'h-16 w-full' : 'size-7'}`}
                         >
                           <ProductImage
                             src={t.image}
@@ -62,19 +62,19 @@ export function CatalogDiscovery({
                             fill
                             sizes={
                               hub && group.kind === 'category'
-                                ? '176px'
-                                : '36px'
+                                ? '128px'
+                                : '28px'
                             }
                             className={
                               hub && group.kind === 'category'
-                                ? 'object-cover transition-transform motion-safe:[@media(hover:hover)]:group-hover:scale-[1.035]'
+                                ? 'object-cover transition-transform duration-standard motion-safe:[@media(hover:hover)]:group-hover:scale-[1.04]'
                                 : 'object-contain'
                             }
                           />
                         </span>
                       )}
                       <span
-                        className={`font-medium leading-5 ${hub && group.kind === 'category' ? 'p-3' : ''}`}
+                        className={`font-medium leading-tight ${hub && group.kind === 'category' ? 'p-1.5 text-[11px]' : ''}`}
                       >
                         {t.name}
                       </span>

@@ -23,7 +23,7 @@ export function ProductRailSection({
         description={description}
         href={href}
       />
-      <div className="mt-8">
+      <div className="mt-4">
         <ProductRail products={products} />
       </div>
     </section>

@@ -27,7 +27,7 @@ export function WorkflowExplorer() {
               key={u.slug}
               href={`/w/${u.slug}`}
               className={
-                'group relative flex min-h-72 flex-col justify-end overflow-hidden rounded-2xl border border-border ' +
+                'group relative flex min-h-72 flex-col justify-end overflow-hidden rounded-(--radius-card) border border-border ' +
                 (i === 0 ? 'sm:col-span-2 lg:col-span-1' : '')
               }
             >
@@ -36,9 +36,9 @@ export function WorkflowExplorer() {
                 alt=""
                 fill
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 320px"
-                className="object-cover transition-transform duration-500 group-hover:scale-105"
+                className="object-cover transition-transform duration-standard group-hover:scale-[1.04]"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0b1f38]/90 via-[#0b1f38]/45 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-surface-overlay/90 via-surface-overlay/45 to-transparent" />
               <div className="relative space-y-3 p-5 text-white">
                 <div>
                   <p className="text-lg font-semibold tracking-tight">{u.name}</p>
@@ -58,7 +58,7 @@ export function WorkflowExplorer() {
                 </div>
                 <span className="inline-flex items-center gap-1.5 text-sm font-semibold">
                   Build {u.name.toLowerCase()} setup
-                  <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+                  <ArrowRight className="size-4 transition-transform duration-fast group-hover:translate-x-0.5" />
                 </span>
               </div>
             </Link>

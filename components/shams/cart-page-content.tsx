@@ -16,6 +16,7 @@ export function CartPageContent({ checkout = false }: { checkout?: boolean }) {
       mutateCart,
       refreshCart,
       removeCartLine,
+      updateCartLineQuantity,
       notify,
     } = useInteractions(),
     [coupon, setCoupon] = useState('')
@@ -37,23 +38,23 @@ export function CartPageContent({ checkout = false }: { checkout?: boolean }) {
           : 'A final look at the gear for your next idea.'}
       </p>
       {cartLoading ? (
-        <div className="mt-8 h-56 animate-pulse rounded-xl bg-muted" />
+        <div className="mt-8 h-56 animate-pulse rounded-(--radius-card) bg-muted" />
       ) : cartError ? (
-        <div role="alert" className="mt-8 rounded-xl border p-6">
+        <div role="alert" className="mt-8 rounded-(--radius-card) border p-6">
           <p>{cartError}</p>
           <button
             onClick={refreshCart}
-            className="mt-3 min-h-11 rounded-lg border px-4"
+            className="mt-3 min-h-11 rounded-(--radius-control) border px-4"
           >
             Retry cart
           </button>
         </div>
       ) : !cartLines.length ? (
-        <div className="mt-8 rounded-xl border border-dashed p-10 text-center">
+        <div className="mt-8 rounded-(--radius-card) border border-dashed p-10 text-center">
           <h2 className="font-semibold">Your cart is empty</h2>
           <Link
             href="/shop"
-            className="mt-5 inline-flex min-h-11 items-center rounded-lg bg-brand px-6 text-brand-foreground"
+            className="mt-5 inline-flex min-h-11 items-center rounded-(--radius-control) bg-brand px-6 text-brand-foreground"
           >
             Explore gear
           </Link>
@@ -68,7 +69,7 @@ export function CartPageContent({ checkout = false }: { checkout?: boolean }) {
                 {cartLines.map((line) => (
                   <article
                     key={line.id}
-                    className="flex gap-3 rounded-2xl border bg-card p-4 sm:gap-5"
+                    className="flex gap-3 rounded-(--radius-card) border bg-card p-4 sm:gap-5"
                   >
                     <div className="relative size-20 shrink-0 sm:size-24 bg-white">
                       <ProductImage
@@ -88,39 +89,27 @@ export function CartPageContent({ checkout = false }: { checkout?: boolean }) {
                         {formatEgp(line.total ?? line.quantity * line.price)}
                       </p>
                       <div className="mt-3 flex flex-wrap items-center gap-3">
-                        <label className="text-xs text-muted-foreground">
-                          Qty{' '}
-                          <select
-                            aria-label={`Quantity for ${line.productName}`}
-                            value={line.quantity}
-                            disabled={cartPending}
-                            onChange={(e) =>
-                              void mutateCart({
-                                action: 'update',
-                                key: line.id,
-                                quantity: Number(e.target.value),
-                              }).catch((e) => notify(e.message, 'error'))
-                            }
-                            className="ml-1 h-11 rounded-lg border px-3 text-base text-foreground"
+                        <div className="flex items-center gap-1">
+                          <button
+                            disabled={cartPending || line.quantity <= 1}
+                            onClick={() => updateCartLineQuantity(line.id, line.quantity - 1)}
+                            aria-label="Decrease quantity"
+                            className="flex size-9 items-center justify-center rounded-(--radius-control) border text-sm transition-colors hover:border-brand hover:text-brand-ink disabled:opacity-40"
                           >
-                            {Array.from(
-                              {
-                                length: Math.min(
-                                  99,
-                                  Math.max(
-                                    line.quantity,
-                                    line.maxQuantity ?? 10,
-                                  ),
-                                ),
-                              },
-                              (_, i) => (
-                                <option key={i} value={i + 1}>
-                                  {i + 1}
-                                </option>
-                              ),
-                            )}
-                          </select>
-                        </label>
+                            −
+                          </button>
+                          <span className="w-9 text-center text-sm font-medium tabular-nums">
+                            {line.quantity}
+                          </span>
+                          <button
+                            disabled={cartPending || line.quantity >= 99}
+                            onClick={() => updateCartLineQuantity(line.id, line.quantity + 1)}
+                            aria-label="Increase quantity"
+                            className="flex size-9 items-center justify-center rounded-(--radius-control) border text-sm transition-colors hover:border-brand hover:text-brand-ink disabled:opacity-40"
+                          >
+                            +
+                          </button>
+                        </div>
                         <button
                           disabled={cartPending}
                           onClick={() => removeCartLine(line.id)}
@@ -145,11 +134,20 @@ export function CartPageContent({ checkout = false }: { checkout?: boolean }) {
                 </summary>
                 <ul className="space-y-3 pb-3">
                   {cartLines.map((line) => (
-                    <li key={line.id} className="flex gap-3 text-xs">
-                      <span className="min-w-0 flex-1">
+                    <li key={line.id} className="flex items-center gap-3 text-xs">
+                      <div className="relative size-12 shrink-0 rounded-(--radius-control) bg-white">
+                        <ProductImage
+                          src={line.productImage || '/placeholder.svg'}
+                          alt={line.productName}
+                          fill
+                          sizes="48px"
+                          className="object-contain p-1"
+                        />
+                      </div>
+                      <span className="min-w-0 flex-1 truncate">
                         {line.quantity} × {line.productName}
                       </span>
-                      <span className="shrink-0">
+                      <span className="shrink-0 tabular-nums">
                         {formatEgp(line.total ?? line.price * line.quantity)}
                       </span>
                     </li>
@@ -202,11 +200,11 @@ export function CartPageContent({ checkout = false }: { checkout?: boolean }) {
                 value={coupon}
                 onChange={(e) => setCoupon(e.target.value)}
                 placeholder="Coupon code"
-                className="h-11 min-w-0 flex-1 rounded-lg border px-3 text-sm"
+                className="h-11 min-w-0 flex-1 rounded-(--radius-control) border px-3 text-sm"
               />
               <button
                 disabled={cartPending || !coupon}
-                className="h-11 rounded-lg border px-3 text-sm"
+                className="h-11 rounded-(--radius-control) border px-3 text-sm"
               >
                 Apply
               </button>
@@ -227,7 +225,7 @@ export function CartPageContent({ checkout = false }: { checkout?: boolean }) {
             {!checkout && (
               <Link
                 href="/checkout"
-                className="mt-5 flex min-h-12 items-center justify-center rounded-lg bg-brand text-sm font-semibold text-brand-foreground"
+                className="mt-5 flex min-h-12 items-center justify-center rounded-(--radius-control) bg-brand text-sm font-semibold text-brand-foreground"
               >
                 Continue to checkout
               </Link>

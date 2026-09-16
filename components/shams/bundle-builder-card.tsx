@@ -19,7 +19,7 @@ export function BundleBuilderCard({
   return (
     <article
       className={cn(
-        'flex flex-col overflow-hidden rounded-2xl border border-border bg-card',
+        'flex flex-col overflow-hidden rounded-(--radius-card) border border-border bg-card',
         className,
       )}
     >
@@ -77,7 +77,7 @@ export function BundleBuilderCard({
             {formatMoney(bundle.bundlePrice)}
           </p>
         </div>
-        <div className="flex flex-wrap items-center gap-2"><Link href={`/bundles/${bundle.slug}`} className="inline-flex min-h-11 items-center justify-center rounded-xl border border-border px-4 text-sm font-semibold hover:border-brand hover:text-brand-ink">View bundle</Link><AddBundleButton bundleName={bundle.name} bundle={bundle} /></div>
+        <div className="flex flex-wrap items-center gap-2"><Link href={`/bundles/${bundle.slug}`} className="inline-flex min-h-11 items-center justify-center rounded-(--radius-control) border border-border px-4 text-sm font-semibold hover:border-brand hover:text-brand-ink">View bundle</Link><AddBundleButton bundleName={bundle.name} bundle={bundle} /></div>
       </div>
     </article>
   )

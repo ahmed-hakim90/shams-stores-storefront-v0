@@ -9,6 +9,7 @@ import {
 } from '@tanstack/react-query'
 import { catalogParams, type CatalogScope } from '@/lib/commerce/experience'
 import { CatalogDiscovery } from './contextual-discovery'
+import { Reveal } from './reveal'
 import type { TaxonomyTerm } from '@/lib/commerce/types'
 import { ProductCard } from './product-card'
 import {
@@ -175,30 +176,31 @@ export function ShopFeed({
       aria-label="Product catalog"
     >
       {discovery && (
-        <CatalogDiscovery
-          {...discovery}
-          scope={scope}
-          params={params}
-          change={change}
-        />
+        <Reveal as="fade-up">
+          <CatalogDiscovery
+            {...discovery}
+            scope={scope}
+            params={params}
+            change={change}
+          />
+        </Reveal>
       )}
-      <div id="catalog-results" className="mb-5 flex scroll-mt-[calc(var(--shell-header-height)+16px)] flex-wrap items-center justify-between gap-3">
+      <div id="catalog-results" className="mb-3 flex scroll-mt-[calc(var(--shell-header-height)+16px)] flex-wrap items-center justify-between gap-2">
         <MobileFilterDrawer
           params={params}
           lockedFilters={lockedFilters}
           facets={availableFacets}
           apply={apply}
         />
-        <p className="hidden text-sm text-muted-foreground lg:block">
-          {resultCount} {resultCount === 1 ? 'product' : 'products'} · Find the
-          right gear for your next project
+        <p className="hidden text-xs text-muted-foreground lg:block">
+          {resultCount} {resultCount === 1 ? 'product' : 'products'}
         </p>
-        <label className="flex items-center gap-2 text-sm">
+        <label className="flex items-center gap-1.5 text-xs">
           <span className="sr-only sm:not-sr-only">Sort</span>
           <select
             value={p.get('sort') ?? 'newest'}
             onChange={(e) => change('sort', e.target.value)}
-            className="min-h-11 max-w-[160px] rounded-[var(--radius-control)] border border-border bg-surface-raised px-3"
+            className="h-8 max-w-[150px] border border-border bg-surface-raised px-2 text-xs"
           >
             {query && <option value="relevance">Best match</option>}
             <option value="newest">Newest</option>
@@ -209,9 +211,9 @@ export function ShopFeed({
         </label>
       </div>
       <div className="shams-catalog-layout">
-        <aside className="shams-sidebar shams-panel hidden p-4 lg:block">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="font-semibold">Refine your search</h2>
+        <aside className="shams-sidebar hidden p-3 lg:block">
+          <div className="mb-2 flex items-center justify-between border-b border-border pb-2">
+            <h2 className="text-xs font-semibold uppercase tracking-wide">Filters</h2>
             {active.length > 0 && (
               <button
                 onClick={() => {
@@ -219,7 +221,7 @@ export function ShopFeed({
                   clearCatalogFilters(n, availableFacets, lockedFilters)
                   apply(n)
                 }}
-                className="min-h-11 text-xs text-brand-ink"
+                className="text-[11px] text-brand-ink"
               >
                 Clear all
               </button>
@@ -236,12 +238,12 @@ export function ShopFeed({
           <FilterFields facets={availableFacets} values={p} change={change} />
         </aside>
         <div className="min-w-0">
-          <div className="mb-4 flex flex-wrap gap-2">
+          <div className="mb-2 flex flex-wrap gap-1.5">
             {active.map((k) => (
               <button
                 key={k}
                 onClick={() => change(k, '')}
-                className="min-h-11 rounded-full border border-brand/30 bg-brand/5 px-3 text-xs text-brand-ink"
+                className="inline-flex h-6 items-center border border-border bg-surface-subtle px-2 text-[11px] text-foreground hover:border-brand"
               >
                 {k === 'onSale' ? 'On sale' : p.get(k)?.replaceAll('-', ' ')} ×
               </button>
@@ -267,7 +269,7 @@ export function ShopFeed({
             </button>
           )}
           <div
-            className="grid grid-cols-1 gap-4"
+            className="shams-product-grid"
             data-results-pending={feed.isPlaceholderData}
             aria-busy={feed.isFetching && !feed.isFetchingNextPage}
           >
@@ -275,13 +277,12 @@ export function ShopFeed({
               <ProductCard
                 key={product.id}
                 product={product}
-                view="list"
                 purchaseDisabled={feed.isPlaceholderData}
               />
             ))}
           </div>
           {items.length === 0 && !feed.isPending && !feed.isError && (
-            <div className="rounded-xl border border-dashed p-10 text-center">
+            <div className="rounded-(--radius-card) border border-dashed p-10 text-center">
               <h2 className="text-lg font-semibold">
                 No gear matches these filters
               </h2>
@@ -313,7 +314,7 @@ export function ShopFeed({
                 {[0, 1, 2].map((x) => (
                   <div
                     key={x}
-                    className="h-52 animate-pulse rounded-xl border bg-muted/40 motion-reduce:animate-none"
+                    className="h-52 animate-pulse rounded-(--radius-card) border bg-muted/40 motion-reduce:animate-none"
                   />
                 ))}
               </div>
@@ -325,7 +326,7 @@ export function ShopFeed({
                 </p>
                 <button
                   onClick={() => feed.fetchNextPage()}
-                  className="mt-3 min-h-11 rounded-lg border px-5"
+                  className="mt-3 min-h-11 rounded-(--radius-control) border px-5"
                 >
                   Retry
                 </button>
@@ -336,7 +337,7 @@ export function ShopFeed({
               !feed.isFetchNextPageError && (
                 <button
                   onClick={() => feed.fetchNextPage()}
-                  className="mx-auto block min-h-11 rounded-lg border px-5 text-sm"
+                  className="mx-auto block min-h-11 rounded-(--radius-control) border px-5 text-sm"
                 >
                   Load more
                 </button>

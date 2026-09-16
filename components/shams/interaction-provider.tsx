@@ -78,7 +78,8 @@ type InteractionContextValue = {
   closeCart: () => void
   openSearch: () => void
   closeSearch: () => void
-  addToCart: (product: Product | string, quantity?: number) => Promise<boolean>
+  addToCart: (product: Product | string, quantity?: number, variant?: { variationId: string; options: { attribute: string; value: string }[] }) => Promise<boolean>
+  updateCartLineQuantity: (key: string, quantity: number) => void
   cart: Cart | undefined
   cartLoading: boolean
   cartError: string | undefined
@@ -121,7 +122,7 @@ function ToastStack({
           <div
             key={notice.id}
             role="status"
-            className="flex w-full items-center gap-3 rounded-lg border border-border bg-card px-3 py-3 text-sm shadow-md"
+            className="flex w-full items-center gap-3 rounded-(--radius-control) border border-border bg-card px-3 py-3 text-sm"
           >
             <span
               className={cn(
@@ -138,7 +139,7 @@ function ToastStack({
             <button
               type="button"
               onClick={() => dismiss(notice.id)}
-              className="inline-flex size-8 items-center justify-center rounded-md text-muted-foreground hover:bg-muted"
+              className="inline-flex size-8 items-center justify-center rounded-(--radius-control) text-muted-foreground hover:bg-muted"
               aria-label="Dismiss notification"
             >
               <X className="size-4" />
@@ -173,6 +174,79 @@ export function InteractionProvider({
         method: 'POST',
         body: JSON.stringify(input),
       }),
+    onMutate: async (input) => {
+      if (!liveMode) return
+      await client.cancelQueries({ queryKey: ['cart'] })
+      const previous = client.getQueryData(['cart']) as Cart | undefined
+      if (!previous) return { previous }
+
+      if (input.action === 'remove' && typeof input.key === 'string') {
+        const line = previous.lines.find((l) => l.id === input.key)
+        if (line) {
+          const lineTotal = line.total ?? line.price * line.quantity
+          const newSubtotal = previous.subtotal - lineTotal
+          client.setQueryData(['cart'], {
+            ...previous,
+            lines: previous.lines.filter((l) => l.id !== input.key),
+            subtotal: newSubtotal,
+            total:
+              newSubtotal + previous.tax + (previous.shipping ?? 0) - previous.discount,
+          })
+        }
+      }
+
+      if (input.action === 'add' && typeof input.productId === 'string') {
+        const qty = Number(input.quantity) || 1
+        const existing = previous.lines.find(
+          (l) => l.productId === input.productId && !l.bundleGroupId,
+        )
+        if (existing) {
+          client.setQueryData(['cart'], {
+            ...previous,
+            lines: previous.lines.map((l) =>
+              l === existing ? { ...l, quantity: l.quantity + qty } : l,
+            ),
+          })
+        } else {
+          const optimisticLine: CartLine = {
+            id: `optimistic-${input.productId}`,
+            productId: input.productId,
+            productName: (input.productName as string) ?? '',
+            productImage: input.productImage as string | undefined,
+            quantity: qty,
+            price: (input.productPrice as number) ?? 0,
+          }
+          client.setQueryData(['cart'], {
+            ...previous,
+            lines: [...previous.lines, optimisticLine],
+          })
+        }
+      }
+
+      if (input.action === 'update' && typeof input.key === 'string') {
+        const qty = Number(input.quantity)
+        if (Number.isInteger(qty) && qty >= 1 && qty <= 99) {
+          const line = previous.lines.find((l) => l.id === input.key)
+          if (line && line.quantity !== qty) {
+            const linePrice = line.price
+            const oldLineTotal = line.total ?? linePrice * line.quantity
+            const newLineTotal = linePrice * qty
+            const newSubtotal = previous.subtotal - oldLineTotal + newLineTotal
+            client.setQueryData(['cart'], {
+              ...previous,
+              lines: previous.lines.map((l) =>
+                l.id === input.key ? { ...l, quantity: qty } : l,
+              ),
+              subtotal: newSubtotal,
+              total:
+                newSubtotal + previous.tax + (previous.shipping ?? 0) - previous.discount,
+            })
+          }
+        }
+      }
+
+      return { previous }
+    },
     onSuccess: (data) => {
       client.setQueryData(['cart'], data)
       if (typeof BroadcastChannel === 'undefined') return
@@ -180,7 +254,10 @@ export function InteractionProvider({
       channel.postMessage('changed')
       channel.close()
     },
-    onError: () => {
+    onError: (_err, _input, context) => {
+      if (context?.previous) {
+        client.setQueryData(['cart'], context.previous)
+      }
       void client.invalidateQueries({ queryKey: ['cart'] })
     },
     scope: { id: 'cart' },
@@ -228,6 +305,20 @@ export function InteractionProvider({
     } finally {
       setStorageReady(true)
     }
+
+    fetch('/api/customer/wishlist')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!data?.product_ids || !Array.isArray(data.product_ids)) return
+        const serverIds = data.product_ids.filter(
+          (x: unknown) => typeof x === 'string',
+        )
+        setWishlistItems((local) => {
+          const merged = [...new Set([...local, ...serverIds])].slice(-100)
+          return merged.length === local.length ? local : merged
+        })
+      })
+      .catch(() => {})
   }, [])
   useEffect(() => {
     if (storageReady) safePersist('shams-wishlist-v3-ids', wishlistItems)
@@ -282,7 +373,11 @@ export function InteractionProvider({
     [],
   )
   const addToCart = useCallback(
-    async (input: Product | string, quantity = 1) => {
+    async (
+      input: Product | string,
+      quantity = 1,
+      variant?: { variationId: string; options: { attribute: string; value: string }[] },
+    ) => {
       const product =
         typeof input === 'string'
           ? liveMode
@@ -311,8 +406,13 @@ export function InteractionProvider({
         try {
           await cartMutation.mutateAsync({
             action: 'add',
-            productId: product.id,
+            productId: variant?.variationId ?? product.id,
+            variationId: variant?.variationId,
+            options: variant?.options,
             quantity,
+            productName: product.name,
+            productImage: product.image,
+            productPrice: product.price.amount,
           })
           notify(`${product.name} added to cart`)
           return true
@@ -324,9 +424,12 @@ export function InteractionProvider({
           return false
         }
       }
+      const lineId = variant
+        ? `product-${variant.variationId}`
+        : `product-${product.id}`
       setCartLines((lines) => {
         const existing = lines.find(
-          (line) => !line.bundleGroupId && line.productId === product.id,
+          (line) => !line.bundleGroupId && line.id === lineId,
         )
         if (existing)
           return lines.map((line) =>
@@ -341,12 +444,16 @@ export function InteractionProvider({
         return [
           ...lines,
           {
-            id: `product-${product.id}`,
-            productId: product.id,
+            id: lineId,
+            productId: variant?.variationId ?? product.id,
             productName: product.name,
             productImage: product.image,
             quantity,
             price: product.price.amount,
+            variationId: variant?.variationId,
+            selectedOptions: variant?.options.map(
+              (o) => `${o.attribute}: ${o.value}`,
+            ),
           },
         ]
       })
@@ -433,13 +540,46 @@ export function InteractionProvider({
     },
     [liveMode],
   )
+  const updateCartLineQuantity = useCallback(
+    (key: string, quantity: number) => {
+      if (!Number.isInteger(quantity) || quantity < 1 || quantity > 99) return
+      if (liveMode) {
+        void cartMutation
+          .mutateAsync({ action: 'update', key, quantity })
+          .catch((e) => notify(e.message, 'error'))
+        return
+      }
+      setCartLines((lines) =>
+        lines.map((line) =>
+          line.id === key ? { ...line, quantity } : line,
+        ),
+      )
+    },
+    [liveMode, cartMutation.mutateAsync, notify],
+  )
   const toggleWishlist = useCallback(
     (id: string) =>
-      setWishlistItems((items) =>
-        items.includes(id)
+      setWishlistItems((items) => {
+        const wasIncluded = items.includes(id)
+        const next = wasIncluded
           ? items.filter((x) => x !== id)
-          : [...items, id].slice(-100),
-      ),
+          : [...items, id].slice(-100)
+
+        fetch(
+          wasIncluded
+            ? `/api/customer/wishlist/${id}`
+            : '/api/customer/wishlist',
+          wasIncluded
+            ? { method: 'DELETE' }
+            : {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ product_id: id }),
+              },
+        ).catch(() => {})
+
+        return next
+      }),
     [],
   )
   const isWishlisted = useCallback(
@@ -492,6 +632,7 @@ export function InteractionProvider({
       },
       closeSearch: () => setSearchOpen(false),
       addToCart,
+      updateCartLineQuantity,
       toggleWishlist,
       isWishlisted,
       toggleCompare,
@@ -515,6 +656,7 @@ export function InteractionProvider({
       searchOpen,
       stickyPurchaseVisible,
       addToCart,
+      updateCartLineQuantity,
       toggleWishlist,
       isWishlisted,
       toggleCompare,
@@ -574,7 +716,7 @@ export function CompareTray() {
         onClick={() => setOpen(true)}
         aria-label={`Compare ${compareItems.length} products`}
         className={cn(
-          'fixed z-[60] flex min-h-11 items-center gap-2 rounded-full border bg-card px-4 text-sm font-semibold shadow-lg',
+          'fixed z-[60] flex min-h-11 items-center gap-2 rounded-full border bg-card px-4 text-sm font-semibold',
           stickyPurchaseVisible
             ? 'right-4 top-[calc(var(--shell-header-height)+12px)]'
             : 'bottom-[var(--fixed-stack-bottom)] right-4',
@@ -662,12 +804,12 @@ function ShellFrame({
     <div data-shell={variant} data-overlay-active={overlayActive}>
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:rounded-lg focus:bg-card focus:p-4"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:rounded-(--radius-control) focus:bg-card focus:p-4"
       >
         Skip to content
       </a>
       {variant === 'checkout' ? (
-        <header className="border-b border-border bg-card shadow-[0_8px_24px_-24px_rgb(17_17_17_/_0.5)]">
+        <header className="border-b border-border bg-card">
           <div className="shams-container flex min-h-20 flex-wrap items-center justify-between gap-3 py-3">
             <Link href="/" aria-label="Shams Stores home">
               <ShamsLogo />

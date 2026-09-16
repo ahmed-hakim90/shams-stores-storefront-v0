@@ -6,8 +6,10 @@ import type {
   CatalogPage,
   FacetResult,
   ProductSummary,
+  ProductVariant,
   SearchSuggestion,
   ProductDetail,
+  ProductBundleAddon,
 } from '../types'
 import { request } from './client'
 import {
@@ -17,6 +19,7 @@ import {
   numeric,
   mapSummary,
   mapDetail,
+  mapVariant,
   mapTerm,
   mapAvailability,
   compatibleProductIds,
@@ -288,10 +291,34 @@ export const getProduct = cache(
     const enrichment = await request(`/wc/v3/products/${id}`, {
       private: true,
       ttl: 300,
-    }).catch(() => ({ data: {} }))
+    }).catch((error) => {
+      console.error('[commerce] product enrichment failed', {
+        productId: id,
+        slug,
+        error: error instanceof Error ? error.message : String(error),
+      })
+      return { data: {} }
+    })
+    const productType = text(record(raw).type)
+    let variants: ProductVariant[] = []
+    if (productType === 'variable') {
+      const varRes = await request(
+        `/wc/store/v1/products/${id}/variations?per_page=100`,
+        { ttl: 120 },
+      ).catch(() => ({ data: [] }))
+      variants = array(varRes.data)
+        .map((v) => {
+          try {
+            return mapVariant(v)
+          } catch {
+            return null
+          }
+        })
+        .filter(Boolean) as ProductVariant[]
+    }
     let detail: ProductDetail
     try {
-      detail = mapDetail(raw, enrichment.data)
+      detail = mapDetail(raw, enrichment.data, variants)
     } catch {
       console.warn('[commerce] invalid product detail omitted', { id })
       return null
@@ -345,6 +372,35 @@ export const getProduct = cache(
           })),
       )
     ).filter((g) => g.products.length)
+
+    try {
+      const rawBundles = await bundlesForProduct(String(id))
+      if (rawBundles.length) {
+        detail.bundles = rawBundles
+          .map((b) => {
+            const rec = record(b)
+            const bundlePrice = Number(rec.bundle_price ?? rec.price ?? 0)
+            const originalPrice = Number(rec.regular_price ?? rec.original_price ?? rec.price ?? 0)
+            const items = array(rec.items ?? rec.bundle_items ?? [])
+            return {
+              id: String(rec.id ?? rec.slug ?? ''),
+              slug: String(rec.slug ?? rec.id ?? ''),
+              name: String(rec.name ?? 'Bundle'),
+              useCase: String(rec.use_case ?? 'studio'),
+              itemCount: items.length,
+              bundlePrice: { amount: bundlePrice, currency: 'EGP' },
+              originalPrice: { amount: originalPrice, currency: 'EGP' },
+              savings: originalPrice - bundlePrice,
+              heroImage: typeof rec.hero_image === 'string' ? rec.hero_image : undefined,
+              badge: typeof rec.badge === 'string' ? rec.badge : undefined,
+            } satisfies ProductBundleAddon
+          })
+          .filter((b) => b.id && b.slug)
+      }
+    } catch {
+      // Bundles API may be unavailable — that's fine
+    }
+
     return detail
   },
 )

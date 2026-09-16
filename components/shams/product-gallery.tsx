@@ -1,5 +1,5 @@
 'use client'
-import { useRef, useState } from 'react'
+import { useRef, useState, useCallback } from 'react'
 import { Dialog } from '@base-ui/react/dialog'
 import {
   ChevronLeft,
@@ -21,13 +21,24 @@ export function ProductGallery({
 }) {
   const [selected, setSelected] = useState(0),
     [open, setOpen] = useState(false),
-    [zoom, setZoom] = useState(false)
+    [zoom, setZoom] = useState(false),
+    [hoverZoom, setHoverZoom] = useState(false),
+    [zoomPos, setZoomPos] = useState({ x: 50, y: 50 })
   const start = useRef<{ x: number; y: number } | null>(null)
+  const mainRef = useRef<HTMLDivElement>(null)
   useOverlayPresence(open)
   const move = (direction: number) => {
     setSelected((v) => (v + direction + images.length) % images.length)
     setZoom(false)
+    setHoverZoom(false)
   }
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    if (!mainRef.current) return
+    const rect = mainRef.current.getBoundingClientRect()
+    const x = ((e.clientX - rect.left) / rect.width) * 100
+    const y = ((e.clientY - rect.top) / rect.height) * 100
+    setZoomPos({ x, y })
+  }, [])
   const image = images[selected] ?? images[0]
   if (!image) return null
   return (
@@ -36,7 +47,11 @@ export function ProductGallery({
       className="min-w-0 lg:sticky lg:top-[calc(var(--shell-header-height)+24px)]"
     >
       <div
-        className="relative aspect-square overflow-hidden rounded-3xl border bg-white"
+        ref={mainRef}
+        className="relative aspect-square overflow-hidden rounded-(--radius-editorial) border bg-white"
+        onMouseEnter={() => setHoverZoom(true)}
+        onMouseLeave={() => setHoverZoom(false)}
+        onMouseMove={handleMouseMove}
         onTouchStart={(e) => {
           start.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }
         }}
@@ -61,11 +76,21 @@ export function ProductGallery({
             fill
             priority={selected === 0}
             sizes="(max-width: 1023px) 90vw, 660px"
-            className="object-contain p-6 sm:p-10"
+            className="object-contain p-6 sm:p-10 transition-transform duration-200 ease-out"
+            style={
+              hoverZoom
+                ? {
+                    transform: 'scale(2)',
+                    transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`,
+                  }
+                : undefined
+            }
           />
-          <span className="absolute bottom-4 right-4 flex size-11 items-center justify-center rounded-full border bg-white">
-            <Expand className="size-4" />
-          </span>
+          {!hoverZoom && (
+            <span className="absolute bottom-4 right-4 flex size-11 items-center justify-center rounded-full border bg-white">
+              <Expand className="size-4" />
+            </span>
+          )}
         </button>
         {images.length > 1 && (
           <span className="absolute bottom-4 left-4 rounded-full bg-muted px-3 py-2 text-xs tabular-nums">
@@ -89,10 +114,11 @@ export function ProductGallery({
                 onClick={() => {
                   setSelected(i)
                   setZoom(false)
+                  setHoverZoom(false)
                 }}
                 aria-label={`View image ${i + 1}`}
                 aria-pressed={i === selected}
-                className={`relative size-16 shrink-0 overflow-hidden rounded-xl border bg-white ${i === selected ? 'border-brand-ink ring-1 ring-brand-ink' : ''}`}
+                className={`relative size-16 shrink-0 overflow-hidden rounded-(--radius-control) border bg-white ${i === selected ? 'border-brand-ink ring-1 ring-brand-ink' : ''}`}
               >
                 <ProductImage
                   src={img.url}
@@ -123,7 +149,7 @@ export function ProductGallery({
         <Dialog.Portal>
           <Dialog.Backdrop className="fixed inset-0 z-[150] bg-black/70" />
           <Dialog.Popup
-            className="shams-overlay fixed inset-3 z-[151] flex flex-col rounded-3xl bg-card p-3 outline-none sm:inset-8"
+            className="shams-overlay fixed inset-3 z-[151] flex flex-col rounded-(--radius-editorial) bg-card p-3 outline-none sm:inset-8"
             onKeyDown={(e) => {
               if (e.key === 'ArrowRight') move(1)
               if (e.key === 'ArrowLeft') move(-1)

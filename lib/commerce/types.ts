@@ -295,6 +295,20 @@ export interface ProductDetail extends ProductSummary {
   variants: ProductVariant[]
   relationships: RelationshipGroup[]
   categories: TaxonomyTerm[]
+  bundles?: ProductBundleAddon[]
+}
+
+export interface ProductBundleAddon {
+  id: string
+  slug: string
+  name: string
+  useCase: string
+  itemCount: number
+  bundlePrice: Money
+  originalPrice: Money
+  savings: number
+  heroImage?: string
+  badge?: string
 }
 export interface TaxonomyTerm {
   id: string

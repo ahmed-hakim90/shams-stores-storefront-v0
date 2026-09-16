@@ -43,8 +43,8 @@ export function FilterFields({
   change: (key: string, value: string) => void
 }) {
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-2">
+    <div className="space-y-2">
+      <div className="grid grid-cols-2 gap-1.5">
         <PriceField
           label="Min price"
           value={values.get('minPrice') ?? ''}
@@ -56,12 +56,12 @@ export function FilterFields({
           change={(v) => change('maxPrice', v)}
         />
       </div>
-      <label className="flex min-h-11 items-center gap-3 text-sm">
+      <label className="flex h-7 items-center gap-2 text-xs">
         <input
           type="checkbox"
           checked={values.get('onSale') === 'true'}
           onChange={(e) => change('onSale', e.target.checked ? 'true' : '')}
-          className="size-4 accent-brand"
+          className="size-3.5 accent-brand"
         />
         On sale
       </label>
@@ -88,7 +88,7 @@ function PriceField({
   const [draft, setDraft] = useState(value)
   useEffect(() => setDraft(value), [value])
   return (
-    <label className="text-xs text-muted-foreground">
+    <label className="text-[11px] text-muted-foreground">
       {label}
       <input
         type="number"
@@ -103,7 +103,7 @@ function PriceField({
         onKeyDown={(e) => {
           if (e.key === 'Enter') e.currentTarget.blur()
         }}
-        className="mt-2 h-11 w-full rounded-[var(--radius-control)] border border-border bg-surface-raised px-3 text-base text-foreground"
+        className="mt-1 h-7 w-full border border-border bg-surface-raised px-2 text-xs text-foreground"
       />
     </label>
   )
@@ -129,22 +129,22 @@ function FilterGroup({
     <details
       open={opened}
       onToggle={(e) => setOpened(e.currentTarget.open)}
-      className="border-t border-border pt-4"
+      className="border-t border-border pt-2"
     >
-      <summary className="min-h-11 cursor-pointer text-sm font-semibold">
+      <summary className="flex h-8 cursor-pointer items-center text-xs font-semibold">
         {group.label}
       </summary>
-      <div className="mt-3">
+      <div className="mt-1">
         {group.options.length > 10 && (
           <input
             aria-label={`Search ${group.label}`}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder={`Find ${group.label.toLowerCase()}`}
-            className="mb-2 h-10 w-full rounded-lg border px-3 text-sm"
+            className="mb-1.5 h-6 w-full border border-border px-2 text-[11px]"
           />
         )}
-        <label className="flex min-h-11 items-center gap-2 text-sm">
+        <label className="flex h-6 items-center gap-1.5 text-xs">
           <input
             type="radio"
             name={name}
@@ -156,7 +156,7 @@ function FilterGroup({
         {shown.map((x) => (
           <label
             key={x.id}
-            className="flex min-h-11 cursor-pointer items-center gap-2 text-sm"
+            className="flex h-6 cursor-pointer items-center gap-1.5 text-xs"
           >
             <input
               type="radio"
@@ -166,7 +166,7 @@ function FilterGroup({
               className="accent-brand"
             />
             <span className="min-w-0 flex-1">{x.label}</span>
-            <span className="text-xs tabular-nums text-muted-foreground">
+            <span className="text-[10px] tabular-nums text-muted-foreground">
               {x.count}
             </span>
           </label>
@@ -175,7 +175,7 @@ function FilterGroup({
           <button
             type="button"
             onClick={() => setExpanded(!expanded)}
-            className="min-h-11 text-xs font-medium text-brand-ink"
+            className="h-6 text-[11px] font-medium text-brand-ink"
           >
             {expanded ? 'Show less' : 'Show more'}
           </button>
@@ -247,7 +247,7 @@ export function MobileFilterDrawer({
         setOpen(v)
       }}
     >
-      <Drawer.Trigger className="inline-flex min-h-11 items-center gap-2 rounded-lg border px-4 text-sm font-medium lg:hidden">
+      <Drawer.Trigger className="inline-flex min-h-11 items-center gap-2 rounded-(--radius-control) border px-4 text-sm font-medium lg:hidden">
         <SlidersHorizontal className="size-4" />
         Filters
       </Drawer.Trigger>
@@ -294,7 +294,7 @@ export function MobileFilterDrawer({
                   clearCatalogFilters(p, availableFacets, lockedFilters)
                   setDraft(p.toString())
                 }}
-                className="min-h-12 rounded-lg border px-4 text-sm"
+                className="min-h-12 rounded-(--radius-control) border px-4 text-sm"
               >
                 Clear all
               </button>
@@ -306,7 +306,7 @@ export function MobileFilterDrawer({
                   apply(new URLSearchParams(draft))
                   setOpen(false)
                 }}
-                className="min-h-12 flex-1 rounded-lg bg-brand px-4 text-sm font-semibold text-brand-foreground"
+                className="min-h-12 flex-1 rounded-(--radius-control) bg-brand px-4 text-sm font-semibold text-brand-foreground"
               >
                 {result.isError
                   ? 'Check your filters'

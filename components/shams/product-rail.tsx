@@ -55,30 +55,30 @@ export function ProductRail({
           <ProductCard key={p.id} product={p} view="rail" />
         ))}
       </div>
-      <div className="mt-3 flex items-center justify-between gap-3">
-        <p className="text-xs text-muted-foreground">
+      <div className="mt-2 flex items-center justify-between gap-3">
+        <p className="text-[11px] text-muted-foreground">
           {edges.end && edges.start
             ? 'Explore the selection'
             : 'Scroll to explore more gear'}
         </p>
-        <div className="flex gap-2">
+        <div className="flex gap-1.5">
           <button
             aria-label="Previous products"
             aria-controls={id}
             disabled={edges.start}
             onClick={() => move(-1)}
-            className="shams-icon-control size-11 disabled:cursor-not-allowed disabled:opacity-45"
+            className="shams-icon-control size-8 disabled:cursor-not-allowed disabled:opacity-45"
           >
-            <ChevronLeft className="size-5" />
+            <ChevronLeft className="size-4" />
           </button>
           <button
             aria-label="Next products"
             aria-controls={id}
             disabled={edges.end}
             onClick={() => move(1)}
-            className="shams-icon-control size-11 disabled:cursor-not-allowed disabled:opacity-45"
+            className="shams-icon-control size-8 disabled:cursor-not-allowed disabled:opacity-45"
           >
-            <ChevronRight className="size-5" />
+            <ChevronRight className="size-4" />
           </button>
         </div>
       </div>

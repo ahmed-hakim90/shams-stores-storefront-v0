@@ -29,7 +29,7 @@ export function AddBundleButton({
       }}
       aria-label={`Add ${bundleName} setup to cart`}
       className={cn(
-        'inline-flex h-11 items-center justify-center gap-2 rounded-xl px-5 text-sm font-semibold transition-colors',
+        'inline-flex h-11 items-center justify-center gap-2 rounded-(--radius-control) px-5 text-sm font-semibold transition-colors duration-fast',
         added
           ? 'bg-success text-white'
           : 'bg-brand text-brand-foreground hover:bg-brand/90',

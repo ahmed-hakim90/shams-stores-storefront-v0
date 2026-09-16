@@ -5,17 +5,20 @@ import { Bell, Check, LoaderCircle, ShoppingCart } from 'lucide-react'
 import { useInteractions } from './interaction-provider'
 import { cn } from '@/lib/utils'
 import type { Product } from '@/lib/commerce'
+import type { SelectedVariant } from './variant-selector'
 
 export function AddToCartButton({
   product,
   quantity = 1,
   className,
   disabled = false,
+  variant,
 }: {
   product: Product
   quantity?: number
   className?: string
   disabled?: boolean
+  variant?: SelectedVariant | null
 }) {
   const { name: productName, stock } = product
   const [added, setAdded] = useState(false)
@@ -23,11 +26,12 @@ export function AddToCartButton({
   const { addToCart } = useInteractions()
   const outOfStock = stock === 'out_of_stock'
   const preorder = stock === 'preorder'
+  const needsOptions = product.hasOptions && !variant
 
   const label =
     product.price.amount === 0
       ? 'Contact for price'
-      : product.hasOptions
+      : needsOptions
         ? 'Choose options'
         : product.purchasable === false && stock !== 'out_of_stock'
           ? 'Unavailable online'
@@ -54,11 +58,14 @@ export function AddToCartButton({
       type="button"
       data-purchase
       aria-busy={pending}
-      disabled={disabled || outOfStock || pending || product.purchasable === false || product.price.amount <= 0 || product.hasOptions}
+      disabled={disabled || outOfStock || pending || product.purchasable === false || product.price.amount <= 0 || needsOptions}
       onClick={async () => {
-        if (disabled || outOfStock || pending) return
+        if (disabled || outOfStock || pending || needsOptions) return
         setPending(true)
-        if (!(await addToCart(product, quantity))) {
+        const variantPayload = variant
+          ? { variationId: variant.variantId, options: variant.options }
+          : undefined
+        if (!(await addToCart(product, quantity, variantPayload))) {
           setPending(false)
           return
         }
@@ -70,7 +77,7 @@ export function AddToCartButton({
       }}
       aria-label={`${label}: ${productName}`}
       className={cn(
-        'inline-flex min-h-11 min-w-0 flex-1 items-center justify-center gap-2 text-center px-3 text-sm font-medium transition-colors',
+        'inline-flex min-h-9 min-w-0 flex-1 items-center justify-center gap-1.5 text-center px-2.5 text-xs font-medium transition-colors',
         outOfStock
           ? 'border border-border bg-background text-foreground hover:border-brand hover:text-brand-ink'
           : 'bg-brand text-brand-foreground hover:bg-brand/90',
@@ -78,7 +85,7 @@ export function AddToCartButton({
         className,
       )}
     >
-      <Icon className={cn('size-4', pending && 'animate-spin')} />
+      <Icon className={cn('size-3.5', pending && 'animate-spin')} />
       <span>{label}</span>
     </button>
   )

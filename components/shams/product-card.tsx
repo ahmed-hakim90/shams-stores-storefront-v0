@@ -32,13 +32,13 @@ export function ProductCard({
   return (
     <article
       className={cn(
-        'group shams-panel shams-product-card min-w-0 overflow-hidden transition-[border-color,box-shadow,transform] duration-180 hover:border-brand/40 hover:shadow-[0_1px_0_rgba(0,0,0,0.02),0_12px_30px_-18px_rgba(21,63,112,0.35)]',
+        'group shams-panel shams-product-card min-w-0 overflow-hidden transition-[border-color,transform] duration-fast ease-out-expo hover:border-brand/40',
         horizontal
-          ? 'relative grid min-h-[210px] grid-cols-[minmax(96px,34%)_minmax(0,1fr)] sm:min-h-[210px] sm:grid-cols-[200px_minmax(0,1fr)]'
+          ? 'relative grid min-h-[180px] grid-cols-[minmax(96px,34%)_minmax(0,1fr)] sm:min-h-[180px] sm:grid-cols-[180px_minmax(0,1fr)]'
           : 'flex flex-col',
         !horizontal && 'mobile-product-card-grid',
         view === 'compact-related' &&
-          'grid-cols-[160px_minmax(0,1fr)] sm:grid-cols-[160px_minmax(0,1fr)]',
+          'grid-cols-[140px_minmax(0,1fr)] sm:grid-cols-[140px_minmax(0,1fr)]',
         className,
       )}
     >
@@ -46,14 +46,14 @@ export function ProductCard({
         className={cn(
           'relative min-w-0 shrink-0 overflow-hidden bg-white',
           horizontal
-            ? 'flex h-full flex-col border-r border-border p-3 sm:p-5'
+            ? 'flex h-full flex-col border-r border-border p-2.5 sm:p-4'
             : view === 'rail'
-              ? 'aspect-[1/1] p-3 sm:p-4'
-              : 'aspect-[4/3] p-3 sm:aspect-[1.15/1] sm:p-5',
+              ? 'aspect-[1/1] p-2.5 sm:p-3'
+              : 'aspect-[4/3] p-2.5 sm:aspect-[1.15/1] sm:p-4',
         )}
       >
         {product.badges.length > 0 && (
-          <div className="absolute left-3 top-3 z-10 flex flex-col items-start gap-1">
+          <div className="absolute left-2 top-2 z-10 flex flex-col items-start gap-0.5">
             {product.badges.map((badge) => (
               <ProductBadge key={badge} badge={badge} />
             ))}
@@ -62,10 +62,10 @@ export function ProductCard({
         {!horizontal && (
           <div
             className={cn(
-              'absolute right-3 top-3 z-10 flex flex-col gap-1.5',
+              'absolute right-2 top-2 z-10 flex flex-col gap-1',
               view === 'rail'
                 ? 'opacity-100'
-                : 'opacity-100 transition-opacity md:opacity-0 md:group-hover:opacity-100 md:focus-within:opacity-100',
+                : 'opacity-100 transition-opacity duration-fast md:opacity-0 md:group-hover:opacity-100 md:focus-within:opacity-100',
             )}
           >
             <WishlistAction productName={product.name} productId={product.id} />
@@ -74,7 +74,7 @@ export function ProductCard({
         )}
         <Link
           href={productHref}
-          className="relative block min-h-[132px] w-full flex-1 overflow-hidden"
+          className="relative block min-h-[120px] w-full flex-1 overflow-hidden"
         >
           <Image
             src={product.image || '/placeholder.svg'}
@@ -82,13 +82,13 @@ export function ProductCard({
             fill
             sizes={
               horizontal
-                ? '(max-width: 639px) 38vw, 260px'
+                ? '(max-width: 639px) 38vw, 240px'
                 : view === 'rail'
-                  ? '(max-width: 640px) calc(min(78vw, 292px) - 1.5rem), (max-width: 768px) calc(256px - 1.5rem), 240px'
-                  : '(max-width: 640px) calc(100vw - 40px), (max-width: 768px) calc(50vw - 60px), (max-width: 1280px) 190px, 220px'
+                  ? '(max-width: 640px) calc(min(78vw, 292px) - 1.5rem), (max-width: 768px) calc(256px - 1.5rem), 220px'
+                  : '(max-width: 640px) calc(100vw - 40px), (max-width: 768px) calc(50vw - 60px), (max-width: 1280px) 180px, 200px'
             }
             className={cn(
-              'object-contain transition-[transform,opacity] duration-300 motion-safe:[@media(hover:hover)]:group-hover:scale-[1.04]',
+              'object-contain transition-[transform,opacity] duration-standard ease-out-expo motion-safe:[@media(hover:hover)]:group-hover:scale-[1.04]',
               product.secondaryImage &&
                 '[@media(hover:hover)]:group-hover:opacity-0',
             )}
@@ -98,8 +98,8 @@ export function ProductCard({
               src={product.secondaryImage}
               alt=""
               fill
-              sizes={horizontal ? '(max-width: 639px) 38vw, 220px' : '260px'}
-              className="pointer-events-none hidden object-contain opacity-0 transition-opacity duration-200 motion-reduce:transition-none [@media(hover:hover)]:block [@media(hover:hover)]:group-hover:opacity-100"
+              sizes={horizontal ? '(max-width: 639px) 38vw, 200px' : '240px'}
+              className="pointer-events-none hidden object-contain opacity-0 transition-opacity duration-standard motion-reduce:transition-none [@media(hover:hover)]:block [@media(hover:hover)]:group-hover:opacity-100"
             />
           )}
         </Link>
@@ -107,13 +107,13 @@ export function ProductCard({
 
       <div
         className={cn(
-          'flex min-w-0 flex-1 flex-col gap-2 p-3 sm:gap-3 sm:p-5',
+          'flex min-w-0 flex-1 flex-col gap-1.5 p-2.5 sm:gap-2 sm:p-4',
           view === 'grid' && 'border-t border-border',
           view === 'rail' && 'border-t border-border',
         )}
       >
-        <div className="flex min-w-0 flex-wrap items-center justify-between gap-x-3 gap-y-1">
-          <span className="min-w-0 truncate text-xs font-semibold uppercase tracking-wide text-brand-ink">
+        <div className="flex min-w-0 flex-wrap items-center justify-between gap-x-2 gap-y-0.5">
+          <span className="min-w-0 truncate text-[10px] font-semibold uppercase tracking-wide text-brand-ink">
             {product.brand}
           </span>
           {!horizontal && product.reviewCount > 0 && (
@@ -132,32 +132,38 @@ export function ProductCard({
           <Link
             href={productHref}
             className={cn(
-              'line-clamp-3 break-words text-base font-semibold leading-[1.4] text-foreground transition-colors hover:text-brand-ink',
-              view === 'rail' ? 'sm:text-base' : 'sm:text-lg',
+              'line-clamp-2 break-words text-sm font-medium leading-[1.35] text-foreground transition-colors duration-fast hover:text-brand-ink',
+              view === 'rail' ? 'sm:text-sm' : 'sm:text-base',
             )}
           >
             {product.name}
           </Link>
           {product.configuration && (
-            <p className="line-clamp-1 text-xs text-muted-foreground">
+            <p className="line-clamp-1 text-[11px] text-muted-foreground">
               {product.configuration}
             </p>
           )}
         </div>
         {product.highlights?.length ? (
-          <p className="line-clamp-2 text-sm leading-5 text-muted-foreground">
-            {product.highlights.slice(0, 3).map((highlight) => highlight.value).join(' · ')}
+          <p className="line-clamp-1 text-xs leading-4 text-muted-foreground">
+            {product.highlights.slice(0, 2).map((highlight) => highlight.value).join(' · ')}
           </p>
         ) : null}
-        <StockStatus status={product.stock} />
+        <StockStatus status={product.stock} compact />
+        {product.stock === 'low_stock' && (
+          <p className="text-[11px] font-medium text-warning">
+            Low stock
+          </p>
+        )}
 
         <div className="mt-auto min-w-0 pt-1">
           <PriceDisplay
             price={product.price}
             previousPrice={product.previousPrice}
             installmentFrom={product.installmentFrom}
+            size="sm"
           />
-          <div className="mt-3 flex min-w-0 flex-wrap items-center gap-2">
+          <div className="mt-2 flex min-w-0 flex-wrap items-center gap-1.5">
             {horizontal && (
               <>
                 <WishlistAction
@@ -172,7 +178,7 @@ export function ProductCard({
                 product={product}
                 disabled={purchaseDisabled}
                 className={cn(
-                  'rounded-lg',
+                  'rounded-(--radius-control)',
                   horizontal ? 'basis-full sm:basis-auto sm:flex-1' : 'w-full',
                 )}
               />
@@ -180,7 +186,7 @@ export function ProductCard({
               <Link
                 href={productHref}
                 className={cn(
-                  'inline-flex min-h-11 items-center justify-center rounded-lg border border-brand/30 px-4 text-sm font-medium text-brand-ink transition-colors hover:bg-brand-muted',
+                  'inline-flex h-9 items-center justify-center rounded-(--radius-control) border border-brand/30 px-3 text-xs font-medium text-brand-ink transition-colors duration-fast hover:bg-brand-muted',
                   horizontal ? 'basis-full sm:basis-auto sm:flex-1' : 'w-full',
                 )}
               >

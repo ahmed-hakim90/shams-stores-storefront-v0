@@ -74,20 +74,20 @@ export function PaymentResult({ orderId }: { orderId: string }) {
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link
               href="/orders"
-              className="inline-flex min-h-11 items-center rounded-lg border px-5 text-sm font-semibold"
+              className="inline-flex min-h-11 items-center rounded-(--radius-control) border px-5 text-sm font-semibold"
             >
               Track order
             </Link>
             <Link
               href="/shop"
-              className="inline-flex min-h-11 items-center rounded-lg bg-brand px-5 text-sm font-semibold text-brand-foreground"
+              className="inline-flex min-h-11 items-center rounded-(--radius-control) bg-brand px-5 text-sm font-semibold text-brand-foreground"
             >
               Continue shopping
             </Link>
           </div>
         </div>
       ) : state === 'failed' ? (
-        <div className="rounded-xl border border-red-200 bg-red-50 p-8 text-center">
+        <div className="rounded-(--radius-card) border border-red-200 bg-red-50 p-8 text-center">
           <h1 className="text-2xl font-semibold text-red-800">
             Payment failed
           </h1>
@@ -98,20 +98,20 @@ export function PaymentResult({ orderId }: { orderId: string }) {
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link
               href="/checkout"
-              className="inline-flex min-h-11 items-center rounded-lg bg-brand px-5 text-sm font-semibold text-brand-foreground"
+              className="inline-flex min-h-11 items-center rounded-(--radius-control) bg-brand px-5 text-sm font-semibold text-brand-foreground"
             >
               Try again
             </Link>
             <Link
               href="/support"
-              className="inline-flex min-h-11 items-center rounded-lg border px-5 text-sm font-semibold"
+              className="inline-flex min-h-11 items-center rounded-(--radius-control) border px-5 text-sm font-semibold"
             >
               Contact Shams
             </Link>
           </div>
         </div>
       ) : (
-        <div className="rounded-xl border p-8 text-center">
+        <div className="rounded-(--radius-card) border p-8 text-center">
           <h1 className="text-2xl font-semibold">Still pending</h1>
           <p className="mt-3 text-sm leading-6 text-muted-foreground">
             Your payment is being processed. We will confirm shortly — you can

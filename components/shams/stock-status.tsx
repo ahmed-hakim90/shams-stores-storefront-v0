@@ -18,16 +18,19 @@ const dotClass: Record<string, string> = {
 
 export function StockStatus({
   status,
+  compact,
   className,
 }: {
   status: StockStatusType
+  compact?: boolean
   className?: string
 }) {
   const meta = stockMeta[status]
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1.5 text-sm font-medium',
+        'inline-flex items-center font-medium',
+        compact ? 'gap-1 text-xs' : 'gap-1.5 text-sm',
         toneClass[meta.tone],
         className,
       )}
@@ -35,7 +38,8 @@ export function StockStatus({
       <span
         aria-hidden
         className={cn(
-          'size-1.5 rounded-full',
+          'rounded-full',
+          compact ? 'size-1' : 'size-1.5',
           dotClass[meta.tone],
           status === 'low_stock' && 'animate-pulse',
         )}

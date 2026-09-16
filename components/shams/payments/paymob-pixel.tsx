@@ -87,7 +87,7 @@ export function PaymobPixel({
   }, [clientSecret, publicKey, reload])
 
   return (
-    <div className="rounded-xl border bg-card p-5">
+    <div className="rounded-(--radius-card) border bg-card p-5">
       <h2 className="text-lg font-semibold">Secure payment</h2>
       <p className="mt-1 text-sm text-muted-foreground">
         Pay {amountLabel}. Card details are encrypted by Paymob.
@@ -103,7 +103,7 @@ export function PaymobPixel({
       {state === 'error' && (
         <button
           onClick={() => setReload((n) => n + 1)}
-          className="mt-4 min-h-11 rounded-lg border border-brand px-5 text-sm font-semibold text-brand-ink"
+          className="mt-4 min-h-11 rounded-(--radius-control) border border-brand px-5 text-sm font-semibold text-brand-ink"
         >
           Retry payment form
         </button>

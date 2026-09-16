@@ -24,10 +24,10 @@ export function DealSection() {
           </div>
           <Link
             href="/deals"
-            className="group hidden shrink-0 items-center gap-1.5 rounded-xl bg-sale px-4 py-2.5 text-sm font-semibold text-white transition-transform hover:-translate-y-0.5 sm:inline-flex"
+            className="group hidden shrink-0 items-center gap-1.5 rounded-(--radius-control) bg-sale px-4 py-2.5 text-sm font-semibold text-white transition-transform duration-fast hover:-translate-y-0.5 sm:inline-flex"
           >
             Shop all deals
-            <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+            <ArrowRight className="size-4 transition-transform duration-fast group-hover:translate-x-0.5" />
           </Link>
         </div>
         <div className="mt-8">

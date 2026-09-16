@@ -3,6 +3,8 @@ import type {
   ProductDetail,
   ProductPrice,
   ProductSpecification,
+  ProductVariant,
+  StockStatus,
   TaxonomyTerm,
   Cart,
   BranchAvailability,
@@ -217,7 +219,48 @@ export function specifications(raw: RecordData): ProductSpecification[] {
   }
   return [...new Map(result.map((x) => [x.key, x])).values()].slice(0, 100)
 }
-export function mapDetail(store: unknown, enrichment: unknown): ProductDetail {
+export function mapVariant(v: unknown): ProductVariant {
+  const r = record(v),
+    id = numeric(r.id)
+  if (!id) throw new Error('Invalid variant')
+  const p = price(r.prices)
+  const stock: StockStatus =
+    r.is_on_backorder === true
+      ? 'preorder'
+      : r.is_in_stock === false
+        ? 'out_of_stock'
+        : 'in_stock'
+  const img = record(array(r.images)[0])
+  return {
+    id: String(id),
+    attributes: array(r.attributes)
+      .map((a) => {
+        const at = record(a)
+        return { name: text(at.name), value: text(at.option) }
+      })
+      .filter((a) => a.name && a.value),
+    price: {
+      ...p,
+      amount: p.amount / 10 ** p.minorUnit,
+      regularAmount: p.regularAmount ? p.regularAmount / 10 ** p.minorUnit : undefined,
+      saleAmount: p.saleAmount ? p.saleAmount / 10 ** p.minorUnit : undefined,
+    },
+    stock: {
+      status: stock,
+      purchasable: r.is_purchasable === true,
+      backordersAllowed: r.is_on_backorder === true,
+    },
+    image:
+      safeImage(img.src)
+        ? { url: safeImage(img.src)!, alt: text(img.alt) || '' }
+        : undefined,
+  }
+}
+export function mapDetail(
+  store: unknown,
+  enrichment: unknown,
+  variants: ProductVariant[] = [],
+): ProductDetail {
   const r = record(store),
     raw = record(enrichment),
     base = mapSummary(r)
@@ -227,15 +270,23 @@ export function mapDetail(store: unknown, enrichment: unknown): ProductDetail {
       return [String(m.key), m.value]
     }),
   )
+  const installmentRaw = meta._shams_installment_from
+  const installmentFrom =
+    typeof installmentRaw === 'string' && /^\d+$/.test(installmentRaw)
+      ? Number(installmentRaw)
+      : typeof installmentRaw === 'number' && installmentRaw > 0
+        ? installmentRaw
+        : undefined
+
   return {
     ...base,
+    installmentFrom,
+    official: meta._shams_official === 'yes' || undefined,
     description:
       typeof (raw.description ?? r.description) === 'string'
         ? String(raw.description ?? r.description)
-            .split(/<\/(?:p|li|h[1-6]|tr)>/i)
-            .map(text)
-            .filter(Boolean)
-            .join('\n\n')
+            .replace(/<(script|style)[\s\S]*?<\/\1>/gi, '')
+            .trim() || undefined
         : undefined,
     shortDescription: text(r.short_description),
     gallery: array(r.images)
@@ -256,7 +307,7 @@ export function mapDetail(store: unknown, enrichment: unknown): ProductDetail {
         : meta._shams_product_warranty === 'no'
           ? undefined
           : text(meta._shams_product_warranty) || undefined,
-    variants: [],
+    variants,
     relationships: [],
     categories: array(r.categories).map(mapTerm),
   }

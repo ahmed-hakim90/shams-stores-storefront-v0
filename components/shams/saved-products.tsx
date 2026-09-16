@@ -65,7 +65,7 @@ export function SavedProducts({
       {q.isError && (
         <button
           onClick={() => q.refetch()}
-          className="my-6 min-h-11 rounded-lg border px-4"
+          className="my-6 min-h-11 rounded-(--radius-control) border px-4"
         >
           Retry
         </button>
@@ -77,7 +77,7 @@ export function SavedProducts({
           </p>
           <Link
             href="/shop"
-            className="mt-4 inline-flex min-h-11 items-center rounded-lg bg-brand px-5 text-sm text-brand-foreground"
+            className="mt-4 inline-flex min-h-11 items-center rounded-(--radius-control) bg-brand px-5 text-sm text-brand-foreground"
           >
             Explore gear
           </Link>
@@ -124,7 +124,7 @@ export function SavedProducts({
             </button>
           )}
           <div
-            className="max-h-[70dvh] overflow-auto overscroll-contain rounded-2xl border bg-card"
+            className="max-h-[70dvh] overflow-auto overscroll-contain rounded-(--radius-editorial) border bg-card"
             tabIndex={0}
             role="region"
             aria-label="Product comparison"

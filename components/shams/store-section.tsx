@@ -11,7 +11,7 @@ const perks = [
 export function StoreSection() {
   return (
     <section className="mobile-store-section mx-auto max-w-[1440px] px-4 py-12 sm:px-6 sm:py-16">
-      <div className="grid gap-8 overflow-hidden rounded-3xl border border-border bg-card p-6 sm:p-10 lg:grid-cols-2 lg:items-center">
+      <div className="grid gap-8 overflow-hidden rounded-(--radius-editorial) border border-border bg-card p-6 sm:p-10 lg:grid-cols-2 lg:items-center">
         <div className="space-y-6">
           <div className="space-y-3">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-ink">
@@ -30,7 +30,7 @@ export function StoreSection() {
           <ul className="space-y-3">
             {perks.map((perk) => (
               <li key={perk.label} className="flex items-center gap-3 text-sm text-foreground">
-                <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-lg bg-brand-muted text-brand-ink">
+                <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-(--radius-control) bg-brand-muted text-brand-ink">
                   <perk.icon className="size-4.5" />
                 </span>
                 {perk.label}
@@ -41,13 +41,13 @@ export function StoreSection() {
           <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <Link
               href="/branches"
-              className="inline-flex h-11 items-center gap-2 rounded-xl bg-brand px-5 text-sm font-semibold text-brand-foreground transition-transform hover:-translate-y-0.5"
+              className="inline-flex h-11 items-center gap-2 rounded-(--radius-control) bg-brand px-5 text-sm font-semibold text-brand-foreground transition-transform duration-fast hover:-translate-y-0.5"
             >
               Find a branch <ArrowRight className="size-4" />
             </Link>
             <Link
               href="/support"
-              className="inline-flex h-11 items-center rounded-xl border border-border px-5 text-sm font-semibold text-foreground transition-colors hover:border-brand hover:text-brand-ink"
+              className="inline-flex h-11 items-center rounded-(--radius-control) border border-border px-5 text-sm font-semibold text-foreground transition-colors duration-fast hover:border-brand hover:text-brand-ink"
             >
               Talk to a specialist
             </Link>

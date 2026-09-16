@@ -80,10 +80,10 @@ export async function LiveCatalogPage({
     brandTerms = []
   }
   return (
-    <main className="shams-container py-6 sm:py-9">
+    <main className="shams-container py-3 sm:py-4">
       <nav
         aria-label="Breadcrumb"
-        className="mb-4 text-xs text-muted-foreground"
+        className="mb-2 text-[11px] text-muted-foreground"
       >
         <Link href="/">Home</Link> / <Link href="/shop">Shop</Link>
         {title !== 'Shop all gear' && ` / ${title}`}
@@ -91,41 +91,41 @@ export async function LiveCatalogPage({
       <header
         className={
           hub
-            ? 'shams-panel grid gap-5 bg-surface-subtle p-5 sm:p-7 md:grid-cols-[1fr_220px]'
-            : 'relative border-b pb-5'
+            ? 'grid gap-3 border-b border-border bg-surface-subtle p-3 sm:p-4 md:grid-cols-[1fr_180px]'
+            : 'border-b pb-3'
         }
       >
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[.16em] text-brand-ink">
+          <p className="text-[10px] font-semibold uppercase tracking-[.16em] text-brand-ink">
             {hub?.kind === 'brand'
               ? 'Inside the brand'
               : hub
                 ? 'Find your perspective'
                 : 'Shams Stores'}
           </p>
-          <h1 className="shams-title mt-2 max-w-3xl">
-            {q.query ? `Results for “${q.query}”` : title}
+          <h1 className="mt-1 text-lg font-semibold sm:text-xl">
+            {q.query ? `Results for "${q.query}"` : title}
           </h1>
-          <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">
-            {description.slice(0, 280)}
+          <p className="mt-1.5 max-w-2xl text-xs leading-5 text-muted-foreground">
+            {description.slice(0, 200)}
           </p>
           {hub && (
             <a
               href="#catalog-results"
-              className="mt-4 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-brand-ink"
+              className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-brand-ink"
             >
               Shop the collection ↓
             </a>
           )}
         </div>
         {hub?.term.image && (
-          <div className="relative hidden min-h-36 overflow-hidden rounded-xl bg-white md:block">
+          <div className="relative hidden min-h-28 overflow-hidden bg-white md:block">
             <ProductImage
               src={hub.term.image}
               alt={hub.term.name}
               fill
-              sizes="220px"
-              className="object-contain p-3"
+              sizes="180px"
+              className="object-contain p-2"
             />
           </div>
         )}
@@ -137,22 +137,22 @@ export async function LiveCatalogPage({
           Object.keys(input).every((key) =>
             ['category', 'sort'].includes(key),
           ))) ? (
-        <section className="mt-8 rounded-3xl border bg-card p-6 sm:p-10">
-          <p className="shams-eyebrow">Create with confidence</p>
-          <h2 className="mt-3 text-2xl font-semibold">
+        <section className="mt-4 border bg-card p-4 sm:p-6">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-brand-ink">Create with confidence</p>
+          <h2 className="mt-1.5 text-base font-semibold">
             Let’s find the right setup for you.
           </h2>
-          <p className="mt-4 max-w-xl text-sm leading-7 text-muted-foreground">
+          <p className="mt-2 max-w-xl text-xs leading-5 text-muted-foreground">
             There are no published kits in this collection right now. Explore
             the catalog or talk to Shams about the equipment you need.
           </p>
-          <div className="mt-6 flex flex-wrap gap-3">
-            <Link href="/shop" className="shams-button">
+          <div className="mt-3 flex flex-wrap gap-2">
+            <Link href="/shop" className="inline-flex h-8 items-center border border-brand bg-brand px-3 text-xs font-medium text-brand-foreground">
               Explore all gear →
             </Link>
             <Link
               href="/support"
-              className="shams-button shams-button-secondary"
+              className="inline-flex h-8 items-center border border-border px-3 text-xs font-medium"
             >
               Talk through your setup
             </Link>

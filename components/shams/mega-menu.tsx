@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { ArrowRight, ChevronDown, Tag } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useCatalogNavigation } from './catalog-navigation'
@@ -13,13 +14,13 @@ const extraLinks = [
   { label: 'Deals', href: '/deals', accent: true },
   { label: 'Bundles', href: '/bundles' },
   { label: 'Brands', href: '/brands' },
-  { label: 'Used & Refurb', href: '/used' },
 ]
 
 export function MegaMenu() {
   const { categories, liveMode } = useCatalogNavigation()
   const [active, setActive] = useState<string | null>(null)
   const closeTimer = useRef<number | undefined>(undefined)
+  const pathname = usePathname()
 
   useEffect(() => () => window.clearTimeout(closeTimer.current), [])
   const open = (slug: string) => {
@@ -46,7 +47,7 @@ export function MegaMenu() {
         if ((e.target as HTMLElement).closest('a')) setActive(null)
       }}
     >
-      <ul className="flex items-center gap-1">
+      <ul className="flex items-center gap-0.5">
         {categories.map((cat) => (
           <li
             key={cat.slug}
@@ -57,15 +58,15 @@ export function MegaMenu() {
               href={`/c/${cat.slug}`}
               onFocus={() => open(cat.slug)}
               className={cn(
-                'inline-flex min-h-11 items-center gap-1 rounded-[var(--radius-control)] px-3 py-2 text-sm font-medium text-foreground/80 transition-colors hover:bg-brand-muted hover:text-brand-ink',
-                active === cat.slug && 'bg-brand-muted text-brand-ink',
+                'inline-flex h-9 items-center gap-1 px-3 text-xs font-medium text-white/85 transition-colors hover:bg-white/15 hover:text-white',
+                active === cat.slug && 'bg-white/15 text-white',
               )}
               aria-expanded={active === cat.slug}
             >
               {cat.name}
               <ChevronDown
                 className={cn(
-                  'size-3.5 transition-transform',
+                  'size-3 transition-transform',
                   active === cat.slug && 'rotate-180',
                 )}
               />
@@ -75,7 +76,7 @@ export function MegaMenu() {
               <div
                 onMouseEnter={() => open(cat.slug)}
                 onMouseLeave={scheduleClose}
-                className="absolute left-0 right-0 top-[calc(100%+0.5rem)] z-50"
+                className="absolute left-0 right-0 top-full z-50"
               >
                 <MegaPanel category={cat} />
               </div>
@@ -83,22 +84,22 @@ export function MegaMenu() {
           </li>
         ))}
 
-        <li aria-hidden className="mx-1 h-5 w-px bg-border" />
+        <li aria-hidden className="mx-1 h-4 w-px bg-white/30" />
 
         {extraLinks
-          .filter((x) => !liveMode || x.href !== '/used')
           .map((link) => (
             <li key={link.href}>
               <Link
                 href={link.href}
+                aria-current={pathname === link.href ? 'page' : undefined}
                 className={cn(
-                  'inline-flex min-h-11 items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                  'inline-flex h-9 items-center gap-1 px-3 text-xs font-medium transition-colors',
                   link.accent
-                    ? 'text-sale hover:text-sale/80'
-                    : 'text-foreground/80 hover:text-brand-ink',
+                    ? 'text-yellow-200 hover:text-yellow-100'
+                    : 'text-white/85 hover:bg-white/15 hover:text-white',
                 )}
               >
-                {link.accent && <Tag className="size-3.5" />}
+                {link.accent && <Tag className="size-3" />}
                 {link.label}
               </Link>
             </li>
@@ -144,7 +145,7 @@ function MegaPanel({ category }: { category: Category }) {
                     <li key={link.label}>
                       <Link
                         href={link.href}
-                        className="block rounded-md py-1 text-sm text-foreground/80 transition-colors hover:text-brand-ink"
+                        className="block rounded-(--radius-control) py-1 text-sm text-foreground/80 transition-colors hover:text-brand-ink"
                       >
                         {link.label}
                       </Link>
@@ -178,7 +179,7 @@ function MegaPanel({ category }: { category: Category }) {
                 alt={featured.name}
                 fill
                 sizes="240px"
-                className="object-contain transition-transform duration-300 group-hover:scale-105"
+                className="object-contain transition-transform duration-standard ease-out-expo group-hover:scale-[1.04]"
               />
             </div>
             <div className="flex items-center justify-between">

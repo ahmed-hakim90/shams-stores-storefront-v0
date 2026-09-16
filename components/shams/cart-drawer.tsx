@@ -18,6 +18,7 @@ export function CartDrawer({ showTrigger = true }: { showTrigger?: boolean }) {
     cartError,
     refreshCart,
     removeCartLine,
+    updateCartLineQuantity,
     cartPending,
   } = useInteractions()
   return (
@@ -28,7 +29,7 @@ export function CartDrawer({ showTrigger = true }: { showTrigger?: boolean }) {
       {showTrigger && (
         <Dialog.Trigger
           aria-label="Open cart"
-          className="relative flex size-11 items-center justify-center rounded-lg"
+          className="relative flex size-11 items-center justify-center rounded-(--radius-control)"
         >
           <ShoppingCart className="size-5" />
           {cartCount > 0 && (
@@ -39,8 +40,8 @@ export function CartDrawer({ showTrigger = true }: { showTrigger?: boolean }) {
         </Dialog.Trigger>
       )}
       <Dialog.Portal>
-        <Dialog.Backdrop className="fixed inset-0 z-[120] bg-black/40" />
-        <Dialog.Popup className="shams-overlay fixed inset-y-0 right-0 z-[121] flex h-dvh w-full max-w-md flex-col bg-background shadow-xl outline-none">
+        <Dialog.Backdrop data-overlay-backdrop className="fixed inset-0 z-[120] bg-black/40" />
+        <Dialog.Popup data-overlay="cart" className="shams-overlay fixed inset-y-0 right-0 z-[121] flex h-dvh w-full max-w-md flex-col bg-background outline-none">
           <header className="flex items-center justify-between border-b p-5">
             <Dialog.Title className="text-xl font-semibold">
               Your cart{' '}
@@ -83,9 +84,27 @@ export function CartDrawer({ showTrigger = true }: { showTrigger?: boolean }) {
                     <p className="mt-2 text-sm font-semibold">
                       {formatEgp(l.total ?? l.price * l.quantity)}
                     </p>
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      Qty {l.quantity}
-                    </p>
+                    <div className="mt-1 flex items-center gap-1">
+                      <button
+                        disabled={cartPending || l.quantity <= 1}
+                        onClick={() => updateCartLineQuantity(l.id, l.quantity - 1)}
+                        aria-label="Decrease quantity"
+                        className="flex size-7 items-center justify-center rounded-(--radius-control) border text-sm transition-colors hover:border-brand hover:text-brand-ink disabled:opacity-40"
+                      >
+                        −
+                      </button>
+                      <span className="w-7 text-center text-xs font-medium tabular-nums">
+                        {l.quantity}
+                      </span>
+                      <button
+                        disabled={cartPending || l.quantity >= 99}
+                        onClick={() => updateCartLineQuantity(l.id, l.quantity + 1)}
+                        aria-label="Increase quantity"
+                        className="flex size-7 items-center justify-center rounded-(--radius-control) border text-sm transition-colors hover:border-brand hover:text-brand-ink disabled:opacity-40"
+                      >
+                        +
+                      </button>
+                    </div>
                     <button
                       disabled={cartPending}
                       onClick={() => removeCartLine(l.id)}
@@ -127,14 +146,14 @@ export function CartDrawer({ showTrigger = true }: { showTrigger?: boolean }) {
                 <Link
                   href="/cart"
                   onClick={closeCart}
-                  className="flex min-h-12 items-center justify-center rounded-lg border text-sm"
+                  className="flex min-h-12 items-center justify-center rounded-(--radius-control) border text-sm"
                 >
                   View cart
                 </Link>
                 <Link
                   href="/checkout"
                   onClick={closeCart}
-                  className="flex min-h-12 items-center justify-center rounded-lg bg-brand text-sm font-semibold text-brand-foreground"
+                  className="flex min-h-12 items-center justify-center rounded-(--radius-control) bg-brand text-sm font-semibold text-brand-foreground"
                 >
                   Checkout
                 </Link>

@@ -50,7 +50,7 @@ export default function DesignSystem() {
           <label className="text-sm">
             Email
             <input
-              className="mt-2 block min-h-12 w-full rounded-xl border bg-card px-3"
+              className="mt-2 block min-h-12 w-full rounded-(--radius-control) border bg-card px-3"
               placeholder="name@example.com"
             />
           </label>
@@ -59,7 +59,7 @@ export default function DesignSystem() {
             <input
               aria-invalid="true"
               aria-describedby="preview-error"
-              className="mt-2 block min-h-12 w-full rounded-xl border border-danger bg-card px-3"
+              className="mt-2 block min-h-12 w-full rounded-(--radius-control) border border-danger bg-card px-3"
             />
             <span id="preview-error" className="mt-2 block text-sm text-danger">
               Enter a valid email address.
@@ -97,11 +97,11 @@ export default function DesignSystem() {
           view="rail"
           purchaseDisabled
         />
-        <div className="rounded-2xl border bg-card p-5">
+        <div className="rounded-(--radius-card) border bg-card p-5">
           <h2 className="mb-5 text-xl font-semibold">Price states</h2>
           <PriceDisplay price={fixture.price} />
           <div
-            className="my-5 h-48 animate-pulse rounded-xl bg-muted"
+            className="my-5 h-48 animate-pulse rounded-(--radius-control) bg-muted"
             aria-label="Loading product"
           />
           <PriceDisplay price={{ amount: 0, currency: 'EGP' }} />

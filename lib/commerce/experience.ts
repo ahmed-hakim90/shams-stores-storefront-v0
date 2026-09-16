@@ -26,7 +26,7 @@ export const homeCollections: PageExperienceConfig[] = [
     eyebrow: 'Just landed',
     description: 'The latest additions to the Shams catalog.',
     href: '/new',
-    query: { pageSize: 8, sort: 'newest' },
+    query: { pageSize: 20, sort: 'newest' },
     presentation: 'rail',
   },
   {
@@ -36,7 +36,7 @@ export const homeCollections: PageExperienceConfig[] = [
     eyebrow: 'Current offers',
     description: 'Explore current savings on gear for your next project.',
     href: '/deals',
-    query: { pageSize: 4, onSale: true, sort: 'newest' },
+    query: { pageSize: 20, onSale: true, sort: 'newest' },
     presentation: 'feature',
   },
   {
@@ -46,7 +46,7 @@ export const homeCollections: PageExperienceConfig[] = [
     eyebrow: 'Popular in the Shams catalog',
     description: 'Popular purchases from across the Shams catalog.',
     href: '/best-sellers',
-    query: { pageSize: 8, sort: 'best-selling' },
+    query: { pageSize: 20, sort: 'best-selling' },
     presentation: 'rail',
   },
 ]

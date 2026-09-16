@@ -19,7 +19,7 @@ export default function NotFound() {
         <p className="mt-4 max-w-md text-base leading-7 text-muted-foreground">Try searching for a product or continue browsing our photography, cinema and creator gear.</p>
         <div className="mt-8 flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
           {links.map((link, index) => (
-            <Link key={link.href} href={link.href} className={index === 0 ? 'inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-brand/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring' : 'inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-border bg-card px-5 text-sm font-semibold text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'}>
+            <Link key={link.href} href={link.href} className={index === 0 ? 'inline-flex min-h-11 items-center justify-center gap-2 rounded-(--radius-control) bg-primary px-5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-brand/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring' : 'inline-flex min-h-11 items-center justify-center gap-2 rounded-(--radius-control) border border-border bg-card px-5 text-sm font-semibold text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'}>
               {link.label}
               {index === 0 && <ArrowRight data-icon="inline-end" />}
             </Link>

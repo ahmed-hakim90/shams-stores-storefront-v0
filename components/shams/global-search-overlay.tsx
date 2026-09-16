@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Dialog } from '@base-ui/react/dialog'
 import { useQuery } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
-import { Search, X } from 'lucide-react'
+import { Search, X, Clock, TrendingUp } from 'lucide-react'
 import { useInteractions } from './interaction-provider'
 import { commerceFetch } from '@/lib/commerce/browser'
 import type { SearchSuggestion } from '@/lib/commerce/types'
@@ -21,7 +21,7 @@ export function GlobalSearchOverlay() {
     [active, setActive] = useState(-1),
     [recent, setRecent] = useState<string[]>([])
   useEffect(() => {
-    const t = setTimeout(() => setDebounced(query.trim()), 250)
+    const t = setTimeout(() => setDebounced(query.trim()), 150)
     return () => clearTimeout(t)
   }, [query])
   useEffect(() => {
@@ -70,10 +70,11 @@ export function GlobalSearchOverlay() {
       }}
     >
       <Dialog.Portal>
-        <Dialog.Backdrop className="fixed inset-0 z-[150] bg-black/40 backdrop-blur-[2px]" />
+        <Dialog.Backdrop data-overlay-backdrop className="fixed inset-0 z-[150] bg-black/40 backdrop-blur-[2px]" />
         <Dialog.Popup
           initialFocus={input}
-          className="shams-overlay fixed inset-x-0 top-0 z-[151] mx-auto flex max-h-[90dvh] flex-col overflow-hidden rounded-b-2xl border bg-background shadow-xl outline-none md:top-8 md:max-w-3xl md:rounded-2xl"
+          data-overlay="search"
+          className="shams-overlay fixed inset-x-0 top-0 z-[151] mx-auto flex max-h-[90dvh] flex-col overflow-hidden rounded-b-(--radius-editorial) border bg-background outline-none md:top-8 md:max-w-3xl md:rounded-(--radius-editorial)"
         >
           <Dialog.Title className="sr-only">Search Shams Stores</Dialog.Title>
           <form
@@ -144,39 +145,57 @@ export function GlobalSearchOverlay() {
             >
               {query.trim().length < 2 ? (
                 <div>
-                  <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                    {recent.length
-                      ? 'Recent searches'
-                      : 'Start with a model, brand or product'}
-                  </p>
-                  {recent.map((x) => (
-                    <button
-                      key={x}
-                      onClick={() => submit(x)}
-                      className="block min-h-11 text-sm"
-                    >
-                      {x}
-                    </button>
-                  ))}
+                  {recent.length > 0 && (
+                    <>
+                      <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                        <Clock className="size-3" />
+                        Recent searches
+                      </p>
+                      {recent.map((x) => (
+                        <button
+                          key={x}
+                          onClick={() => submit(x)}
+                          className="flex min-h-11 w-full items-center gap-2 rounded-(--radius-control) px-2 text-sm text-left hover:bg-muted"
+                        >
+                          <span className="text-muted-foreground">{x}</span>
+                        </button>
+                      ))}
+                      <button
+                        onClick={() => {
+                          setRecent([])
+                          try {
+                            localStorage.removeItem('shams-recent-searches')
+                          } catch {}
+                        }}
+                        className="ml-4 min-h-9 text-xs text-muted-foreground underline"
+                      >
+                        Clear
+                      </button>
+                    </>
+                  )}
+                  <div className={recent.length > 0 ? 'mt-5 border-t pt-5' : ''}>
+                    <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                      <TrendingUp className="size-3" />
+                      Popular searches
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {['Canon EOS', 'Sony A7', 'DJI Mini', 'Rode Wireless', 'Godox'].map((term) => (
+                        <button
+                          key={term}
+                          onClick={() => submit(term)}
+                          className="rounded-full border px-3 py-1.5 text-sm hover:border-brand hover:text-brand-ink"
+                        >
+                          {term}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                   <button
                     onClick={() => navigate('/shop')}
-                    className="mt-4 min-h-11 text-sm font-semibold text-brand-ink"
+                    className="mt-5 min-h-11 text-sm font-semibold text-brand-ink"
                   >
                     Explore all gear →
                   </button>
-                  {recent.length > 0 && (
-                    <button
-                      onClick={() => {
-                        setRecent([])
-                        try {
-                          localStorage.removeItem('shams-recent-searches')
-                        } catch {}
-                      }}
-                      className="ml-4 min-h-11 text-xs text-muted-foreground"
-                    >
-                      Clear recent searches
-                    </button>
-                  )}
                   <div className="mt-5 grid gap-5 border-t pt-5 sm:grid-cols-2">
                     <section>
                       <h3 className="mb-2 text-sm font-semibold">
@@ -213,7 +232,7 @@ export function GlobalSearchOverlay() {
                   {[1, 2, 3].map((x) => (
                     <div
                       key={x}
-                      className="h-16 animate-pulse rounded-lg bg-muted/60"
+                      className="h-16 animate-pulse rounded-(--radius-control) bg-muted/60"
                     />
                   ))}
                 </div>
@@ -237,7 +256,7 @@ export function GlobalSearchOverlay() {
                     key={`${item.kind}-${item.id}`}
                     onClick={() => navigate(item.href)}
                     className={cn(
-                      'flex min-h-20 w-full items-center gap-3 rounded-lg p-2 text-left hover:bg-muted',
+                      'flex min-h-20 w-full items-center gap-3 rounded-(--radius-control) p-2 text-left hover:bg-muted',
                       active === index && 'bg-muted',
                     )}
                   >
@@ -299,11 +318,11 @@ export function SearchTrigger({
     <button
       onClick={openSearch}
       className={cn(
-        'flex h-11 w-full items-center gap-3 rounded-xl border bg-background px-3.5 text-left text-sm text-muted-foreground',
+        'flex h-9 w-full items-center gap-2.5 rounded-(--radius-control) border bg-background px-3 text-left text-xs text-muted-foreground',
         className,
       )}
     >
-      <Search className="size-4 shrink-0" />
+      <Search className="size-3.5 shrink-0" />
       <span className="truncate">{placeholder}</span>
     </button>
   )

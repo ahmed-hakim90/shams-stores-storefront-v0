@@ -31,9 +31,9 @@ export function TrustSection() {
           {pillars.map((p) => (
             <div
               key={p.title}
-              className="flex flex-col gap-2.5 rounded-2xl border border-border bg-card p-5"
+              className="flex flex-col gap-2.5 rounded-(--radius-card) border border-border bg-card p-5"
             >
-              <span className="inline-flex size-10 items-center justify-center rounded-xl bg-brand-muted text-brand-ink">
+              <span className="inline-flex size-10 items-center justify-center rounded-(--radius-control) bg-brand-muted text-brand-ink">
                 <p.icon className="size-5" />
               </span>
               <p className="font-semibold tracking-tight text-foreground">{p.title}</p>

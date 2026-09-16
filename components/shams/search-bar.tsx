@@ -58,7 +58,7 @@ export function SearchBar({ className }: { className?: string }) {
           }}
           placeholder="Search by model, brand, category or SKU…"
           aria-label="Search products"
-          className="h-11 w-full rounded-xl border border-border bg-background pl-10 pr-10 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-brand focus:ring-3 focus:ring-brand/15 [&::-webkit-search-cancel-button]:hidden"
+          className="h-11 w-full rounded-(--radius-control) border border-border bg-background pl-10 pr-10 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-brand focus:ring-3 focus:ring-brand/15 [&::-webkit-search-cancel-button]:hidden"
         />
         {query && (
           <button
@@ -73,7 +73,7 @@ export function SearchBar({ className }: { className?: string }) {
       </form>
 
       {open && (
-        <div className="absolute left-0 right-0 top-[calc(100%+0.5rem)] z-50 overflow-hidden rounded-xl border border-border bg-popover shadow-xl">
+        <div className="absolute left-0 right-0 top-[calc(100%+0.5rem)] z-50 overflow-hidden rounded-(--radius-editorial) border border-border bg-popover">
           {results.length > 0 ? (
             <ul className="max-h-[60vh] overflow-y-auto py-1.5">
               {results.map((p) => (
@@ -84,7 +84,7 @@ export function SearchBar({ className }: { className?: string }) {
                     onMouseDown={(e) => e.preventDefault()}
                     onClick={() => setOpen(false)}
                   >
-                    <span className="relative size-11 shrink-0 overflow-hidden rounded-md border border-border bg-white">
+                    <span className="relative size-11 shrink-0 overflow-hidden rounded-(--radius-control) border border-border bg-white">
                       <Image
                         src={p.image || '/placeholder.svg'}
                         alt=""
@@ -146,7 +146,7 @@ export function SearchBar({ className }: { className?: string }) {
                     href={c.href}
                     onMouseDown={(e) => e.preventDefault()}
                     onClick={() => setOpen(false)}
-                    className="rounded-lg border border-border px-3 py-2 text-sm font-medium text-foreground transition-colors hover:border-brand hover:text-brand-ink"
+                    className="rounded-(--radius-control) border border-border px-3 py-2 text-sm font-medium text-foreground transition-colors hover:border-brand hover:text-brand-ink"
                   >
                     {c.label}
                   </Link>
