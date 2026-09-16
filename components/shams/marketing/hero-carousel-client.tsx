@@ -92,8 +92,8 @@ export function HeroCarouselClient({ slides }: { slides: HeroSlide[] }) {
 
         {/* Content */}
         <div className="absolute inset-0 z-30 flex items-end sm:items-center">
-          <div className="w-full px-4 pb-16 pt-4 sm:px-6 sm:pb-0 sm:pt-0 lg:px-8">
-            <div className="max-w-[calc(100%-6rem)] sm:max-w-lg space-y-2 sm:space-y-3" key={active}>
+          <div className="w-full px-6 pb-20 pt-6 sm:px-10 sm:pb-0 sm:pt-0 lg:px-16">
+            <div className="max-w-full sm:max-w-[calc(100%-8rem)] lg:max-w-lg space-y-3 sm:space-y-4" key={active}>
               <span className="inline-block rounded-full bg-brand/90 px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-brand-foreground sm:px-3 sm:py-1 sm:text-[10px]">
                 {slide.categoryName.length > 20 ? slide.categoryName.split(' ')[0] : slide.categoryName}
               </span>
@@ -129,17 +129,17 @@ export function HeroCarouselClient({ slides }: { slides: HeroSlide[] }) {
           </div>
         </div>
 
-        {/* Navigation arrows */}
+        {/* Navigation arrows - hidden on mobile */}
         <button
           onClick={prev}
-          className="absolute left-2 top-1/2 z-40 flex size-9 -translate-y-1/2 items-center justify-center rounded-full bg-black/30 text-white backdrop-blur-sm transition-colors hover:bg-black/50 sm:left-4 sm:size-11 lg:size-12"
+          className="absolute left-2 top-1/2 z-40 hidden size-9 -translate-y-1/2 items-center justify-center rounded-full bg-black/30 text-white backdrop-blur-sm transition-colors hover:bg-black/50 sm:flex sm:left-4 sm:size-11 lg:size-12"
           aria-label="Previous slide"
         >
           <ChevronLeft className="size-4 sm:size-5" />
         </button>
         <button
           onClick={next}
-          className="absolute right-2 top-1/2 z-40 flex size-9 -translate-y-1/2 items-center justify-center rounded-full bg-black/30 text-white backdrop-blur-sm transition-colors hover:bg-black/50 sm:right-4 sm:size-11 lg:size-12"
+          className="absolute right-2 top-1/2 z-40 hidden size-9 -translate-y-1/2 items-center justify-center rounded-full bg-black/30 text-white backdrop-blur-sm transition-colors hover:bg-black/50 sm:right-4 sm:size-11 lg:size-12"
           aria-label="Next slide"
         >
           <ChevronRight className="size-4 sm:size-5" />
