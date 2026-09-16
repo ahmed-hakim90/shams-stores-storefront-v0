@@ -1,9 +1,16 @@
-import { getHeroCampaign } from '@/lib/commerce/live/merchandising'
-import { HeroCascade } from '@/components/shams/marketing'
-import { ProductSpotlight } from '@/components/shams/marketing/merchandising-sections'
+import { Suspense } from 'react'
+import { HeroCarousel } from '@/components/shams/marketing/hero-carousel'
 
 export async function LiveHero() {
-  const campaign = await getHeroCampaign().catch(() => null)
-  if (!campaign) return <ProductSpotlight />
-  return <HeroCascade campaign={campaign} />
+  return (
+    <Suspense fallback={<HeroCarouselSkeleton />}>
+      <HeroCarousel />
+    </Suspense>
+  )
+}
+
+function HeroCarouselSkeleton() {
+  return (
+    <div className="relative aspect-[16/9] w-full animate-pulse bg-muted sm:aspect-[21/9] lg:aspect-[2.5/1]" />
+  )
 }
