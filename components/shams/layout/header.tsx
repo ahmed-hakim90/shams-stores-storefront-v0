@@ -14,7 +14,7 @@ import {
   ShoppingCart,
   User,
 } from 'lucide-react'
-import { ShamsLogo, MobileMenu } from '@/components/shams/shared'
+import { ShamsLogo, MobileMenu, useCountPulse } from '@/components/shams/shared'
 import { SearchTrigger } from '@/components/shams/overlays'
 import { MegaMenu } from './mega-menu'
 import {
@@ -23,6 +23,22 @@ import {
   useAuth,
 } from '@/components/shams/providers'
 import { MobileHeader } from './mobile-navigation'
+import { AnnouncementBar } from './announcement-bar'
+
+function PulseBadge({ count, className }: { count: number; className: string }) {
+  const pulse = useCountPulse(count)
+  if (!count) return null
+  return (
+    <span
+      key={pulse}
+      aria-live="polite"
+      aria-atomic="true"
+      className={`${className}${pulse > 0 ? ' badge-pop' : ''}`}
+    >
+      {count}
+    </span>
+  )
+}
 
 function IconAction({
   href,
@@ -38,14 +54,15 @@ function IconAction({
   return (
     <Link
       href={href}
-      className="shams-icon-control group relative size-10 shrink-0 text-foreground/80 hover:border-brand/30 hover:text-brand-ink"
+      className="shams-icon-control group relative size-10 shrink-0 text-foreground/80 hover:border-foreground hover:text-brand-ink"
     >
       <span className="relative">
         <Icon className="size-5" />
-        {count !== undefined && count > 0 && (
-          <span className="absolute -right-2 -top-2 inline-flex min-w-4 items-center justify-center rounded-full bg-brand px-1 text-[0.55rem] font-semibold leading-4 text-brand-foreground">
-            {count}
-          </span>
+        {count !== undefined && (
+          <PulseBadge
+            count={count}
+            className="absolute -right-2 -top-2 inline-flex min-w-4 items-center justify-center rounded-full bg-brand px-1 text-[0.55rem] font-semibold leading-4 text-brand-foreground"
+          />
         )}
       </span>
       <span className="sr-only">{label}</span>
@@ -68,6 +85,13 @@ export function Header() {
     return () => document.removeEventListener('mousedown', onDown)
   }, [accountOpen])
   const header = useRef<HTMLElement>(null)
+  const [scrolled, setScrolled] = useState(false)
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 80)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
   useEffect(() => {
     const el = header.current
     if (!el) return
@@ -84,12 +108,15 @@ export function Header() {
     return () => observer.disconnect()
   }, [])
   return (
-    <>
+    <div className="sticky top-0 z-50" data-scrolled={scrolled || undefined}>
+      <AnnouncementBar />
       <MobileHeader />
 
       {/* Utility bar */}
-      <div className="hidden border-b border-border bg-foreground text-on-dark lg:block">
-        <div className="mx-auto flex h-8 max-w-[1440px] items-center justify-between px-4 text-[11px]">
+      <div className="header-utility hidden lg:block">
+        <div className="min-h-0 overflow-hidden">
+          <div className="border-b border-border bg-foreground text-on-dark">
+            <div className="mx-auto flex h-8 max-w-[1440px] items-center justify-between px-4 text-[11px]">
           <p className="inline-flex items-center gap-1.5">
             <ShieldCheck className="size-3" />
             Photography, cinema & creator gear · Expert advice
@@ -116,12 +143,14 @@ export function Header() {
             <span className="text-on-dark-subtle">|</span>
             <span>EGP · English</span>
           </div>
+            </div>
+          </div>
         </div>
       </div>
 
       <header
         ref={header}
-        className="sticky top-0 z-50 hidden border-b border-border bg-background/95 backdrop-blur md:block"
+        className={`hidden border-b border-border bg-background/95 backdrop-blur transition-shadow duration-standard motion-reduce:transition-none md:block ${scrolled ? 'shadow-[0_2px_12px_rgba(0,0,0,0.06)]' : ''}`}
       >
         {/* Main row */}
         <div className="border-b border-border">
@@ -150,7 +179,7 @@ export function Header() {
                     onClick={() => setAccountOpen((v) => !v)}
                     aria-expanded={accountOpen}
                     aria-label={`Account: ${user.name}`}
-                    className="shams-icon-control group relative size-10 shrink-0 text-foreground/80 hover:border-brand/30 hover:text-brand-ink"
+                    className="shams-icon-control group relative size-10 shrink-0 text-foreground/80 hover:border-foreground hover:text-brand-ink"
                   >
                     <span className="flex size-5 items-center justify-center rounded-full bg-brand text-[0.6rem] font-bold text-brand-foreground">
                       {user.name.charAt(0).toUpperCase()}
@@ -160,7 +189,7 @@ export function Header() {
                   <Link
                     href="/account/login"
                     aria-label="Sign in"
-                    className="shams-icon-control group relative size-10 shrink-0 text-foreground/80 hover:border-brand/30 hover:text-brand-ink"
+                    className="shams-icon-control group relative size-10 shrink-0 text-foreground/80 hover:border-foreground hover:text-brand-ink"
                   >
                     <User className="size-5" />
                     <span className="sr-only">Sign in</span>
@@ -198,13 +227,14 @@ export function Header() {
                 type="button"
                 onClick={openWishlist}
                 aria-label="Open wishlist"
-                className="shams-icon-control group relative size-10 shrink-0 text-foreground/80 hover:border-brand/30 hover:text-brand-ink"
+                className="shams-icon-control group relative size-10 shrink-0 text-foreground/80 hover:border-foreground hover:text-brand-ink"
               >
                 <span className="relative">
                   <Heart className="size-5" />
-                  <span className="absolute -right-2 -top-2 inline-flex min-w-4 items-center justify-center rounded-full bg-brand px-1 text-[0.55rem] font-semibold leading-4 text-brand-foreground">
-                    {wishlistCount || ''}
-                  </span>
+                  <PulseBadge
+                    count={wishlistCount}
+                    className="absolute -right-2 -top-2 inline-flex min-w-4 items-center justify-center rounded-full bg-brand px-1 text-[0.55rem] font-semibold leading-4 text-brand-foreground"
+                  />
                 </span>
                 <span className="sr-only">Wishlist</span>
               </button>
@@ -213,14 +243,13 @@ export function Header() {
                 onPointerEnter={preloadCartDrawer}
                 onFocus={preloadCartDrawer}
                 aria-label="Open cart"
-                className="shams-icon-control relative size-10 hover:border-brand/30 hover:text-brand-ink"
+                className="shams-icon-control relative size-10 hover:border-foreground hover:text-brand-ink"
               >
                 <ShoppingCart className="size-5" />
-                {cartCount > 0 && (
-                  <span aria-live="polite" aria-atomic="true" className="absolute right-0 top-0 rounded-full bg-brand px-1.5 text-[9px] text-brand-foreground">
-                    {cartCount}
-                  </span>
-                )}
+                <PulseBadge
+                  count={cartCount}
+                  className="absolute right-0 top-0 rounded-full bg-brand px-1.5 text-[9px] text-brand-foreground"
+                />
               </button>
             </div>
           </div>
@@ -240,6 +269,6 @@ export function Header() {
           </div>
         </div>
       </header>
-    </>
+    </div>
   )
 }

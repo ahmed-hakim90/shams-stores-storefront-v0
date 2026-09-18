@@ -15,7 +15,7 @@ import {
 import { usePathname } from 'next/navigation'
 import { SearchTrigger } from '@/components/shams/overlays'
 
-import { MobileMenu, ShamsLogo } from '@/components/shams/shared'
+import { MobileMenu, ShamsLogo, useCountPulse } from '@/components/shams/shared'
 import {
   preloadCartDrawer,
   useInteractions,
@@ -23,9 +23,13 @@ import {
 } from '@/components/shams/providers'
 
 function CountBadge({ count }: { count: number }) {
+  const pulse = useCountPulse(count)
   if (!count) return null
   return (
-    <span className="absolute -right-2 -top-2 min-w-4 rounded-full bg-brand px-1 text-center text-[0.6rem] font-semibold leading-4 text-brand-foreground">
+    <span
+      key={pulse}
+      className={`absolute -right-1.5 -top-1.5 min-w-4 rounded-full bg-brand px-1 text-center text-[0.6rem] font-semibold leading-4 text-brand-foreground${pulse > 0 ? ' badge-pop' : ''}`}
+    >
       {count}
     </span>
   )
@@ -50,9 +54,9 @@ export function MobileHeader() {
   return (
     <header
       ref={header}
-      className="sticky top-0 z-50 border-b border-border bg-background px-3 pt-[max(0px,env(safe-area-inset-top))] md:hidden"
+      className="border-b border-border bg-background/85 backdrop-blur-xl backdrop-saturate-150 shadow-[0_1px_8px_rgba(0,0,0,0.04)] px-3 pt-[max(0px,env(safe-area-inset-top))] md:hidden"
     >
-      <div className="relative flex h-11 items-center justify-between">
+      <div className="relative flex h-12 items-center justify-between">
         <MobileMenu />
         <Link
           href="/"
@@ -61,15 +65,17 @@ export function MobileHeader() {
         >
           <ShamsLogo className="w-[min(130px,calc(100vw-200px))]" />
         </Link>
-        <div className="ml-auto flex items-center gap-0.5">
+        <div className="ml-auto flex items-center gap-1.5">
           <button
             type="button"
             onClick={openWishlist}
             aria-label="Open wishlist"
-            className="relative flex size-9 items-center justify-center border border-border text-foreground/80 hover:border-brand/30 hover:text-brand-ink"
+            className="flex size-11 items-center justify-center text-foreground/80 transition-[color,scale] duration-fast hover:text-foreground active:scale-90"
           >
-            <Heart className="size-4" />
-            <CountBadge count={wishlistCount} />
+            <span className="relative inline-flex">
+              <Heart className="size-[22px]" />
+              <CountBadge count={wishlistCount} />
+            </span>
           </button>
           <button
             type="button"
@@ -77,14 +83,16 @@ export function MobileHeader() {
             onPointerEnter={preloadCartDrawer}
             onFocus={preloadCartDrawer}
             aria-label="Open cart"
-            className="relative flex size-9 items-center justify-center border border-border text-foreground/80 hover:border-brand/30 hover:text-brand-ink"
+            className="flex size-11 items-center justify-center text-foreground/80 transition-[color,scale] duration-fast hover:text-foreground active:scale-90"
           >
-            <ShoppingBag className="size-4" />
-            <CountBadge count={cartCount} />
+            <span className="relative inline-flex">
+              <ShoppingBag className="size-[22px]" />
+              <CountBadge count={cartCount} />
+            </span>
           </button>
         </div>
       </div>
-      <div className="pb-1.5">
+      <div className="pb-2">
         <SearchTrigger placeholder="Search gear…" />
       </div>
     </header>
@@ -104,6 +112,11 @@ export function MobileBottomNav() {
   const { openSearch } = useInteractions()
   const { user } = useAuth()
   const nav = useRef<HTMLElement>(null)
+  const [intent, setIntent] = useState<string | null>(null)
+
+  useEffect(() => {
+    setIntent(null)
+  }, [pathname])
 
   useEffect(() => {
     const el = nav.current
@@ -127,14 +140,14 @@ export function MobileBottomNav() {
   return (
     <nav
       ref={nav}
-      className="fixed inset-x-0 bottom-0 z-[55] border-t border-border bg-background pb-[max(0px,env(safe-area-inset-bottom))] md:hidden"
+      className="fixed inset-x-0 bottom-0 z-[55] border-t border-border bg-background/85 backdrop-blur-xl backdrop-saturate-150 pb-[max(0px,env(safe-area-inset-bottom))] md:hidden"
       data-fixed-bar
       aria-label="Mobile shopping navigation"
     >
-      <div className="mx-auto grid h-14 max-w-lg grid-cols-5">
+      <div className="mx-auto grid h-16 max-w-lg grid-cols-5 gap-1">
         <span className="sr-only">Store navigation</span>
         {items.map(({ label, href, icon: Icon }) => {
-          const active =
+          const routeActive =
             label === 'Search'
               ? pathname.startsWith('/search')
               : label === 'Home'
@@ -146,6 +159,7 @@ export function MobileBottomNav() {
                   : label === 'Offers'
                     ? pathname.startsWith('/deals')
                     : pathname.startsWith('/account')
+          const active = intent ? intent === label : routeActive
           const isAccount = label === 'Account'
           const iconElement = isAccount && user ? (
             <span className="flex size-5 items-center justify-center rounded-full bg-brand text-[0.6rem] font-bold text-brand-foreground">
@@ -155,8 +169,10 @@ export function MobileBottomNav() {
             <Icon className="size-[18px]" />
           )
           const baseClass =
-            'relative flex flex-col items-center justify-center gap-0.5 text-muted-foreground'
-          const activeClass = active ? 'text-foreground after:absolute after:bottom-0 after:left-1/2 after:h-0.5 after:w-6 after:-translate-x-1/2 after:bg-brand' : ''
+            'relative flex flex-col items-center justify-center gap-1 text-muted-foreground transition-[color,scale] duration-instant motion-reduce:transition-none active:scale-[0.94]'
+          const activeClass = active
+            ? 'text-foreground after:absolute after:bottom-0 after:left-1/2 after:h-0.5 after:w-6 after:-translate-x-1/2 after:bg-brand'
+            : ''
           return label === 'Search' ? (
             <button
               key={label}
@@ -173,6 +189,7 @@ export function MobileBottomNav() {
             <Link
               key={label}
               href={href}
+              onClick={() => setIntent(label)}
               aria-current={active ? 'page' : undefined}
               aria-label={isAccount && user ? `Account: ${user.name}` : label}
               className={`${baseClass} ${activeClass} ${isAccount && user ? 'text-foreground' : ''}`}

@@ -117,6 +117,26 @@ export async function LiveFooter() {
                 </svg>
               </a>
             </div>
+
+            <div className="mt-6 rounded-(--radius-card) border border-border/60 bg-background/40 p-4">
+              <h3 className="text-sm font-semibold tracking-tight text-foreground">Stay in the loop</h3>
+              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">New arrivals, exclusive offers, and creator tips.</p>
+              <form className="mt-3 flex gap-2" action="#">
+                <input
+                  type="email"
+                  required
+                  placeholder="your@email.com"
+                  aria-label="Email address"
+                  className="h-10 min-w-0 flex-1 rounded-(--radius-control) border border-border bg-surface-raised px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-brand focus:outline-none"
+                />
+                <button
+                  type="button"
+                  className="h-10 shrink-0 rounded-(--radius-control) bg-foreground px-4 text-xs font-semibold text-on-dark transition-colors hover:bg-foreground/90"
+                >
+                  Subscribe
+                </button>
+              </form>
+            </div>
           </div>
 
           {groups.map((group) => (

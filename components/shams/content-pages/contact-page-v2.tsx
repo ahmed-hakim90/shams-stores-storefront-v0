@@ -151,7 +151,7 @@ export function ContactPageV2() {
               <Link
                 key={item.title}
                 href={item.href}
-                className="group flex items-start gap-3 rounded-(--radius-card) border border-border bg-card p-5 transition-colors hover:border-brand/40"
+                className="group flex items-start gap-3 rounded-(--radius-card) border border-border bg-card p-5 transition-colors hover:border-foreground"
               >
                 <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-(--radius-control) bg-brand-muted text-brand-ink transition-colors group-hover:bg-brand group-hover:text-brand-foreground">
                   <item.icon className="size-4" />

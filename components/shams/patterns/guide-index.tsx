@@ -20,7 +20,7 @@ export function GuideIndex({ guides }: GuideIndexProps) {
         <Link
           key={guide.title}
           href={guide.href}
-          className="group flex flex-col gap-4 rounded-(--radius-card) border border-border bg-card p-6 transition-colors hover:border-brand/40"
+          className="group flex flex-col gap-4 rounded-(--radius-card) border border-border bg-card p-6 transition-colors hover:border-foreground"
         >
           <span className="inline-flex size-10 items-center justify-center rounded-(--radius-control) bg-brand-muted text-brand-ink transition-colors group-hover:bg-brand group-hover:text-brand-foreground">
             <guide.icon className="size-5" />

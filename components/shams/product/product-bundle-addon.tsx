@@ -11,7 +11,7 @@ export function ProductBundleAddonCard({
   return (
     <Link
       href={`/bundles/${bundle.slug}`}
-      className="group flex items-center gap-4 rounded-(--radius-card) border bg-card p-4 transition-colors hover:border-brand"
+      className="group flex items-center gap-4 rounded-(--radius-card) border bg-card p-4 transition-colors hover:border-foreground"
     >
       <div className="flex size-12 shrink-0 items-center justify-center rounded-(--radius-control) bg-brand-muted">
         <Package className="size-5 text-brand-ink" />

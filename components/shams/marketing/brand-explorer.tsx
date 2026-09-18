@@ -20,9 +20,9 @@ export function BrandExplorer() {
           <Link
             key={brand.slug}
             href={`/b/${brand.slug}`}
-            className="group flex flex-col items-center justify-center gap-1.5 rounded-(--radius-card) border border-border bg-card px-4 py-7 text-center transition-colors hover:border-brand/40"
+            className="group flex flex-col items-center justify-center gap-1.5 rounded-(--radius-card) border border-border bg-card px-4 py-7 text-center transition-colors hover:border-foreground hover:bg-surface-raised"
           >
-            <div className="relative mb-2 aspect-[1.8/1] w-full overflow-hidden rounded-(--radius-control) bg-surface-subtle">{brand.image ? <Image src={brand.image} alt="" fill sizes="180px" className="object-contain p-4 transition-transform duration-standard motion-safe:[@media(hover:hover)]:group-hover:scale-[1.04]" /> : <span className="flex h-full items-center justify-center text-lg font-semibold uppercase tracking-tight text-muted-foreground">{brand.name}</span>}</div><span className="text-lg font-semibold uppercase tracking-tight text-muted-foreground transition-colors duration-fast motion-safe:[@media(hover:hover)]:group-hover:text-brand-ink">{brand.name}</span>
+            <div className="relative mb-2 aspect-[1.8/1] w-full overflow-hidden rounded-(--radius-control) bg-surface-subtle">{brand.image ? <Image src={brand.image} alt="" fill sizes="180px" className="object-contain p-4 transition-transform duration-standard motion-safe:[@media(hover:hover)]:group-hover:scale-[1.02]" /> : <span className="flex h-full items-center justify-center text-lg font-semibold uppercase tracking-tight text-muted-foreground">{brand.name}</span>}</div><span className="text-lg font-semibold uppercase tracking-tight text-muted-foreground transition-colors duration-fast motion-safe:[@media(hover:hover)]:group-hover:text-foreground">{brand.name}</span>
             <span className="text-xs text-muted-foreground/80">{brand.tagline}</span>
             <span className="mt-1 text-[0.7rem] font-medium text-brand/80">
               {brand.productCount} products

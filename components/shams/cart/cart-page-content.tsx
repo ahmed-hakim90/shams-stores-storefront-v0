@@ -95,7 +95,7 @@ export function CartPageContent({ checkout = false }: { checkout?: boolean }) {
                             disabled={cartPending || line.quantity <= 1}
                             onClick={() => updateCartLineQuantity(line.id, line.quantity - 1)}
                             aria-label="Decrease quantity"
-                            className="flex size-9 items-center justify-center rounded-(--radius-control) border text-sm transition-colors hover:border-brand hover:text-brand-ink disabled:opacity-40"
+                            className="flex size-9 items-center justify-center rounded-(--radius-control) border text-sm transition-colors hover:border-foreground hover:text-foreground disabled:opacity-40"
                           >
                             −
                           </button>
@@ -106,7 +106,7 @@ export function CartPageContent({ checkout = false }: { checkout?: boolean }) {
                             disabled={cartPending || line.quantity >= 99}
                             onClick={() => updateCartLineQuantity(line.id, line.quantity + 1)}
                             aria-label="Increase quantity"
-                            className="flex size-9 items-center justify-center rounded-(--radius-control) border text-sm transition-colors hover:border-brand hover:text-brand-ink disabled:opacity-40"
+                            className="flex size-9 items-center justify-center rounded-(--radius-control) border text-sm transition-colors hover:border-foreground hover:text-foreground disabled:opacity-40"
                           >
                             +
                           </button>

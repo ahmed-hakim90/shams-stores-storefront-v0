@@ -457,7 +457,7 @@ export default async function StorefrontRoute({
         <p className="mb-8 text-muted-foreground">Gear curated for how you create.</p>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {useCases.map((u) => (
-            <Link key={u.slug} href={`/w/${u.slug}`} className="rounded-(--radius-card) border bg-card p-6 transition-colors hover:border-brand">
+            <Link key={u.slug} href={`/w/${u.slug}`} className="rounded-(--radius-card) border bg-card p-6 transition-colors hover:border-foreground">
               <p className="font-semibold">{u.name}</p>
               <p className="mt-1 text-sm text-muted-foreground">{u.description}</p>
             </Link>

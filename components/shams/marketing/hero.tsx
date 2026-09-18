@@ -458,7 +458,7 @@ function GearChip({ gear }: { gear: ProductSummary }) {
   return (
     <Link
       href={`/p/${gear.slug}`}
-      className="group flex shrink-0 items-center gap-2 border border-border bg-surface-raised px-2.5 py-1.5 transition-colors hover:border-brand/40"
+      className="group flex shrink-0 items-center gap-2 border border-border bg-surface-raised px-2.5 py-1.5 transition-colors hover:border-foreground"
     >
       <div className="relative size-8 shrink-0">
         <ProductImage
@@ -683,7 +683,7 @@ function CompleteStage({
             <Link
               key={gear.id}
               href={`/p/${gear.slug}`}
-              className="hero-assembly-piece flex items-center gap-1 border border-border bg-surface-raised px-1.5 py-1 text-[9px] font-medium text-muted-foreground transition-colors hover:border-brand/40 hover:text-foreground"
+              className="hero-assembly-piece flex items-center gap-1 border border-border bg-surface-raised px-1.5 py-1 text-[9px] font-medium text-muted-foreground transition-colors hover:border-foreground hover:text-foreground"
             >
               <div className="relative size-4 shrink-0">
                 <ProductImage

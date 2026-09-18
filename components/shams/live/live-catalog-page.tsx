@@ -1,4 +1,4 @@
-import { primaryCategories } from '@/lib/commerce/navigation'
+import { primaryCategories, topLevelCategories } from '@/lib/commerce/navigation'
 import Link from 'next/link'
 import {
   listProducts,
@@ -54,20 +54,33 @@ export async function LiveCatalogPage({
   )
   const initialParams = catalogParams(raw, scope)
   const q = parseQuery(Object.fromEntries(new URLSearchParams(initialParams)))
+  const topCats = topLevelCategories(categories)
   const categoryGroups = isLanding
     ? (
         await Promise.all(
-          primaryCategories(categories).map(async (cat) => {
+          topCats.slice(0, 3).map(async (cat) => {
             const p = await listProducts({
               category: cat.slug,
-              pageSize: 6,
+              pageSize: 12,
               sort: 'best-selling',
-            }).catch(() => ({ items: [], total: 0, hasNextPage: false }))
-            return { category: cat, products: p.items }
+            }).catch(() => ({
+              items: [],
+              total: 0,
+              hasNextPage: false,
+              nextCursor: undefined,
+            }))
+            return {
+              category: cat,
+              products: p.items,
+              total: p.total,
+              hasNextPage: p.hasNextPage,
+              nextCursor: p.nextCursor,
+            }
           }),
         )
       ).filter((g) => g.products.length > 0)
     : []
+  const remainingSections = isLanding ? topCats.slice(3) : []
   const emptyPage = {
     items: [],
     total: 0,
@@ -193,6 +206,7 @@ export async function LiveCatalogPage({
           categories={categoryTerms}
           brands={brandTerms}
           categoryGroups={categoryGroups}
+          remainingCategories={remainingSections}
         />
       ) : (
         <ShopFeed

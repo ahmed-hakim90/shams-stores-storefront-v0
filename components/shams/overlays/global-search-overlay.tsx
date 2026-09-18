@@ -74,7 +74,7 @@ export function GlobalSearchOverlay() {
         <Dialog.Popup
           initialFocus={input}
           data-overlay="search"
-          className="shams-overlay fixed inset-x-0 top-0 z-[151] mx-auto flex max-h-[90dvh] flex-col overflow-hidden rounded-b-(--radius-editorial) border bg-background outline-none md:top-8 md:max-w-3xl md:rounded-(--radius-editorial)"
+          className="fixed inset-x-0 top-0 z-[151] mx-auto flex max-h-[90dvh] flex-col overflow-hidden rounded-b-(--radius-editorial) border bg-background outline-none md:top-8 md:max-w-3xl md:rounded-(--radius-editorial)"
         >
           <Dialog.Title className="sr-only">Search Shams Stores</Dialog.Title>
           <form
@@ -183,7 +183,7 @@ export function GlobalSearchOverlay() {
                         <button
                           key={term}
                           onClick={() => submit(term)}
-                          className="rounded-full border px-3 py-1.5 text-sm hover:border-brand hover:text-brand-ink"
+                          className="rounded-full border px-3 py-1.5 text-sm hover:border-foreground hover:text-foreground"
                         >
                           {term}
                         </button>
@@ -256,7 +256,7 @@ export function GlobalSearchOverlay() {
                     key={`${item.kind}-${item.id}`}
                     onClick={() => navigate(item.href)}
                     className={cn(
-                      'flex min-h-20 w-full items-center gap-3 rounded-(--radius-control) p-2 text-left hover:bg-muted',
+                      'flex min-h-20 w-full animate-fade-in items-center gap-3 rounded-(--radius-control) p-2 text-left motion-reduce:animate-none hover:bg-muted',
                       active === index && 'bg-muted',
                     )}
                   >

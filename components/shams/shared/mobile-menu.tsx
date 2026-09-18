@@ -71,9 +71,9 @@ export function MobileMenu() {
     <Dialog.Root open={open} onOpenChange={(v) => { setOpen(v); if (!v) setShowBrands(false) }}>
       <Dialog.Trigger
         aria-label="Open menu"
-        className="shams-icon-control relative size-11 text-foreground/80 hover:border-brand/30 hover:text-brand-ink lg:hidden"
+        className="flex size-11 items-center justify-center text-foreground/80 transition-[color,scale] duration-fast hover:text-foreground active:scale-90 lg:hidden"
       >
-        <Menu className="size-5" />
+        <Menu className="size-[22px]" />
       </Dialog.Trigger>
 
       <Dialog.Portal>
@@ -88,7 +88,7 @@ export function MobileMenu() {
               type="button"
               onClick={() => setOpen(false)}
               aria-label="Close menu"
-              className="shams-icon-control size-11 hover:border-brand/30 hover:text-brand-ink"
+              className="shams-icon-control size-11 hover:border-foreground hover:text-foreground"
             >
               <X className="size-5" />
             </button>
@@ -133,22 +133,33 @@ export function MobileMenu() {
                           />
                         </button>
                       </div>
-                      {isOpen && (
-                        <div className="grid grid-cols-2 gap-x-3 gap-y-1 pb-3 pl-3 pr-2">
-                          {cat.columns
-                            .flatMap((col) => col.links)
-                            .map((link) => (
-                              <MenuLink
-                                key={link.label + link.href}
-                                href={link.href}
-                                onClick={() => setOpen(false)}
-                                className="truncate py-1.5 text-sm text-muted-foreground hover:text-brand-ink"
-                              >
-                                {link.label}
-                              </MenuLink>
-                            ))}
+                      <div
+                        aria-hidden={!isOpen}
+                        className={cn(
+                          'grid transition-[grid-template-rows,opacity,visibility] duration-standard ease-out motion-reduce:transition-none',
+                          isOpen
+                            ? 'grid-rows-[1fr] opacity-100 visible'
+                            : 'grid-rows-[0fr] opacity-0 invisible',
+                        )}
+                      >
+                        <div className="min-h-0 overflow-hidden">
+                          <div className="grid grid-cols-2 gap-x-3 gap-y-1 pb-3 pl-3 pr-2">
+                            {cat.columns
+                              .flatMap((col) => col.links)
+                              .map((link) => (
+                                <MenuLink
+                                  key={link.label + link.href}
+                                  href={link.href}
+                                  onClick={() => setOpen(false)}
+                                  tabIndex={isOpen ? undefined : -1}
+                                  className="truncate py-1.5 text-sm text-muted-foreground hover:text-brand-ink"
+                                >
+                                  {link.label}
+                                </MenuLink>
+                              ))}
+                          </div>
                         </div>
-                      )}
+                      </div>
                     </li>
                   )
                 })}
@@ -210,7 +221,7 @@ export function MobileMenu() {
                       key={u.slug}
                       href={`/w/${u.slug}`}
                       onClick={() => setOpen(false)}
-                      className="rounded-full border border-border px-3 py-1.5 text-sm text-foreground hover:border-brand hover:text-brand-ink"
+                      className="rounded-full border border-border px-3 py-1.5 text-sm text-foreground hover:border-foreground hover:text-foreground"
                     >
                       {u.name}
                     </MenuLink>

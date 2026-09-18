@@ -95,12 +95,12 @@ function OverviewSection({ user, logout }: { user: NonNullable<ReturnType<typeof
       </div>
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2">
-        <Link href="/account/orders" className="rounded-(--radius-card) border bg-card p-5 transition-colors hover:border-brand">
+        <Link href="/account/orders" className="rounded-(--radius-card) border bg-card p-5 transition-colors hover:border-foreground">
           <Package className="size-5 text-brand-ink" />
           <h2 className="mt-5 font-semibold">Orders</h2>
           <p className="mt-2 text-sm text-muted-foreground">Track your orders and purchase history</p>
         </Link>
-        <Link href="/account/addresses" className="rounded-(--radius-card) border bg-card p-5 transition-colors hover:border-brand">
+        <Link href="/account/addresses" className="rounded-(--radius-card) border bg-card p-5 transition-colors hover:border-foreground">
           <MapPin className="size-5 text-brand-ink" />
           <h2 className="mt-5 font-semibold">Addresses</h2>
           <p className="mt-2 text-sm text-muted-foreground">Manage your delivery addresses</p>

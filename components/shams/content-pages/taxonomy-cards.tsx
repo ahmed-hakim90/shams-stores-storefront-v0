@@ -22,7 +22,7 @@ export function TaxonomyCards({
         <Link
           key={t.id}
           href={`/${kind === 'brand' ? 'b' : 'c'}/${t.slug}`}
-          className={`group min-w-0 overflow-hidden border border-border bg-card transition-colors duration-fast hover:border-brand ${compact ? 'flex w-32 shrink-0 items-center gap-2 p-2' : 'p-3'}`}
+          className={`group min-w-0 overflow-hidden border border-border bg-card transition-colors duration-fast hover:border-foreground ${compact ? 'flex w-32 shrink-0 items-center gap-2 p-2' : 'p-3'}`}
         >
           {t.image ? (
             <div

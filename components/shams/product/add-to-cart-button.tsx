@@ -77,10 +77,10 @@ export function AddToCartButton({
       }}
       aria-label={`${label}: ${productName}`}
       className={cn(
-        'inline-flex min-h-9 min-w-0 flex-1 items-center justify-center gap-1.5 text-center px-2.5 text-xs font-medium transition-colors',
+        'inline-flex min-h-9 min-w-0 flex-1 items-center justify-center gap-1.5 rounded-(--radius-control) text-center px-2.5 text-xs font-medium transition-[background-color,box-shadow,transform] duration-fast ease-out-expo',
         outOfStock
           ? 'border border-border bg-background text-foreground hover:border-brand hover:text-brand-ink'
-          : 'bg-brand text-brand-foreground hover:bg-brand/90',
+          : 'bg-brand text-brand-foreground hover:bg-brand-hover hover:shadow-[0_2px_6px_rgba(244,122,32,0.15)] active:bg-brand-active active:translate-y-px',
         added && 'bg-success text-on-dark hover:bg-success',
         className,
       )}

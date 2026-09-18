@@ -152,7 +152,7 @@ function ToastStack({
           <div
             key={notice.id}
             role="status"
-            className="flex w-full items-center gap-3 rounded-(--radius-control) border border-border bg-card px-3 py-3 text-sm"
+            className="flex w-full animate-fade-up items-center gap-3 rounded-(--radius-control) border border-border bg-card px-3 py-3 text-sm motion-reduce:animate-none"
           >
             <span
               className={cn(

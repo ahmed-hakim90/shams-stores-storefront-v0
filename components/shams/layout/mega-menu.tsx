@@ -211,7 +211,7 @@ function MegaPanel({ category }: { category: Category }) {
                   alt={featured.name}
                   fill
                   sizes="240px"
-                  className="object-contain transition-transform duration-standard ease-out-expo group-hover:scale-[1.04]"
+                  className="object-contain transition-transform duration-standard ease-out-expo group-hover:scale-[1.025]"
                 />
               </div>
               <div className="flex items-center justify-between">

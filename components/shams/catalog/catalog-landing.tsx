@@ -1,27 +1,26 @@
 'use client'
 
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { catalogParams } from '@/lib/commerce/experience'
-import type { ProductSummary, TaxonomyTerm } from '@/lib/commerce/types'
+import type { TaxonomyTerm } from '@/lib/commerce/types'
 import { CatalogDiscovery } from '@/components/shams/marketing'
-import { ProductScrollRow } from '@/components/shams/product'
-
-type CategoryGroup = {
-  category: TaxonomyTerm
-  products: ProductSummary[]
-}
+import {
+  CategorySections,
+  type CategorySectionGroup,
+} from './category-sections'
 
 export function CatalogLanding({
   params,
   categories,
   brands,
   categoryGroups,
+  remainingCategories = [],
 }: {
   params: string
   categories: TaxonomyTerm[]
   brands: TaxonomyTerm[]
-  categoryGroups: CategoryGroup[]
+  categoryGroups: CategorySectionGroup[]
+  remainingCategories?: TaxonomyTerm[]
 }) {
   const router = useRouter()
   const change = (key: string, value: string) => {
@@ -41,23 +40,8 @@ export function CatalogLanding({
         params={params}
         change={change}
       />
-      <div className="space-y-6">
-        {categoryGroups.map((group) => (
-          <section key={group.category.slug}>
-            <div className="mb-2 flex items-center justify-between">
-              <h2 className="text-sm font-semibold">{group.category.name}</h2>
-              <Link
-                href={`/c/${group.category.slug}`}
-                prefetch={false}
-                data-prefetch-on-intent
-                className="text-xs text-brand-ink"
-              >
-                View all →
-              </Link>
-            </div>
-            <ProductScrollRow products={group.products} />
-          </section>
-        ))}
+      <div className="mt-6">
+        <CategorySections groups={categoryGroups} remaining={remainingCategories} />
       </div>
     </section>
   )

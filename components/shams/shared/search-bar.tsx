@@ -130,7 +130,7 @@ export function SearchBar({ className }: { className?: string }) {
                     type="button"
                     onMouseDown={(e) => e.preventDefault()}
                     onClick={() => submit(term)}
-                    className="rounded-full border border-border px-3 py-1 text-sm text-foreground transition-colors hover:border-brand hover:text-brand-ink"
+                    className="rounded-full border border-border px-3 py-1 text-sm text-foreground transition-colors hover:border-foreground hover:text-foreground"
                   >
                     {term}
                   </button>
@@ -146,7 +146,7 @@ export function SearchBar({ className }: { className?: string }) {
                     href={c.href}
                     onMouseDown={(e) => e.preventDefault()}
                     onClick={() => setOpen(false)}
-                    className="rounded-(--radius-control) border border-border px-3 py-2 text-sm font-medium text-foreground transition-colors hover:border-brand hover:text-brand-ink"
+                    className="rounded-(--radius-control) border border-border px-3 py-2 text-sm font-medium text-foreground transition-colors hover:border-foreground hover:text-foreground"
                   >
                     {c.label}
                   </Link>

@@ -15,8 +15,8 @@ export function WishlistDrawer() {
       }}
     >
       <Dialog.Portal>
-        <Dialog.Backdrop className="fixed inset-0 z-[130] bg-black/40" />
-        <Dialog.Popup className="fixed inset-y-0 right-0 z-[131] w-full max-w-md overflow-y-auto overscroll-contain bg-background p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] outline-none">
+        <Dialog.Backdrop data-overlay-backdrop className="fixed inset-0 z-[130] bg-black/40" />
+        <Dialog.Popup data-overlay="wishlist" className="fixed inset-y-0 right-0 z-[131] w-full max-w-md overflow-y-auto overscroll-contain bg-background p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] outline-none">
           <Dialog.Title className="sr-only">Wishlist</Dialog.Title>
           <Dialog.Close
             aria-label="Close wishlist"

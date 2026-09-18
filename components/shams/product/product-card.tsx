@@ -9,6 +9,7 @@ import { StockStatus } from './stock-status'
 import { WishlistAction } from './wishlist-action'
 import { CompareAction } from './compare-action'
 import { AddToCartButton } from './add-to-cart-button'
+import { discountPercent } from '@/lib/commerce'
 
 export function ProductCard({
   product,
@@ -30,11 +31,12 @@ export function ProductCard({
     product.price.amount > 0 &&
     product.stock !== 'out_of_stock' &&
     !product.hasOptions
+  const discount = discountPercent(product.price, product.previousPrice)
 
   return (
     <article
       className={cn(
-        'group shams-panel shams-product-card min-w-0 overflow-hidden transition-[border-color,transform] duration-fast ease-out-expo hover:border-brand/40',
+        'group shams-panel shams-product-card min-w-0 overflow-hidden transition-[border-color,box-shadow] duration-standard ease-out-expo hover:border-foreground',
         horizontal
           ? 'relative grid min-h-[180px] grid-cols-[minmax(96px,34%)_minmax(0,1fr)] sm:min-h-[180px] sm:grid-cols-[180px_minmax(0,1fr)]'
           : 'flex flex-col',
@@ -49,35 +51,48 @@ export function ProductCard({
           horizontal
             ? 'flex h-full flex-col border-r border-border p-2.5 sm:p-4'
             : view === 'rail'
-              ? 'aspect-square p-2 sm:p-3'
-              : 'aspect-square p-2 sm:aspect-[1.15/1] sm:p-4',
+              ? 'flex aspect-square flex-col p-1.5 sm:p-2'
+              : 'flex aspect-square flex-col px-1.5 pt-1.5 pb-1 sm:px-2 sm:pt-2 sm:pb-1 sm:aspect-[1.15/1]',
         )}
       >
-        {product.badges.length > 0 && (
-          <div className="absolute left-2 top-2 z-10 flex flex-col items-start gap-0.5">
+        {!horizontal && product.badges.length > 0 && (
+          <div className="absolute left-0 top-0 z-20 flex flex-col items-start">
             {product.badges.map((badge) => (
-              <ProductBadge key={badge} badge={badge} />
+              <ProductBadge key={badge} badge={badge} discount={discount ?? undefined} />
             ))}
           </div>
         )}
         {!horizontal && !hideActions && (
-          <div
-            className={cn(
-              'absolute right-2 top-2 z-10 flex flex-col gap-1',
-              view === 'rail'
-                ? 'opacity-100'
-                : 'opacity-100 transition-opacity duration-fast md:opacity-0 md:group-hover:opacity-100 md:focus-within:opacity-100',
-            )}
-          >
-            <WishlistAction productName={product.name} productId={product.id} />
-            <CompareAction productName={product.name} productId={product.id} />
+          <div className="shams-card-actions relative z-10 flex h-7 min-h-[28px] items-center justify-end">
+            <div className="flex items-center gap-1">
+              <WishlistAction
+                productName={product.name}
+                productId={product.id}
+                className="size-7 [&_svg]:size-3.5"
+              />
+              <CompareAction
+                productName={product.name}
+                productId={product.id}
+                className="size-7 [&_svg]:size-3.5"
+              />
+            </div>
+          </div>
+        )}
+        {horizontal && product.badges.length > 0 && (
+          <div className="absolute left-0 top-0 z-10 flex flex-col items-start gap-0.5">
+            {product.badges.map((badge) => (
+              <ProductBadge key={badge} badge={badge} discount={discount ?? undefined} />
+            ))}
           </div>
         )}
         <Link
           href={productHref}
           prefetch={false}
           data-prefetch-on-intent
-          className="relative block min-h-[120px] w-full flex-1 overflow-hidden"
+          className={cn(
+            'relative block w-full overflow-hidden',
+            !horizontal ? 'min-h-0 flex-1' : 'min-h-[120px] flex-1',
+          )}
         >
           <Image
             src={product.image || '/placeholder.svg'}
@@ -91,7 +106,7 @@ export function ProductCard({
                   : '(max-width: 640px) calc(100vw - 40px), (max-width: 768px) calc(50vw - 60px), (max-width: 1280px) 180px, 200px'
             }
             className={cn(
-              'object-contain transition-[transform,opacity] duration-standard ease-out-expo motion-safe:[@media(hover:hover)]:group-hover:scale-[1.04]',
+              'object-contain transition-[transform,opacity] duration-standard ease-out-expo motion-safe:[@media(hover:hover)]:group-hover:scale-[1.025]',
               product.secondaryImage &&
                 '[@media(hover:hover)]:group-hover:opacity-0',
             )}

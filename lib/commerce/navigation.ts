@@ -19,3 +19,12 @@ export function primaryCategories(terms: TaxonomyTerm[], limit = 8) {
     })
     .slice(0, limit)
 }
+export function topLevelCategories(terms: TaxonomyTerm[]) {
+  const top = terms.filter((t) => !t.parentId)
+  const primary = primaryCategories(top, primaryCategorySlugs.length)
+  const seen = new Set(primary.map((t) => t.id))
+  return [
+    ...primary,
+    ...top.filter((t) => !seen.has(t.id)).sort((a, b) => b.count - a.count),
+  ]
+}

@@ -247,19 +247,19 @@ export function MobileFilterDrawer({
         setOpen(v)
       }}
     >
-      <Drawer.Trigger className="inline-flex h-9 items-center gap-1.5 border border-border bg-surface-raised px-3 text-xs font-medium lg:hidden">
+      <Drawer.Trigger className="shams-filter-fab fixed bottom-[calc(var(--fixed-stack-bottom)+var(--sticky-purchase-offset)+var(--compare-tray-offset)+1rem)] right-4 z-[56] inline-flex h-10 items-center gap-2 rounded-full bg-foreground/85 px-4 text-xs font-semibold text-on-dark shadow-lg backdrop-blur-xl backdrop-saturate-150 hover:bg-foreground/95 lg:hidden">
         <SlidersHorizontal className="size-3.5" />
         Filters
         {selected > 0 && (
-          <span className="inline-flex size-4 items-center justify-center bg-brand text-[9px] font-bold text-brand-foreground">
+          <span className="inline-flex size-5 items-center justify-center rounded-full bg-brand text-[10px] font-bold text-brand-foreground">
             {selected}
           </span>
         )}
       </Drawer.Trigger>
       <Drawer.Portal>
-        <Drawer.Backdrop className="fixed inset-0 z-[140] bg-black/50" />
+        <Drawer.Backdrop data-overlay-backdrop className="fixed inset-0 z-[140] bg-black/50" />
         <Drawer.Viewport className="fixed inset-0 z-[141] flex">
-          <Drawer.Popup className="shams-overlay flex h-dvh w-full flex-col bg-background outline-none">
+          <Drawer.Popup data-overlay="filter" className="flex h-dvh w-full flex-col bg-background outline-none">
             <header className="flex h-12 shrink-0 items-center justify-between border-b px-4">
               <Drawer.Title className="text-sm font-semibold">
                 Filters {selected > 0 && `(${selected})`}

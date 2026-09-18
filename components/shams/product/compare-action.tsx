@@ -26,7 +26,7 @@ export function CompareAction({
           : `Add ${productName} to compare`
       }
       className={cn(
-        'inline-flex size-11 items-center justify-center rounded-full border border-border bg-background/95 transition-colors hover:border-brand hover:text-brand-ink shrink-0',
+        'inline-flex size-11 items-center justify-center rounded-full border border-border bg-background/95 transition-colors hover:border-foreground hover:text-foreground shrink-0',
         active && 'border-brand bg-brand text-brand-foreground',
         className,
       )}

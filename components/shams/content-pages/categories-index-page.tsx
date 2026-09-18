@@ -42,7 +42,7 @@ export function CategoriesIndexPage({
           return (
             <article
               key={cat.slug}
-              className="group flex flex-col overflow-hidden rounded-(--radius-card) border border-border bg-card transition-colors duration-fast hover:border-brand/50"
+              className="group flex flex-col overflow-hidden rounded-(--radius-card) border border-border bg-card transition-colors duration-fast hover:border-foreground"
             >
               <Link
                 href={`/c/${cat.slug}`}
@@ -77,7 +77,7 @@ export function CategoriesIndexPage({
                         <Link
                           key={link.href + link.label}
                           href={link.href}
-                          className="rounded-full border border-border px-2.5 py-1 text-xs text-muted-foreground transition-colors hover:border-brand hover:text-brand-ink"
+                          className="rounded-full border border-border px-2.5 py-1 text-xs text-muted-foreground transition-colors hover:border-foreground hover:text-foreground"
                         >
                           {link.label}
                         </Link>
@@ -96,7 +96,7 @@ export function CategoriesIndexPage({
                         <Link
                           key={link.href + link.label}
                           href={link.href}
-                          className="rounded-full border border-border px-2.5 py-1 text-xs text-muted-foreground transition-colors hover:border-brand hover:text-brand-ink"
+                          className="rounded-full border border-border px-2.5 py-1 text-xs text-muted-foreground transition-colors hover:border-foreground hover:text-foreground"
                         >
                           {link.label}
                         </Link>

@@ -239,12 +239,12 @@ export function ShopFeed({
         </aside>
         <div className="min-w-0">
           <>
-            <div className="mb-2 flex flex-wrap gap-1.5">
+            <div className="shams-chips-row mb-2">
                 {active.map((k) => (
                   <button
                     key={k}
                     onClick={() => change(k, '')}
-                    className="inline-flex h-6 items-center border border-border bg-surface-subtle px-2 text-[11px] text-foreground hover:border-brand"
+                    className="inline-flex h-6 items-center border border-border bg-surface-subtle px-2 text-[11px] text-foreground hover:border-foreground"
                   >
                     {k === 'onSale' ? 'On sale' : p.get(k)?.replaceAll('-', ' ')} ×
                   </button>

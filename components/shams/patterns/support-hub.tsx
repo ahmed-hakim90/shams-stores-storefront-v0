@@ -108,7 +108,7 @@ export function SupportHub() {
             className={`inline-flex h-8 items-center rounded-(--radius-control) px-3 text-xs font-medium transition-colors ${
               active === t.key
                 ? 'bg-brand text-brand-foreground'
-                : 'border border-border bg-background text-muted-foreground hover:border-brand/40 hover:text-foreground'
+                : 'border border-border bg-background text-muted-foreground hover:border-foreground hover:text-foreground'
             }`}
           >
             {t.label}

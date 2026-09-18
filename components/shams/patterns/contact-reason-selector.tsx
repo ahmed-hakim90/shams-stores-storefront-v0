@@ -84,7 +84,7 @@ export function ContactReasonSelector() {
             className={`flex flex-col items-start gap-3 rounded-(--radius-card) border p-5 text-left transition-colors ${
               selected === reason.key
                 ? 'border-brand/40 bg-brand-muted'
-                : 'border-border bg-card hover:border-brand/40'
+                : 'border-border bg-card hover:border-foreground'
             }`}
           >
             <span
@@ -118,7 +118,7 @@ export function ContactReasonSelector() {
               const isExternal =
                 ch.href.startsWith('http') || ch.href.startsWith('tel:')
               const className =
-                'inline-flex min-h-9 items-center gap-2 rounded-(--radius-control) border border-border bg-background px-4 text-xs font-medium text-foreground transition-colors hover:border-brand/40 hover:text-brand'
+                'inline-flex min-h-9 items-center gap-2 rounded-(--radius-control) border border-border bg-background px-4 text-xs font-medium text-foreground transition-colors hover:border-foreground hover:text-brand'
               if (isExternal) {
                 return (
                   <a key={ch.href} href={ch.href} className={className}>

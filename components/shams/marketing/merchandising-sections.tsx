@@ -83,7 +83,7 @@ function ProductVisual({
       fill
       priority={priority}
       sizes={sizes}
-      className="object-contain p-5 transition-transform duration-standard motion-safe:[@media(hover:hover)]:group-hover:scale-[1.04]"
+      className="object-contain p-5 transition-transform duration-standard motion-safe:[@media(hover:hover)]:group-hover:scale-[1.025]"
     />
   )
 }
@@ -200,7 +200,7 @@ export async function CategoryMosaic() {
                       ? '(max-width:767px) 44vw, 420px'
                       : '(max-width:767px) 44vw, 280px'
                   }
-                  className="object-cover transition-transform duration-standard motion-safe:[@media(hover:hover)]:group-hover:scale-[1.04]"
+                  className="object-cover transition-transform duration-standard motion-safe:[@media(hover:hover)]:group-hover:scale-[1.025]"
                 />
               ) : (
                 <Camera className="absolute left-1/2 top-1/2 size-6 -translate-x-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -280,7 +280,7 @@ export async function BrandShowcase() {
             <Link
               href={`/b/${b.slug}`}
               key={b.id}
-              className="group flex min-h-24 min-w-0 flex-col items-center justify-between border bg-card p-3 text-center transition-colors hover:border-brand"
+              className="group flex min-h-24 min-w-0 flex-col items-center justify-between border bg-card p-3 text-center transition-colors hover:border-foreground hover:bg-surface-raised"
             >
               {b.image ? (
                 <div className="relative h-10 w-full">
@@ -335,7 +335,7 @@ export async function UseCaseDiscovery() {
                 alt=""
                 fill
                 sizes="240px"
-                className="object-contain p-3 transition-transform duration-standard motion-safe:[@media(hover:hover)]:group-hover:scale-[1.04]"
+                className="object-contain p-3 transition-transform duration-standard motion-safe:[@media(hover:hover)]:group-hover:scale-[1.025]"
               />
             </div>
             <div className="border-t p-3">
@@ -627,7 +627,7 @@ export function GearGuides() {
             <Link
               key={guide.id}
               href={guide.destination}
-              className="group flex items-start gap-3 border bg-card p-4 transition-colors hover:border-brand"
+              className="group flex items-start gap-3 border bg-card p-4 transition-colors hover:border-foreground hover:bg-surface-raised"
             >
               <BookOpen className="mt-0.5 size-4 shrink-0 text-brand-ink" />
               <div className="min-w-0">
@@ -665,7 +665,7 @@ export function BuyingQuestions() {
           <Link
             key={q.id}
             href={q.destination}
-            className="group flex items-start gap-3 border bg-card p-3.5 transition-colors hover:border-brand"
+            className="group flex items-start gap-3 border bg-card p-3.5 transition-colors hover:border-foreground hover:bg-surface-raised"
           >
             <HelpCircle className="mt-0.5 size-4 shrink-0 text-brand-ink" />
             <div className="min-w-0">

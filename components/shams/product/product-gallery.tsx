@@ -69,23 +69,26 @@ export function ProductGallery({
           onClick={() => setOpen(true)}
           className="relative block size-full"
         >
-          <ProductImage
-            key={image.url}
-            src={image.url}
-            alt={image.alt || name}
-            fill
-            priority={selected === 0}
-            sizes="(max-width: 1023px) 90vw, 660px"
-            className="object-contain p-6 sm:p-10 transition-transform duration-200 ease-out"
-            style={
-              hoverZoom
-                ? {
-                    transform: 'scale(2)',
-                    transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`,
-                  }
-                : undefined
-            }
-          />
+          {images.map((img, i) => (
+            <ProductImage
+              key={`${img.url}-${i}`}
+              src={img.url}
+              alt={i === selected ? img.alt || name : ''}
+              fill
+              priority={i === 0}
+              sizes="(max-width: 1023px) 90vw, 660px"
+              className={`object-contain p-6 sm:p-10 transition-opacity duration-standard ease-out motion-reduce:transition-none ${i === selected ? 'opacity-100' : 'opacity-0'}`}
+              style={
+                i === selected && hoverZoom
+                  ? {
+                      transform: 'scale(2)',
+                      transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`,
+                      transition: 'transform 200ms ease-out',
+                    }
+                  : undefined
+              }
+            />
+          ))}
           {!hoverZoom && (
             <span className="absolute bottom-4 right-4 flex size-11 items-center justify-center rounded-full border bg-surface-raised">
               <Expand className="size-4" />
@@ -118,7 +121,7 @@ export function ProductGallery({
                 }}
                 aria-label={`View image ${i + 1}`}
                 aria-pressed={i === selected}
-                className={`relative size-16 shrink-0 overflow-hidden rounded-(--radius-control) border bg-surface-raised ${i === selected ? 'border-brand-ink ring-1 ring-brand-ink' : ''}`}
+                className={`relative size-16 shrink-0 overflow-hidden rounded-(--radius-control) border bg-surface-raised transition-[border-color,box-shadow] duration-fast motion-reduce:transition-none ${i === selected ? 'border-brand-ink ring-1 ring-brand-ink' : ''}`}
               >
                 <ProductImage
                   src={img.url}

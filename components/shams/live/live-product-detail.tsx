@@ -23,6 +23,7 @@ import {
 } from '@/components/shams/product'
 import { Reveal } from '@/components/shams/shared'
 import DOMPurify from 'dompurify'
+import { Lock, RefreshCw, ShieldCheck } from 'lucide-react'
 import { useInteractions } from '@/components/shams/providers'
 export function LiveProductDetail({ product }: { product: ProductDetail }) {
   const [quantity, setQuantity] = useState(1)
@@ -147,7 +148,7 @@ export function LiveProductDetail({ product }: { product: ProductDetail }) {
                 reviewCount={product.reviewCount}
               />
             )}
-            <div className="my-6 border-y py-5">
+            <div className="my-6 rounded-(--radius-control) bg-surface-raised/40 px-4 py-5">
               <PriceDisplay
                 price={selectedVariant?.price ?? product.price}
                 previousPrice={!selectedVariant ? product.previousPrice : undefined}
@@ -212,6 +213,22 @@ export function LiveProductDetail({ product }: { product: ProductDetail }) {
                 variant={selectedVariant}
                 className="mt-4 min-h-12 w-full rounded-(--radius-control)"
               />
+            </div>
+            <div className="mt-4 grid grid-cols-3 gap-2 border-t border-border/60 pt-4">
+              {[
+                { icon: 'Lock', label: 'Secure checkout' },
+                { icon: 'RefreshCw', label: '14-day returns' },
+                { icon: 'ShieldCheck', label: 'Official warranty' },
+              ].map((badge) => (
+                <div key={badge.label} className="flex flex-col items-center gap-1 text-center">
+                  <span className="flex size-8 items-center justify-center rounded-full bg-brand-muted text-brand-ink">
+                    {badge.icon === 'Lock' && <Lock className="size-3.5" />}
+                    {badge.icon === 'RefreshCw' && <RefreshCw className="size-3.5" />}
+                    {badge.icon === 'ShieldCheck' && <ShieldCheck className="size-3.5" />}
+                  </span>
+                  <span className="text-[11px] leading-tight text-muted-foreground">{badge.label}</span>
+                </div>
+              ))}
             </div>
             {product.stock === 'out_of_stock' && (
               <p className="mt-3 text-sm text-muted-foreground">
@@ -305,7 +322,7 @@ export function LiveProductDetail({ product }: { product: ProductDetail }) {
           )}
         </nav>
       </Reveal>
-      <div className="mt-8 space-y-10">
+      <div className="mt-8 space-y-14">
         {product.relationships.map((group, i) => (
           <Reveal as="fade-up" delay={i * 60} key={group.type}>
             <section
@@ -368,7 +385,7 @@ export function LiveProductDetail({ product }: { product: ProductDetail }) {
       {sticky && (
         <div
           data-fixed-bar
-          className="fixed inset-x-0 z-[65] border-t bg-background p-3 lg:hidden"
+          className="fixed inset-x-0 z-[65] animate-slide-in-up border-t bg-background/85 backdrop-blur-xl backdrop-saturate-150 shadow-[0_-2px_12px_rgba(0,0,0,0.06)] p-3 motion-reduce:animate-none lg:hidden"
           style={{
             bottom: 'var(--fixed-stack-bottom)',
           }}

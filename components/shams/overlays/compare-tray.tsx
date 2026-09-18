@@ -37,8 +37,8 @@ export function CompareTray() {
       </button>
       <Dialog.Root open={open} onOpenChange={setOpen}>
         <Dialog.Portal>
-          <Dialog.Backdrop className="fixed inset-0 z-[140] bg-black/40" />
-          <Dialog.Popup className="shams-overlay fixed inset-y-0 right-0 z-[141] w-full max-w-3xl overflow-y-auto overscroll-contain bg-background p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] outline-none">
+          <Dialog.Backdrop data-overlay-backdrop className="fixed inset-0 z-[140] bg-black/40" />
+          <Dialog.Popup data-overlay="compare" className="fixed inset-y-0 right-0 z-[141] w-full max-w-3xl overflow-y-auto overscroll-contain bg-background p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] outline-none">
             <Dialog.Title className="sr-only">
               Compare your shortlist
             </Dialog.Title>

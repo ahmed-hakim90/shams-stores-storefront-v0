@@ -36,7 +36,7 @@ export function CatalogDiscovery({
           group.terms.length > 0 && (
             <section key={group.kind} className="min-w-0">
               <h2 className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide">{group.title}</h2>
-              <div className="flex gap-1.5 overflow-x-auto overscroll-x-contain pb-1 snap-x snap-proximity">
+              <div className="shams-chips-row snap-x snap-proximity pb-1">
                 {group.terms.map((t) => {
                   const active = selected.get(group.kind) === t.slug
                   return (
@@ -50,7 +50,7 @@ export function CatalogDiscovery({
                           active ? (scope[group.kind] ?? '') : t.slug,
                         )
                       }
-                      className={`group flex shrink-0 snap-start border text-left text-xs transition-colors duration-fast ${hub && group.kind === 'category' ? 'w-32 flex-col overflow-hidden' : 'h-12 w-28 items-center gap-1.5 px-2'} ${active ? 'border-brand-ink bg-brand-muted text-brand-ink' : 'border-border bg-card hover:border-brand'}`}
+                      className={`group flex shrink-0 snap-start border text-left text-xs transition-colors duration-fast ${hub && group.kind === 'category' ? 'w-32 flex-col overflow-hidden' : 'h-12 w-28 items-center gap-1.5 px-2'} ${active ? 'border-brand-ink bg-brand-muted text-brand-ink' : 'border-border bg-card hover:border-foreground'}`}
                     >
                       {t.image && (
                         <span
@@ -67,7 +67,7 @@ export function CatalogDiscovery({
                             }
                             className={
                               hub && group.kind === 'category'
-                                ? 'object-cover transition-transform duration-standard motion-safe:[@media(hover:hover)]:group-hover:scale-[1.04]'
+                                ? 'object-cover transition-transform duration-standard motion-safe:[@media(hover:hover)]:group-hover:scale-[1.025]'
                                 : 'object-contain'
                             }
                           />

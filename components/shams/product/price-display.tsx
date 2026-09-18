@@ -39,7 +39,7 @@ export function PriceDisplay({
         )}
         {off && (
           <span className={cn(
-            'rounded bg-[color-mix(in_oklab,var(--color-sale)_12%,transparent)] font-semibold text-sale',
+            'rounded bg-[color-mix(in_oklab,var(--color-sale)_20%,transparent)] font-bold text-sale',
             size === 'sm' ? 'px-1 py-px text-[10px]' : 'px-1.5 py-0.5 text-xs',
           )}>
             -{off}%

@@ -36,7 +36,7 @@ export class SectionErrorBoundary extends Component<Props, State> {
           <button
             type="button"
             onClick={this.reset}
-            className="inline-flex min-h-9 items-center rounded-(--radius-control) border border-border px-4 text-sm font-medium hover:border-brand hover:text-brand-ink"
+            className="inline-flex min-h-9 items-center rounded-(--radius-control) border border-border px-4 text-sm font-medium hover:border-foreground hover:text-foreground"
           >
             Try again
           </button>

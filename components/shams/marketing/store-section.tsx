@@ -47,7 +47,7 @@ export function StoreSection() {
             </Link>
             <Link
               href="/support"
-              className="inline-flex h-11 items-center rounded-(--radius-control) border border-border px-5 text-sm font-semibold text-foreground transition-colors duration-fast hover:border-brand hover:text-brand-ink"
+              className="inline-flex h-11 items-center rounded-(--radius-control) border border-border px-5 text-sm font-semibold text-foreground transition-colors duration-fast hover:border-foreground hover:text-brand-ink"
             >
               Talk to a specialist
             </Link>

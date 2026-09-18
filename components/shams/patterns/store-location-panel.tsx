@@ -80,7 +80,7 @@ export function StoreLocationPanel({
           </a>
           <a
             href="https://wa.me/201011331666"
-            className="inline-flex min-h-9 items-center gap-2 rounded-(--radius-control) border border-border px-4 text-xs font-medium text-foreground transition-colors hover:border-brand/40 hover:text-brand"
+            className="inline-flex min-h-9 items-center gap-2 rounded-(--radius-control) border border-border px-4 text-xs font-medium text-foreground transition-colors hover:border-foreground hover:text-brand"
           >
             <WhatsAppIcon />
             WhatsApp
