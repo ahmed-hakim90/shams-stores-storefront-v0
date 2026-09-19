@@ -185,10 +185,10 @@ export async function CategoryMosaic() {
           <Link
             key={category.id}
             href={`/c/${category.slug}`}
-            className={`group flex min-w-0 flex-col overflow-hidden border bg-card ${index < 2 ? 'merch-category-major' : ''}`}
+            className={`group relative flex min-w-0 flex-col overflow-hidden border bg-surface-tint ${index < 2 ? 'merch-category-major' : ''}`}
           >
             <div
-              className={`relative bg-surface-tint ${index < 2 ? 'min-h-32 flex-1' : 'h-20'}`}
+              className={`relative flex-1 ${index < 2 ? 'min-h-48' : 'min-h-36'}`}
             >
               {category.image ? (
                 <ProductImage
@@ -203,21 +203,23 @@ export async function CategoryMosaic() {
                   className="object-cover transition-transform duration-standard motion-safe:[@media(hover:hover)]:group-hover:scale-[1.025]"
                 />
               ) : (
-                <Camera className="absolute left-1/2 top-1/2 size-6 -translate-x-1/2 -translate-y-1/2 text-muted-foreground" />
+                <Camera className="absolute left-1/2 top-1/3 size-6 -translate-x-1/2 -translate-y-1/2 text-muted-foreground" />
               )}
-            </div>
-            <div className="flex items-start justify-between gap-2 p-3">
-              <div>
-                <h3 className="text-sm font-semibold">{category.name}</h3>
-                <p className="mt-0.5 line-clamp-2 text-[11px] leading-4 text-muted-foreground">
-                  {all
-                    .filter((c) => c.parentId === category.id)
-                    .slice(0, 3)
-                    .map((c) => c.name)
-                    .join(' · ') || 'Explore the collection'}
-                </p>
+              {/* Petrol scrim keeps overlaid copy legible over photography */}
+              <div className="absolute inset-0 bg-gradient-to-t from-surface-overlay/90 via-surface-overlay/45 to-transparent " />
+              <div className="absolute inset-x-0 bottom-0 flex items-start justify-between gap-2 p-3 text-on-dark">
+                <div className="min-w-0 transition-colors hover:text-brand">
+                  <h3 className="text-sm font-semibold">{category.name}</h3>
+                  <p className="mt-0.5 line-clamp-2 text-[11px] leading-4 text-on-dark-muted transition-colors hover:text-brand">
+                    {all
+                      .filter((c) => c.parentId === category.id)
+                      .slice(0, 3)
+                      .map((c) => c.name)
+                      .join(' · ') || 'Explore the collection'}
+                  </p>
+                </div>
+                <ArrowUpRight className="mt-0.5 size-3 shrink-0 text-brand" />
               </div>
-              <ArrowUpRight className="mt-0.5 size-3 shrink-0 text-brand-ink" />
             </div>
           </Link>
         ))}
@@ -240,7 +242,7 @@ export async function BrandShowcase() {
       <div className="grid gap-3 lg:grid-cols-2">
         <Link
           href={`/b/${data.brand.slug}`}
-          className="group grid min-h-56 overflow-hidden border bg-surface-editorial-dark text-on-dark sm:grid-cols-[.8fr_1.2fr]"
+          className="group grid min-h-56 overflow-hidden border bg-surface-dark text-on-dark sm:grid-cols-[.8fr_1.2fr]"
         >
           <div className="flex flex-col justify-between p-5 lg:p-6">
             <div>
@@ -468,18 +470,18 @@ export async function BundleStory() {
   if (!bundle) return null
   return (
     <section className="shams-container py-4 sm:py-5" data-merch="bundle">
-      <div className="grid overflow-hidden border md:grid-cols-2">
+      <div className="grid overflow-hidden border bg-surface-dark text-on-dark md:grid-cols-2">
         <div className="p-5 sm:p-7">
-          <p className="text-[11px] font-semibold uppercase tracking-wide text-brand-ink">A complete starting point</p>
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-brand-muted">A complete starting point</p>
           <h2 className="mt-2 text-xl font-semibold tracking-tight sm:text-2xl">
             {bundle.name}
           </h2>
           {bundle.shortDescription && (
-            <p className="mt-3 line-clamp-4 text-xs leading-5 text-muted-foreground">
+            <p className="mt-3 line-clamp-4 text-xs leading-5 text-on-dark-muted">
               {bundle.shortDescription}
             </p>
           )}
-          <p className="mt-3 text-xs leading-5">
+          <p className="mt-3 text-xs leading-5 text-on-dark-muted">
             Explore the included equipment and configuration with the Shams
             team.
           </p>
@@ -602,21 +604,21 @@ export function GearGuides() {
       <div className="mt-3 grid gap-3 md:grid-cols-[1.4fr_1fr]">
         <Link
           href={featured.destination}
-          className="group flex min-h-48 flex-col overflow-hidden border bg-surface-editorial-dark text-on-dark md:min-h-64"
+          className="group flex min-h-48 flex-col overflow-hidden border bg-accent text-foreground md:min-h-64"
         >
           <div className="flex flex-1 flex-col justify-between p-5 sm:p-6">
             <div>
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-brand-muted">
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-accent-foreground">
                 {featured.eyebrow}
               </p>
               <h3 className="mt-2 text-lg font-semibold tracking-tight sm:text-xl">
                 {featured.title}
               </h3>
-              <p className="mt-2 max-w-md text-xs leading-5 text-on-dark-muted">
+              <p className="mt-2 max-w-md text-xs leading-5 text-muted-foreground">
                 {featured.description}
               </p>
             </div>
-            <span className="mt-4 inline-flex items-center gap-1.5 text-xs font-semibold text-brand-muted">
+            <span className="mt-4 inline-flex items-center gap-1.5 text-xs font-semibold text-accent-foreground">
               Read the guide
               <ArrowRight className="size-3" />
             </span>
@@ -665,7 +667,7 @@ export function BuyingQuestions() {
           <Link
             key={q.id}
             href={q.destination}
-            className="group flex items-start gap-3 border bg-card p-3.5 transition-colors hover:border-foreground hover:bg-surface-raised"
+            className="group flex items-start gap-3 border bg-card p-3.5 transition-colors hover:border-brand-hover hover:bg-surface-raised"
           >
             <HelpCircle className="mt-0.5 size-4 shrink-0 text-brand-ink" />
             <div className="min-w-0">

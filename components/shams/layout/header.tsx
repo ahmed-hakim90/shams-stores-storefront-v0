@@ -255,8 +255,8 @@ export function Header() {
           </div>
         </div>
 
-        {/* Nav row - brand colored like B&H */}
-        <div className="hidden bg-brand lg:block">
+        {/* Nav row — graphite band like B&H / Adorama; orange stays reserved for CTAs */}
+        <div className="hidden bg-surface-dark lg:block">
           <div className="shams-container flex items-center justify-between">
             <MegaMenu />
             <Link

@@ -54,6 +54,7 @@
   --color-surface: var(--surface);
   --color-surface-raised: var(--surface-raised);
   --color-surface-subtle: var(--surface-subtle);
+  --color-surface-dark: var(--surface-dark);
   --color-line-strong: var(--line-strong);
   --color-surface-tint: var(--surface-tint);
   --color-surface-editorial-dark: var(--surface-editorial-dark);
@@ -148,59 +149,63 @@
 
 :root {
   color-scheme: light;
-  --background: #ffffff;
-  --foreground: #111111;
-  --card: #f5f5f5;
-  --card-foreground: #111111;
+  /* Base: cool broken white + technical ink over a pure-white product surface. */
+  --background: #f4f5f6;
+  --foreground: #101214;
+  --card: #ffffff;
+  --card-foreground: #101214;
   --popover: #ffffff;
-  --popover-foreground: #111111;
+  --popover-foreground: #101214;
   --primary: #f47a20;
-  --primary-foreground: #211409;
-  --secondary: #f5f5f5;
-  --secondary-foreground: #111111;
-  --muted: #f0f0f0;
-  --muted-foreground: #666666;
-  --accent: #fff3e9;
-  --accent-foreground: #c75a0d;
+  --primary-foreground: #1c1006;
+  --secondary: #edf0f2;
+  --secondary-foreground: #1c2024;
+  --muted: #f1f3f4;
+  --muted-foreground: #5b6472;
+  --accent: #e7eefb;
+  --accent-foreground: #1d4ed8;
   --destructive: #c9362b;
-  --border: #e0e0e0;
-  --input: #e0e0e0;
+  --border: #dde2e6;
+  --input: #ccd3d9;
   --ring: #f47a20;
 
+  /* Brand: Shams orange stays the CTA accent; burnt ink for text-grade use. */
   --brand: #f47a20;
   --brand-ink: #a54108;
   --brand-hover: #dc6815;
   --brand-active: #c75a0d;
-  --brand-foreground: #211409;
-  --brand-muted: #fff3e9;
-  --brand-dark: #171717;
-  --sale: #a94b20;
+  --brand-foreground: #1c1006;
+  --brand-muted: #fdefe3;
+  --brand-dark: #1c2024;
+  --sale: #c9362b;
   --success: #13773d;
-  --success-muted: #e8f6ee;
+  --success-muted: #e7f4ec;
   --warning: #b76e00;
-  --warning-muted: #fff5df;
+  --warning-muted: #fff4db;
   --danger: #c9362b;
   --danger-muted: #fcebea;
-  --info: #4f6578;
-  --info-muted: #eef2f5;
-  --surface: #f5f5f5;
+  --info: #2563eb;
+  --info-muted: #e8f0fd;
+  /* Atmosphere: graphite for structure, deep petrol for cinematic sections,
+     petrol-black scrims over imagery, steel hairlines between surfaces. */
+  --surface: #ffffff;
   --surface-raised: #ffffff;
-  --surface-subtle: #ebebeb;
-  --surface-dark: #171717;
-  --surface-editorial-dark: #20211f;
-  --surface-overlay: #0b1f38;
+  --surface-subtle: #eceff2;
+  --surface-dark: #1c2024;
+  --surface-editorial-dark: #102a2e;
+  --surface-overlay: #0d2124;
   --on-dark: #ffffff;
-  --on-dark-muted: rgba(255, 255, 255, 0.75);
-  --on-dark-faint: rgba(255, 255, 255, 0.55);
-  --on-dark-subtle: rgba(255, 255, 255, 0.4);
-  --on-dark-border: rgba(255, 255, 255, 0.15);
-  --on-dark-border-strong: rgba(255, 255, 255, 0.3);
-  --line-strong: #d0d0d0;
-  --surface-tint: #e8e8e8;
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.08);
-  --shadow-xl: 0 16px 40px rgba(0, 0, 0, 0.12);
+  --on-dark-muted: rgba(244, 247, 250, 0.78);
+  --on-dark-faint: rgba(244, 247, 250, 0.58);
+  --on-dark-subtle: rgba(244, 247, 250, 0.42);
+  --on-dark-border: rgba(244, 247, 250, 0.14);
+  --on-dark-border-strong: rgba(244, 247, 250, 0.28);
+  --line-strong: #c6ced6;
+  --surface-tint: #e9edf1;
+  --shadow-sm: 0 1px 2px rgba(16, 18, 20, 0.05);
+  --shadow-md: 0 4px 12px rgba(16, 18, 20, 0.07);
+  --shadow-lg: 0 8px 24px rgba(16, 18, 20, 0.09);
+  --shadow-xl: 0 16px 40px rgba(16, 18, 20, 0.14);
 
   --space-section: clamp(1.75rem, 3.5vw, 3.5rem);
   --space-section-compact: clamp(1.25rem, 2.5vw, 2.5rem);
@@ -260,14 +265,14 @@
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
   --radius: 0px;
-  --sidebar: #fafafa;
-  --sidebar-foreground: #252525;
-  --sidebar-primary: #343434;
-  --sidebar-primary-foreground: #fafafa;
-  --sidebar-accent: #f7f7f7;
-  --sidebar-accent-foreground: #343434;
-  --sidebar-border: #ebebeb;
-  --sidebar-ring: #b5b5b5;
+  --sidebar: #fafbfc;
+  --sidebar-foreground: #26292c;
+  --sidebar-primary: #33373b;
+  --sidebar-primary-foreground: #fafbfc;
+  --sidebar-accent: #f3f5f7;
+  --sidebar-accent-foreground: #33373b;
+  --sidebar-border: #e3e7ea;
+  --sidebar-ring: #b3bac1;
   --z-dropdown: 40;
   --z-sticky: 50;
   --z-fixed-bar: 60;
@@ -459,14 +464,14 @@
 /* Shared commerce surfaces and native scrolling. */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #a4a19b transparent;
+  scrollbar-color: #a9b1b9 transparent;
 }
 ::-webkit-scrollbar {
   width: 10px;
   height: 8px;
 }
 ::-webkit-scrollbar-thumb {
-  background: #a4a19b;
+  background: #a9b1b9;
   border: 2px solid var(--background);
   border-radius: 10px;
 }
@@ -567,9 +572,9 @@
   min-height: 40px;
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--border);
+  /* border: 1px solid var(--border);
   border-radius: var(--radius-control);
-  background: var(--surface-raised);
+  background: var(--surface-raised); */
   color: var(--foreground);
   transition: background-color var(--motion-fast), border-color var(--motion-fast), color var(--motion-fast);
 }
@@ -609,7 +614,7 @@
   color: var(--foreground);
 }
 .shams-button-secondary:hover {
-  border-color: var(--foreground);
+  border-color: var(--brand-hover);
   background: var(--surface-subtle);
   box-shadow: none;
 }
@@ -754,8 +759,8 @@
   transition: border-color var(--motion-standard) var(--ease-out), box-shadow var(--motion-standard) var(--ease-out);
 }
 .shams-product-card:hover {
-  border-color: var(--foreground);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  border-color: var(--brand-hover);
+  box-shadow: 0 6px 20px rgba(236, 147, 14, 0.15);
 }
 .shams-product-card [data-purchase] {
   transition: opacity var(--motion-fast);
@@ -1191,7 +1196,7 @@
 
 /* Ribbon sale badge */
 .ribbon-sale {
-  background-color: #dc2626;
+  background-color: var(--sale);
   color: #ffffff;
   border-radius: 0 4px 0 0;
   padding: 0.375rem 0.625rem 0.5rem;
@@ -1209,7 +1214,7 @@
     -45deg,
     transparent,
     transparent 3px,
-    #dc2626 3px,
-    #dc2626 6px
+    var(--sale) 3px,
+    var(--sale) 6px
   );
 }

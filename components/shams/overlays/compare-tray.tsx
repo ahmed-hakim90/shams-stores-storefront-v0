@@ -31,7 +31,7 @@ export function CompareTray() {
         )}
       >
         <Scale className="size-4" /> Compare{' '}
-        <span className="rounded-full bg-brand-muted px-2 py-1 text-brand-ink">
+        <span className="rounded-full bg-info px-2 py-1 text-white">
           {compareItems.length}
         </span>
       </button>

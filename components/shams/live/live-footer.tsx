@@ -56,7 +56,7 @@ export async function LiveFooter() {
     },
   ]
   return (
-    <footer className="mt-8 bg-[#f2f2f2] pb-24 md:pb-0">
+    <footer className="mt-8 bg-surface-dark pb-24 text-on-dark md:pb-0">
       <div className="shams-container py-8 sm:py-10">
         <div className="grid gap-8 lg:grid-cols-[1.2fr_repeat(4,1fr)]">
           <div className="lg:col-span-1">
@@ -67,7 +67,7 @@ export async function LiveFooter() {
             >
               <ShamsLogo className="w-[180px] max-w-full" />
             </Link>
-            <p className="mt-3 text-xs leading-5 text-muted-foreground">
+            <p className="mt-3 text-xs leading-5 text-on-dark-muted">
               Egypt&apos;s specialist for photography, cinema and creator gear.
               Authorized products and nationwide delivery.
             </p>
@@ -75,14 +75,19 @@ export async function LiveFooter() {
             <div className="mt-4 space-y-2">
               <a
                 href="tel:+201011331666"
-                className="flex items-center gap-2 text-sm font-semibold text-foreground"
+                className="flex items-center gap-2 text-sm font-semibold text-on-dark transition-colors hover:text-brand-hover"
               >
                 <Phone className="size-3.5 text-brand" />
-                +01011331666
+                +201011331666
               </a>
-              <p className="flex items-center gap-2 text-xs text-muted-foreground">
+              <p className="flex items-center gap-2 text-sm text-on-dark-muted transition-colors hover:text-brand-hover">
                 <MapPin className="size-3.5 text-brand" />
-                Downtown · Heliopolis 
+                · Downtown Branch: 5 Sherif Street – Downtown – Cairo 
+              </p>
+              <p className="flex items-center gap-2 text-sm text-on-dark-muted transition-colors hover:text-brand-hover">
+                <MapPin className="size-3.5 text-brand" />
+                · Heliopolis Branch: 24 Omar Ibn 
+                El-Khattab St. – Ismailia Square – Cairo 
               </p>
             </div>
 
@@ -90,7 +95,7 @@ export async function LiveFooter() {
               <a
                 href="https://www.facebook.com/ShamsStores/"
                 aria-label="Facebook"
-                className="flex size-8 items-center justify-center rounded-full bg-foreground/10 text-foreground/60 transition-colors hover:bg-foreground/20 hover:text-foreground"
+                className="flex size-8 items-center justify-center rounded-full bg-on-dark-border text-on-dark-muted transition-colors hover:bg-on-dark-border-strong hover:text-brand-hover"
               >
                 <svg className="size-4" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.5 2.9h-2.3v7A10 10 0 0 0 22 12Z"/>
@@ -99,7 +104,7 @@ export async function LiveFooter() {
               <a
                 href="https://www.instagram.com/shamsstores/"
                 aria-label="Instagram"
-                className="flex size-8 items-center justify-center rounded-full bg-foreground/10 text-foreground/60 transition-colors hover:bg-foreground/20 hover:text-foreground"
+                className="flex size-8 items-center justify-center rounded-full bg-on-dark-border text-on-dark-muted transition-colors hover:bg-on-dark-border-strong hover:text-brand-hover"
               >
                 <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
@@ -110,7 +115,7 @@ export async function LiveFooter() {
               <a
                 href="https://www.youtube.com/@shamsstores4105"
                 aria-label="YouTube"
-                className="flex size-8 items-center justify-center rounded-full bg-foreground/10 text-foreground/60 transition-colors hover:bg-foreground/20 hover:text-foreground"
+                className="flex size-8 items-center justify-center rounded-full bg-on-dark-border text-on-dark-muted transition-colors hover:bg-on-dark-border-strong hover:text-brand-hover"
               >
                 <svg className="size-4" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31.5 31.5 0 0 0 0 12a31.5 31.5 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31.5 31.5 0 0 0 24 12a31.5 31.5 0 0 0-.5-5.8ZM9.6 15.6V8.4l6.3 3.6-6.3 3.6Z"/>
@@ -118,20 +123,20 @@ export async function LiveFooter() {
               </a>
             </div>
 
-            <div className="mt-6 rounded-(--radius-card) border border-border/60 bg-background/40 p-4">
-              <h3 className="text-sm font-semibold tracking-tight text-foreground">Stay in the loop</h3>
-              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">New arrivals, exclusive offers, and creator tips.</p>
+            <div className="mt-6 rounded-(--radius-card) border border-on-dark-border bg-white/5 p-4">
+              <h3 className="text-sm font-semibold tracking-tight text-on-dark">Stay in the loop</h3>
+              <p className="mt-1 text-xs leading-relaxed text-on-dark-muted">New arrivals, exclusive offers, and creator tips.</p>
               <form className="mt-3 flex gap-2" action="#">
                 <input
                   type="email"
                   required
                   placeholder="your@email.com"
                   aria-label="Email address"
-                  className="h-10 min-w-0 flex-1 rounded-(--radius-control) border border-border bg-surface-raised px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-brand focus:outline-none"
+                  className="h-10 min-w-0 flex-1 rounded-(--radius-control) border border-transparent bg-surface-raised px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-brand focus:outline-none"
                 />
                 <button
                   type="button"
-                  className="h-10 shrink-0 rounded-(--radius-control) bg-foreground px-4 text-xs font-semibold text-on-dark transition-colors hover:bg-foreground/90"
+                  className="h-10 shrink-0 rounded-(--radius-control) bg-brand px-4 text-xs font-semibold text-brand-foreground transition-colors hover:bg-brand-hover"
                 >
                   Subscribe
                 </button>
@@ -141,7 +146,7 @@ export async function LiveFooter() {
 
           {groups.map((group) => (
             <div key={group.title}>
-              <h2 className="mb-2.5 text-xs font-semibold uppercase tracking-wide text-foreground">
+              <h2 className="mb-2.5 text-xs font-semibold uppercase tracking-wide text-on-dark">
                 {group.title}
               </h2>
               <ul className="space-y-1.5">
@@ -149,7 +154,7 @@ export async function LiveFooter() {
                   <li key={href}>
                     <Link
                       href={href}
-                      className="text-xs text-muted-foreground transition-colors hover:text-foreground"
+                      className="text-xs text-on-dark-muted transition-colors hover:text-brand-hover"
                     >
                       {name}
                     </Link>
@@ -161,9 +166,9 @@ export async function LiveFooter() {
         </div>
       </div>
 
-      <div className="shams-container border-t border-border/60 py-5">
+      <div className="shams-container border-t border-on-dark-border py-5">
         <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
-          <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+          <span className="text-[10px] font-semibold uppercase tracking-wide text-on-dark-muted">
             We accept
           </span>
           <div className="flex flex-wrap items-center gap-2">
@@ -193,16 +198,16 @@ export async function LiveFooter() {
       </div>
 
       <div className="shams-container">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border/60 py-5 text-[11px] text-muted-foreground">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-on-dark-border py-5 text-[11px] text-on-dark-muted">
           <p>&copy; {new Date().getFullYear()} Shams Stores. All rights reserved.</p>
           <div className="flex flex-wrap items-center gap-4">
-            <Link href="/terms" className="transition-colors hover:text-foreground">
+            <Link href="/terms" className="transition-colors hover:text-brand-hover">
               Terms & conditions
             </Link>
-            <Link href="/privacy" className="transition-colors hover:text-foreground">
+            <Link href="/privacy" className="transition-colors hover:text-brand-hover">
               Privacy policy
             </Link>
-            <Link href="/cookies" className="transition-colors hover:text-foreground">
+            <Link href="/cookies" className="transition-colors hover:text-brand-hover">
               Cookie policy
             </Link>
           </div>

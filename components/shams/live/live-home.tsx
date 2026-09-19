@@ -31,7 +31,7 @@ async function Feed({ config }: { config: PageExperienceConfig }) {
     if (config.presentation === 'feature')
       return (
         <section
-          className="border-y border-border bg-surface-tint"
+          className="border-y border-border bg-surface-raised"
           data-merch="deals"
         >
           <div className="shams-container py-4 sm:py-5">

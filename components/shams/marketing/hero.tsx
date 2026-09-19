@@ -134,16 +134,16 @@ type HeroViewProps = {
 
 function CampaignBar({ campaign }: { campaign: ResolvedHeroCampaign }) {
   return (
-    <div className="hero-cascade-fade-in mb-3 flex items-center justify-between gap-3 border border-border bg-surface-editorial-dark px-3 py-2 text-brand-foreground sm:px-4">
+    <div className="hero-cascade-fade-in mb-3 flex items-center justify-between gap-3 border border-border bg-surface-editorial-dark px-3 py-2 text-on-dark sm:px-4">
       <div className="flex min-w-0 items-center gap-2">
         {campaign.badge && (
           <span className="inline-flex size-1.5 shrink-0 rounded-full bg-brand" />
         )}
-        <span className="truncate text-[11px] font-semibold uppercase tracking-wider text-brand-foreground/90">
+        <span className="truncate text-[11px] font-semibold uppercase tracking-wider text-on-dark-muted">
           {campaign.badge}
         </span>
       </div>
-      <span className="hidden shrink-0 text-[11px] text-brand-foreground/60 sm:inline">
+      <span className="hidden shrink-0 text-[11px] text-on-dark-faint sm:inline">
         {campaign.subtitle}
       </span>
     </div>
@@ -738,13 +738,13 @@ function HeroFallback() {
   return (
     <section className="mx-auto max-w-[1440px] px-4 pt-3 sm:px-6 sm:pt-4">
       <div className="grid gap-3 lg:grid-cols-12">
-        <div className="relative overflow-hidden border border-border bg-brand text-brand-foreground lg:col-span-8">
+        <div className="relative overflow-hidden border border-border bg-surface-editorial-dark text-on-dark lg:col-span-8">
           <div className="relative flex flex-col gap-4 p-5 sm:p-7 md:flex-row md:items-center">
             <div className="flex-1 space-y-3">
               <h1 className="text-balance text-2xl font-semibold leading-[1.05] tracking-tight sm:text-3xl">
                 {featured.brand} {featured.name}
               </h1>
-              <p className="text-sm text-brand-foreground/80">
+              <p className="text-sm text-on-dark-muted">
                 {featured.configuration}
               </p>
               <div className="flex items-baseline gap-2">
@@ -752,14 +752,14 @@ function HeroFallback() {
                   {formatMoney(featured.price)}
                 </span>
                 {featured.previousPrice && (
-                  <span className="text-xs text-brand-foreground/60 line-through">
+                  <span className="text-xs text-on-dark-faint line-through">
                     {formatMoney(featured.previousPrice)}
                   </span>
                 )}
               </div>
               <Link
                 href={`/p/${featured.slug}`}
-                className="inline-flex h-9 items-center gap-1.5 border border-brand-foreground bg-brand-foreground px-5 text-xs font-semibold text-brand"
+                className="inline-flex h-9 items-center gap-1.5 bg-brand px-5 text-xs font-semibold text-brand-foreground transition-colors hover:bg-brand-hover"
               >
                 Shop now <ArrowRight className="size-3.5" />
               </Link>

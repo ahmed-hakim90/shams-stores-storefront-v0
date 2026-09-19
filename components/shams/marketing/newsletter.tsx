@@ -16,13 +16,13 @@ export function Newsletter() {
 
   return (
     <section className="mx-auto max-w-[1440px] px-4 py-8 sm:px-6 sm:py-10">
-      <div className="relative overflow-hidden border border-border bg-brand px-5 py-7 text-brand-foreground sm:px-8 sm:py-9">
+      <div className="relative overflow-hidden border border-border bg-surface-editorial-dark px-5 py-7 text-on-dark sm:px-8 sm:py-9">
         <div
           aria-hidden
           className="absolute inset-0 opacity-40"
           style={{
             backgroundImage:
-              'radial-gradient(100% 120% at 90% 10%, rgba(255,255,255,0.16) 0%, transparent 55%)',
+              'radial-gradient(100% 120% at 90% 10%, rgba(255,255,255,0.12) 0%, transparent 55%)',
           }}
         />
         <div className="relative grid gap-4 lg:grid-cols-2 lg:items-center">
@@ -30,7 +30,7 @@ export function Newsletter() {
             <h2 className="text-balance text-xl font-semibold tracking-tight sm:text-2xl">
               First to know. First to shoot.
             </h2>
-            <p className="max-w-md text-xs text-brand-foreground/80 sm:text-sm">
+            <p className="max-w-md text-xs text-on-dark-muted sm:text-sm">
               New arrivals, restocks and creator deals — straight to your inbox.
               No spam, just gear worth knowing about.
             </p>
@@ -69,10 +69,10 @@ export function Newsletter() {
                 placeholder="you@email.com"
                 aria-invalid={status === 'error'}
                 aria-describedby={status === 'error' ? 'newsletter-error' : undefined}
-                className="h-9 w-full border border-transparent bg-brand-foreground/95 px-3 text-xs text-brand outline-none placeholder:text-brand/50 focus:ring-2 focus:ring-brand-foreground/40"
+                className="h-9 w-full border border-transparent bg-surface-raised px-3 text-xs text-foreground outline-none placeholder:text-muted-foreground focus:ring-2 focus:ring-brand/50"
               />
               {status === 'error' && error && (
-                <p id="newsletter-error" role="alert" className="flex items-center gap-1 text-[11px] font-medium text-brand-foreground/90">
+                <p id="newsletter-error" role="alert" className="flex items-center gap-1 text-[11px] font-medium text-on-dark">
                   <AlertCircle className="size-3" /> {error}
                 </p>
               )}
@@ -80,7 +80,7 @@ export function Newsletter() {
             <button
               type="submit"
               disabled={status === 'success'}
-              className="inline-flex h-9 items-center justify-center gap-1.5 bg-brand-foreground px-5 text-xs font-semibold text-brand disabled:opacity-70"
+              className="inline-flex h-9 items-center justify-center gap-1.5 bg-brand px-5 text-xs font-semibold text-brand-foreground transition-colors hover:bg-brand-hover disabled:opacity-70"
             >
               {status === 'success' ? (
                 <>

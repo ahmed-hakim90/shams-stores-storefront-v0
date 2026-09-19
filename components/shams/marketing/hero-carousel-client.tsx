@@ -86,9 +86,9 @@ export function HeroCarouselClient({ slides }: { slides: HeroSlide[] }) {
           )
         })}
 
-        {/* Gradient overlays */}
-        <div className="absolute inset-0 z-20 bg-gradient-to-r from-black/70 via-black/30 to-transparent" />
-        <div className="absolute inset-0 z-20 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+        {/* Gradient overlays — petrol-black scrim keeps imagery cinematic */}
+        <div className="absolute inset-0 z-20 bg-gradient-to-r from-surface-overlay/85 via-surface-overlay/40 to-transparent" />
+        <div className="absolute inset-0 z-20 bg-gradient-to-t from-surface-overlay/60 via-transparent to-transparent" />
 
         {/* Content */}
         <div className="absolute inset-0 z-30 flex items-end sm:items-center">

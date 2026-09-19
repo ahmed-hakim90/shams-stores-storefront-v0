@@ -68,12 +68,12 @@ export function ProductCard({
               <WishlistAction
                 productName={product.name}
                 productId={product.id}
-                className="size-7 [&_svg]:size-3.5"
+                className="size-7 [&_svg]:size-4"
               />
               <CompareAction
                 productName={product.name}
                 productId={product.id}
-                className="size-7 [&_svg]:size-3.5"
+                className="size-7 [&_svg]:size-4"
               />
             </div>
           </div>
@@ -131,7 +131,7 @@ export function ProductCard({
         )}
       >
         <div className="flex min-w-0 flex-wrap items-center justify-between gap-x-2 gap-y-0.5">
-          <span className="min-w-0 truncate text-[10px] font-semibold uppercase tracking-wide text-brand-ink">
+          <span className="min-w-0 truncate text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
             {product.brand}
           </span>
           {!horizontal && product.reviewCount > 0 && (
