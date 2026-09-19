@@ -1,8 +1,10 @@
+> الحالة المعتمدة الأحدث: [تسليم Qoder](QODER-HANDOFF-2026-09-19.md). الأقسام التاريخية لا تعني أن الدفع ما زال مغلقًا أو أن 1.2.0 صالح للتثبيت. استخدم Headless 1.2.1 وCommerce UX 0.8.3 للحقول الجديدة.
+
 > تصحيح تفعيل 19 سبتمبر: استخدم [Shams Headless 1.2.1](../wordpress-plugin/shams-headless-1.2.1.zip)، وليس 1.2.0. عولج تكرار `Shams_Auth::register()`؛ [السبب والفحوص](../wordpress-plugin/shams-headless-1.2.1-release.md). ادعاء نجاح syntax للإصدار السابق كان غير صحيح بسبب exit code مضلل من PHP-WASM.
 
 # التشغيل والتحقق والإصدار
 
-> تحديث الدفع والتقسيط: [PAYMOB-VERCEL](PAYMOB-VERCEL.md). Paymob الجديد يتطلب Shams Headless 1.2.0؛ إشارات 1.1.1 أدناه تخص إصدار المفضلة السابق.
+> تحديث الدفع والتقسيط: [PAYMOB-VERCEL](PAYMOB-VERCEL.md). Paymob الجديد يتطلب Shams Headless 1.2.1؛ إشارات 1.1.1 أدناه تخص إصدار المفضلة السابق.
 
 ## بداية آمنة
 

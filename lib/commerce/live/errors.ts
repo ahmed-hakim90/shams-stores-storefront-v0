@@ -8,6 +8,8 @@ export type ErrorCode =
   | 'PRICE_CHANGED'
   | 'SESSION_EXPIRED'
   | 'PAYMENT_FAILED'
+  | 'PAYMENT_REVIEW_REQUIRED'
+  | 'PAYMENT_SESSION_BUSY'
   | 'SERVER_ERROR'
   | 'UNKNOWN'
 export class CommerceFault extends Error {

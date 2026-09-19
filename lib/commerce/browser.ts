@@ -3,6 +3,7 @@ export class BrowserCommerceError extends Error {
     message: string,
     public code: string,
     public requestId?: string,
+    public orderId?: string,
   ) {
     super(message)
   }
@@ -39,6 +40,9 @@ export async function commerceFetch<T>(
       typeof body.error === 'string' ? body.error : 'Please try again.',
       body.code ?? 'UNKNOWN',
       body.requestId,
+      typeof body.orderId === 'string' && /^\d+$/.test(body.orderId)
+        ? body.orderId
+        : undefined,
     )
   return body as T
 }

@@ -67,6 +67,7 @@ export function CheckoutForm() {
   const [error, setError] = useState('')
   const [pending, setPending] = useState(false)
   const [uncertain, setUncertain] = useState(false)
+  const [reviewOrderId, setReviewOrderId] = useState<string | null>(null)
   const [saved, setSaved] = useState(false)
   const [intent, setIntent] = useState<PaymentIntentClient | null>(null)
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
@@ -258,8 +259,8 @@ export function CheckoutForm() {
     }
   }
 
-  const startPayment = async () => {
-    if (submitting.current || uncertain) return
+  const startPayment = async (opts?: { resume?: boolean }) => {
+    if (submitting.current || (uncertain && !opts?.resume)) return
     if (!validateAll()) { setError('Please complete the highlighted fields.'); return }
     if (cartPending) { setError('Delivery is updating. Please try again when it finishes.'); return }
     if (!saved) { if (await handleFormSubmit()) setError('Review the delivery and payment options, then confirm your order.'); return }
@@ -296,11 +297,12 @@ export function CheckoutForm() {
       setPending(false)
       if (
         e instanceof BrowserCommerceError &&
-        ['NETWORK_ERROR', 'SERVER_ERROR', 'UNKNOWN'].includes(e.code)
+        ['NETWORK_ERROR', 'SERVER_ERROR', 'UNKNOWN', 'PAYMENT_REVIEW_REQUIRED', 'PAYMENT_SESSION_BUSY'].includes(e.code)
       ) {
         setUncertain(true)
+        if (e.orderId) setReviewOrderId(e.orderId)
         setError(
-          'We could not confirm the result. Contact Shams before trying again to avoid a duplicate order.',
+          e.code === 'PAYMENT_REVIEW_REQUIRED' || e.code === 'PAYMENT_SESSION_BUSY' ? e.message : 'We could not confirm the result. Contact Shams before trying again to avoid a duplicate order.',
         )
       } else submitting.current = false
     }
@@ -535,7 +537,7 @@ export function CheckoutForm() {
       {saved && cart?.rates.length ? (
         <div className="space-y-2">
           <p className="text-xs font-medium">Delivery method</p>
-          <div className="flex flex-col gap-1.5 sm:flex-row sm:flex-wrap">
+          <div className="grid grid-cols-1 items-start gap-2 lg:grid-cols-2">
             {cart.rates.map((rate) => (
               <label
                 key={rate.id}
@@ -571,14 +573,14 @@ export function CheckoutForm() {
 
       <div className="space-y-2">
         <p className="text-xs font-medium">Payment method</p>
-        <div className="flex flex-col gap-1.5 sm:flex-row sm:flex-wrap">
+        <div className="grid grid-cols-1 items-start gap-2 lg:grid-cols-2">
           {config.data?.paymobOptions?.map((option) => {
             const Icon = option.kind === 'installments' ? Calendar : CreditCard
             return (
-              <label key={option.id} className={`flex min-h-20 cursor-pointer items-start gap-3 rounded-(--radius-control) border p-3 text-sm transition-colors sm:flex-1 ${method === option.id ? 'border-brand bg-brand/5' : 'hover:border-brand'}`}>
-                <input type="radio" name="payment" className="mt-1 size-4 accent-brand" checked={method === option.id} onChange={() => { setMethod(option.id); preloadPaymobPixel() }} />
+              <label key={option.id} className={`flex min-w-0 min-h-20 cursor-pointer items-start gap-3 rounded-(--radius-control) border p-3 text-sm transition-colors ${method === option.id ? 'border-brand bg-brand/5' : 'hover:border-brand'}`}>
+                <input type="radio" name="payment" disabled={uncertain || pending} className="mt-1 size-4 accent-brand" checked={method === option.id} onChange={() => { setMethod(option.id); preloadPaymobPixel() }} />
                 <Icon className="mt-0.5 size-5 shrink-0 text-brand-ink" />
-                <span><span className="block font-semibold">{option.title}</span><span className="mt-1 block text-xs leading-5 text-muted-foreground">{option.description}</span></span>
+                <span className="min-w-0"><span className="block font-semibold">{option.title}</span><span className="mt-1 block text-xs leading-5 text-muted-foreground">{option.description}</span></span>
               </label>
             )
           })}
@@ -596,6 +598,7 @@ export function CheckoutForm() {
                   type="radio"
                   className="size-3.5 accent-brand"
                   name="payment"
+                  disabled={uncertain || pending}
                   checked={method === id}
                   onChange={() => setMethod(id)}
                 />
@@ -619,7 +622,7 @@ export function CheckoutForm() {
           <p role="alert" className="rounded-(--radius-control) bg-danger-muted p-2.5 text-xs text-danger">
             {error}
           </p>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             {!uncertain && (
               <button
                 onClick={() => { setError(''); startPayment() }}
@@ -629,12 +632,22 @@ export function CheckoutForm() {
                 Try again
               </button>
             )}
-            <button
+            {!uncertain && <button
               onClick={() => { setError(''); setMethod('') }}
               className="min-h-8 rounded-(--radius-control) border px-3 text-xs"
             >
               Change method
-            </button>
+            </button>}
+            {uncertain && reviewOrderId && (
+              <button
+                type="button"
+                onClick={() => { submitting.current = false; setError(''); void startPayment({ resume: true }) }}
+                disabled={pending}
+                className="min-h-11 rounded-(--radius-control) bg-brand px-4 text-sm font-semibold text-brand-foreground disabled:opacity-60"
+              >
+                {pending ? 'Preparing…' : `Complete payment for Order #${reviewOrderId}`}
+              </button>
+            )}
             <Link
               href="/support"
               className="inline-flex min-h-8 items-center px-1 text-xs text-brand-ink underline underline-offset-2"
@@ -642,6 +655,11 @@ export function CheckoutForm() {
               Support
             </Link>
           </div>
+          {uncertain && reviewOrderId && (
+            <p className="text-[11px] text-muted-foreground">
+              No new order will be created — this resumes Order #{reviewOrderId} and shows the secure payment form.
+            </p>
+          )}
         </div>
       )}
 
@@ -653,7 +671,7 @@ export function CheckoutForm() {
 
       <button
         disabled={uncertain || pending}
-        onClick={startPayment}
+        onClick={() => void startPayment()}
         className="min-h-11 w-full rounded-(--radius-control) bg-brand px-6 text-sm font-semibold text-brand-foreground disabled:bg-muted disabled:text-muted-foreground"
       >
         {pending

@@ -1,6 +1,6 @@
 # Shams headless — agent entry point
 
-Read [docs/START-HERE.md](docs/START-HERE.md) before changing this repository. Read the linked API contract and runbook for the affected area. Qoder and other assistants can use [docs/QODER-START.md](docs/QODER-START.md) as an explicit onboarding prompt.
+Read [docs/START-HERE.md](docs/START-HERE.md) and the current [Qoder handoff](docs/QODER-HANDOFF-2026-09-19.md) before changing this repository. Read the linked API contract and runbook for the affected area. Qoder and other assistants can use [docs/QODER-START.md](docs/QODER-START.md) as an explicit onboarding prompt.
 
 - Follow the owner's latest instruction; reply in concise Egyptian Arabic unless asked otherwise.
 - Inspect `git status` and the relevant diff first. Uncommitted changes are existing work: never reset, overwrite, or reformat them wholesale.

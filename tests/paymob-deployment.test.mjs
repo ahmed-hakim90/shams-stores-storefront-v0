@@ -143,3 +143,168 @@ test('pending order shipping payload uses Woo REST string instance IDs and trust
   assert.deepEqual(posted.shipping_lines,[{method_id:id.split(':')[0],instance_id:instance,method_title:'Cairo',total:'85.00'}])
  }
 })
+
+test('failure after order creation requires review, retains claim and logs only safe stage context', async () => {
+ const normalization=await import('../lib/commerce/live/normalize.ts')
+ let writes=0,completed=0; const logs=[]; const original=console.error
+ const route=moduleAt('../app/api/payments/intention/route.ts',{
+  '@/lib/commerce/live/cart':{assertSameOrigin(){},getCart:async()=>({lines:[{productId:'1',quantity:1,total:100}],total:100,coupons:[],rates:[],errors:[],needsShipping:false})},
+  '@/lib/commerce/live/errors':{CommerceFault:Fault,errorResponse:e=>Response.json({code:e.code,error:e.message},{status:e.status})},
+  '@/lib/commerce/live/normalize':normalization,
+  '@/lib/payments/orders':{createPendingOrder:async()=>{writes++;return {orderId:'123',currency:'EGP',amountCents:10000,items:[],billing:{}}}},
+  '@/lib/payments/paymob/provider':{createPaymobProvider:()=>({createIntention:async()=>{throw new Fault('NETWORK_ERROR','secret provider detail',503)}})},
+  '@/lib/payments/paymob/config':{paymobEnabled:()=>true,paymobConfig:()=>({})},
+  '@/lib/payments/paymob/settings':{paymobOptions:async()=>[{id:'paymob-card',integrationIds:[1]}]},
+  '@/lib/payments/order-contract':{paymentCartSnapshot},
+  '@/lib/payments/session':{paymentClaim:async()=>({claimed:true}),completeClaim:async()=>completed++},
+  '@/lib/rate-limit':{rateLimit:()=>({success:true})},
+ })
+ try {
+  console.error=(...args)=>logs.push(args)
+  const response=await route.POST(new Request('https://store.example/api/payments/intention',{method:'POST',body:JSON.stringify({paymentMethod:'paymob-card',address:{firstName:'Test',lastName:'Test',email:'fixture@example.test',phone:'01000000000',state:'C',city:'Cairo',address1:'Fixture'}})}))
+  const body=await response.json();assert.equal(response.status,409);assert.equal(body.code,'PAYMENT_REVIEW_REQUIRED');assert.match(body.error,/#123/)
+  assert.equal(body.orderId,'123')
+  assert.equal(writes,1);assert.equal(completed,1);assert.equal(logs[0][1].stage,'create_intention')
+  assert.doesNotMatch(JSON.stringify(logs),/secret provider detail|fixture@example|01000000000/)
+ } finally {console.error=original}
+})
+
+const resumeHarness = async ({ claim, ownership = null, order, intention = null }) => {
+ const normalization = await import('../lib/commerce/live/normalize.ts')
+ const state = { ordersCreated: 0, providerCalls: 0, completed: 0, remembered: 0, metaWrites: [] }
+ const route = moduleAt('../app/api/payments/intention/route.ts', {
+  '@/lib/commerce/live/cart': { assertSameOrigin() {}, getCart: async () => ({ lines: [{ productId: '1', quantity: 1, total: 100 }], total: 100, coupons: [], rates: [], errors: [], needsShipping: false }) },
+  '@/lib/commerce/live/errors': { CommerceFault: Fault, errorResponse: e => Response.json({ code: e.code, error: e.message }, { status: e.status }) },
+  '@/lib/commerce/live/normalize': normalization,
+  '@/lib/payments/orders': {
+   createPendingOrder: async () => { state.ordersCreated++; return { orderId: '999', currency: 'EGP', amountCents: 10000, items: [], billing: {} } },
+   getWooOrder: async () => (order ? { ...order, meta: { ...order.meta } } : null),
+   updateWooOrder: async (id, patch) => { state.metaWrites.push(patch) },
+   rememberOrder: async () => { state.remembered++ },
+   readOwnershipCookie: async () => ownership,
+  },
+  '@/lib/payments/paymob/provider': { createPaymobProvider: () => ({ createIntention: async () => { state.providerCalls++; if (!intention) throw new Fault('SERVER_ERROR', 'provider down', 502); return intention } }) },
+  '@/lib/payments/paymob/config': { paymobEnabled: () => true, paymobConfig: () => ({ publicKey: 'pk' }) },
+  '@/lib/payments/paymob/settings': { paymobOptions: async () => [{ id: 'paymob-card', kind: 'card', integrationIds: [1] }] },
+  '@/lib/payments/order-contract': { paymentCartSnapshot },
+  '@/lib/payments/session': { paymentClaim: claim, completeClaim: async () => { state.completed++ } },
+  '@/lib/rate-limit': { rateLimit: () => ({ success: true }) },
+ })
+ const post = () => route.POST(new Request('https://store.example/api/payments/intention', { method: 'POST', body: JSON.stringify({ paymentMethod: 'paymob-card', address: { firstName: 'Test', lastName: 'Test', email: 'fixture@example.test', phone: '01000000000', state: 'C', city: 'Cairo', address1: 'Fixture' } }) }))
+ return { state, post }
+}
+const baseOrder = (meta = {}, status = 'pending') => ({ orderId: '123', orderKey: 'k', status, total: 100, amountCents: 10000, currency: 'EGP', email: 'f@e.t', meta, items: [{ name: 'x', amountCents: 10000, quantity: 1 }], billing: { firstName: 'T', lastName: 'T', email: 'f@e.t', phone: '01000000000', city: 'Cairo', state: 'C', street: 'S', postalCode: '' }, shipping: {} })
+const completeClaimFixture = { claimed: false, orderId: '123', key: 'k', fingerprint: 'f', token: 't' }
+const busyClaim = async () => { throw new Fault('PAYMENT_SESSION_BUSY', 'Payment is being prepared or needs review.', 409) }
+const intentionFixture = { id: 77, client_secret: 'cs2', intention_order_id: '55', payment_methods: [1] }
+
+test('total mismatch before any provider call keeps the claim running and skips compensation', async () => {
+ const normalization = await import('../lib/commerce/live/normalize.ts')
+ let writes = 0, completed = 0, providerCalls = 0
+ const route = moduleAt('../app/api/payments/intention/route.ts', {
+  '@/lib/commerce/live/cart': { assertSameOrigin() {}, getCart: async () => ({ lines: [{ productId: '1', quantity: 1, total: 100 }], total: 100, coupons: [], rates: [], errors: [], needsShipping: false }) },
+  '@/lib/commerce/live/errors': { CommerceFault: Fault, errorResponse: e => Response.json({ code: e.code, error: e.message }, { status: e.status }) },
+  '@/lib/commerce/live/normalize': normalization,
+  '@/lib/payments/orders': { createPendingOrder: async () => { writes++; return { orderId: '123', currency: 'EGP', amountCents: 999999, items: [], billing: {} } }, getWooOrder: async () => null, updateWooOrder: async () => {}, rememberOrder: async () => {}, readOwnershipCookie: async () => null },
+  '@/lib/payments/paymob/provider': { createPaymobProvider: () => ({ createIntention: async () => { providerCalls++; return {} } }) },
+  '@/lib/payments/paymob/config': { paymobEnabled: () => true, paymobConfig: () => ({}) },
+  '@/lib/payments/paymob/settings': { paymobOptions: async () => [{ id: 'paymob-card', kind: 'card', integrationIds: [1] }] },
+  '@/lib/payments/order-contract': { paymentCartSnapshot },
+  '@/lib/payments/session': { paymentClaim: async () => ({ claimed: true, key: 'k', fingerprint: 'f', token: 't' }), completeClaim: async () => { completed++ } },
+  '@/lib/rate-limit': { rateLimit: () => ({ success: true }) },
+ })
+ const response = await route.POST(new Request('https://store.example/api/payments/intention', { method: 'POST', body: JSON.stringify({ paymentMethod: 'paymob-card', address: { firstName: 'Test', lastName: 'Test', email: 'fixture@example.test', phone: '01000000000', state: 'C', city: 'Cairo', address1: 'Fixture' } }) }))
+ const body = await response.json()
+ assert.equal(response.status, 409)
+ assert.equal(body.code, 'PAYMENT_REVIEW_REQUIRED')
+ assert.equal(body.orderId, '123')
+ assert.equal(writes, 1); assert.equal(completed, 0); assert.equal(providerCalls, 0)
+})
+
+test('resume with a stored unexpired intention returns it without provider calls or new orders', async () => {
+ const { state, post } = await resumeHarness({
+  claim: async () => completeClaimFixture,
+  order: baseOrder({ _paymob_client_secret: 'cs', _paymob_intention_expires: String(Date.now() + 600000), _paymob_pixel_methods: ['card'] }),
+ })
+ const response = await post()
+ const body = await response.json()
+ assert.equal(response.status, 200)
+ assert.equal(body.clientSecret, 'cs')
+ assert.equal(body.orderId, '123')
+ assert.equal(state.providerCalls, 0); assert.equal(state.ordersCreated, 0); assert.equal(state.remembered, 1); assert.equal(state.completed, 0)
+})
+
+test('resume re-prepares the same order once and falls back to kind-based Pixel names', async () => {
+ const { state, post } = await resumeHarness({ claim: async () => completeClaimFixture, order: baseOrder(), intention: intentionFixture })
+ const response = await post()
+ const body = await response.json()
+ assert.equal(response.status, 200)
+ assert.equal(body.clientSecret, 'cs2')
+ assert.deepEqual(body.pixelMethods, ['card'])
+ assert.equal(body.orderId, '123')
+ assert.equal(state.ordersCreated, 0); assert.equal(state.providerCalls, 1); assert.equal(state.remembered, 1); assert.equal(state.completed, 0)
+ assert.equal(state.metaWrites.length, 2)
+ assert.equal(state.metaWrites[0].meta_data[0].key, '_paymob_prep')
+ const saved = Object.fromEntries(state.metaWrites[1].meta_data.map(m => [m.key, m.value]))
+ assert.equal(saved._paymob_intention_id, 77)
+ assert.equal(saved._paymob_intention_order_id, '55')
+ assert.deepEqual(saved._paymob_superseded_intentions, [])
+})
+
+test('resume cooldown and attempt cap bound provider retries', async () => {
+ const cooling = await resumeHarness({ claim: async () => completeClaimFixture, order: baseOrder({ _paymob_prep: { n: 1, ts: Date.now() } }), intention: intentionFixture })
+ const coolingResponse = await cooling.post()
+ assert.equal(coolingResponse.status, 429)
+ assert.equal(cooling.state.providerCalls, 0)
+ const capped = await resumeHarness({ claim: async () => completeClaimFixture, order: baseOrder({ _paymob_attempts: Array.from({ length: 5 }, (_, i) => ({ intentionId: `x${i}`, status: 'pending' })) }), intention: intentionFixture })
+ const cappedResponse = await capped.post()
+ const cappedBody = await cappedResponse.json()
+ assert.equal(cappedResponse.status, 409)
+ assert.equal(cappedBody.code, 'PAYMENT_REVIEW_REQUIRED')
+ assert.equal(capped.state.providerCalls, 0)
+})
+
+test('resume refuses orders that already have a result', async () => {
+ const { state, post } = await resumeHarness({ claim: async () => completeClaimFixture, order: baseOrder({}, 'processing'), intention: intentionFixture })
+ const response = await post()
+ const body = await response.json()
+ assert.equal(response.status, 409)
+ assert.match(body.error, /already has a result/)
+ assert.equal(body.orderId, '123')
+ assert.equal(state.providerCalls, 0)
+})
+
+test('running claim is unlocked through the ownership cookie and stays fail-closed without it', async () => {
+ const owned = await resumeHarness({ claim: busyClaim, ownership: { id: '123', key: 'k', email: 'f@e.t' }, order: baseOrder(), intention: intentionFixture })
+ const ownedResponse = await owned.post()
+ const ownedBody = await ownedResponse.json()
+ assert.equal(ownedResponse.status, 200)
+ assert.equal(ownedBody.clientSecret, 'cs2')
+ assert.equal(owned.state.ordersCreated, 0); assert.equal(owned.state.providerCalls, 1)
+ for (const ownership of [null, { id: '123', key: 'other', email: 'f@e.t' }]) {
+  const locked = await resumeHarness({ claim: busyClaim, ownership, order: baseOrder(), intention: intentionFixture })
+  const lockedResponse = await locked.post()
+  const lockedBody = await lockedResponse.json()
+  assert.equal(lockedResponse.status, 409)
+  assert.equal(lockedBody.code, 'PAYMENT_SESSION_BUSY')
+  assert.equal(locked.state.providerCalls, 0); assert.equal(locked.state.ordersCreated, 0)
+ }
+})
+
+test('intention parsing tolerates numeric ids, numeric strings and bare integration lists', async () => {
+ const { createPaymobClient } = moduleAt('../lib/payments/paymob/client.ts', { '../../commerce/live/errors': { CommerceFault: Fault } })
+ const cfg = config.paymobConfig(environment, [13])
+ const client = createPaymobClient(cfg, async () => Response.json({ id: 77, client_secret: 'cs', intention_order_id: '55', payment_methods: [13, 14] }))
+ const result = await client.createIntention({ amount: 100, payment_methods: [13] })
+ assert.equal(result.id, '77')
+ assert.equal(result.intention_order_id, 55)
+ assert.deepEqual(result.pixelMethods, [])
+ const bare = createPaymobClient(cfg, async () => Response.json({ id: 'a', client_secret: 'cs' }))
+ assert.deepEqual((await bare.createIntention({ amount: 100, payment_methods: [13] })).pixelMethods, [])
+})
+
+test('callbacks for superseded intentions still settle the order', () => {
+ const withLedger = { ...order, meta: { ...order.meta, _paymob_superseded_intentions: [{ intentionId: 'old', paymobOrderId: '98', supersededAt: 'now' }] } }
+ assert.deepEqual(reconcilePayment({ ...event, paymobOrderId: '98' }, withLedger), { action: 'apply', state: 'paid' })
+ assert.deepEqual(reconcilePayment({ ...event, paymobOrderId: '97' }, withLedger), { action: 'ignore' })
+})

@@ -44,6 +44,8 @@ export function createPaymobClient(
         data && typeof data === 'object'
           ? JSON.stringify((data as Record<string, unknown>).message ?? '')
           : ''
+      // Provider rejection text only; never request bodies, headers or customer data.
+      console.error('[paymob-reject]', { status: response.status, detail: detail.slice(0, 300) })
       throw new CommerceFault(
         'PAYMENT_FAILED',
         detail
@@ -52,6 +54,9 @@ export function createPaymobClient(
         response.status === 429 ? 429 : 502,
       )
     }
+    // Key names only: reveals the live response shape without values or secrets.
+    if (data && typeof data === 'object')
+      console.error('[paymob-intention-shape]', { keys: Object.keys(data as Record<string, unknown>) })
     return data as T
   }
 
@@ -68,18 +73,26 @@ export function createPaymobClient(
           502,
         )
       return {
-        id: typeof data.id === 'string' ? data.id : '',
+        id:
+          typeof data.id === 'string'
+            ? data.id
+            : typeof data.id === 'number'
+              ? String(data.id)
+              : '',
         client_secret: clientSecret,
         pixelMethods: Array.isArray(data.payment_methods)
           ? [...new Set(data.payment_methods.flatMap((m: unknown) => {
               if (!m || typeof m !== 'object') return []
               const method = m as Record<string, unknown>
               return typeof method.name === 'string' && config.integrationIds.includes(Number(method.integration_id)) ? [method.name.toLowerCase()] : []
-            }))] : [],
+            }))]
+          : [],
         intention_order_id:
           typeof data.intention_order_id === 'number'
             ? data.intention_order_id
-            : undefined,
+            : typeof data.intention_order_id === 'string' && /^\d+$/.test(data.intention_order_id)
+              ? Number(data.intention_order_id)
+              : undefined,
         status: typeof data.status === 'string' ? data.status : undefined,
       }
     },

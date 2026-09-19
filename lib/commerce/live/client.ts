@@ -55,7 +55,9 @@ export async function request(
       message = body.message ?? ''
     } catch {}
     const status = response.status
-    const kind = /cart.*token|token.*cart/.test(code)
+    const paymentReview = ['payment_session_changed', 'payment_order_conflict'].includes(code)
+    const sessionBusy = code === 'payment_session_busy'
+    const kind = paymentReview ? 'PAYMENT_REVIEW_REQUIRED' : sessionBusy ? 'PAYMENT_SESSION_BUSY' : /cart.*token|token.*cart/.test(code)
       ? 'SESSION_EXPIRED'
       : status === 429
         ? 'RATE_LIMITED'
@@ -79,7 +81,7 @@ export async function request(
               ? 'Your session could not be verified. Please refresh and try again.'
               : 'The store could not complete this request. Please try again.'
       ),
-      status === 404 ? 404 : status === 400 ? 400 : status === 429 ? 429 : 502,
+      paymentReview || sessionBusy ? 409 : status === 404 ? 404 : status === 400 ? 400 : status === 429 ? 429 : 502,
     )
   }
   let data: unknown

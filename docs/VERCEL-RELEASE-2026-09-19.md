@@ -75,3 +75,5 @@ Existing failed attempt may leave a durable running claim because claim precedes
 Shipping hotfix promoted successfully as dpl_2d2xpHr1MNjxAPZTZqAf5gUt5Tg8. Real order/payment not performed. Historical payment claim still requires operational review.
 
 Bank-transfer UI deployed/promoted: dpl_CqxDjNd5Cf1bpwcXqajbzCY8T4Sz. Build and promotion successful. 61 headless tests, TypeScript, 97 WordPress tests and 11 PHP syntax checks passed. Account display requires Commerce UX 0.8.3 (prepared package, not installed); no hardcoded fallback numbers. Component fixture reviewed at four sizes. No actual order/payment submitted.
+
+Review-state/UI follow-up: dpl_7nnFbL54CYGVjjKmv5Bmy5wzaQRE built successfully, with 62 tests and TypeScript passed. Adds safe stage diagnostics and PAYMENT_REVIEW_REQUIRED after a claimed preparation failure; grid layout avoids compressed payment columns. Read-only Woo inspection found pending headless orders 30309/30310 without saved intention metadata. No claim/order changes or payment performed; root provider-stage failure remains unconfirmed. Fixture visual check at mobile/desktop; not an end-to-end payment test.

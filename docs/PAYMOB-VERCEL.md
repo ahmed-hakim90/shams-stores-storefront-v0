@@ -1,3 +1,5 @@
+> الحالة المعتمدة الأحدث: [تسليم Qoder](QODER-HANDOFF-2026-09-19.md). الأقسام التاريخية لا تعني أن الدفع ما زال مغلقًا أو أن 1.2.0 صالح للتثبيت. استخدم Headless 1.2.1 وCommerce UX 0.8.3 للحقول الجديدة.
+
 > العرض المحلي: `PAYMOB_INSTALLMENT_DISPLAY_ENABLED=true` يسمح بتنويه التقسيط من طرق WooCommerce المفعلة والقائمة المعتمدة، بدون مفاتيح Paymob أو فتح إنشاء الدفعات. يعيد checkout API الحقل `installmentAvailable` منفصلًا عن `paymob`. عند إغلاق الدفع يوضح التنويه أن الدفع أونلاين غير مفعّل. فشل المصدر يخفي التنويه. الإعداد مفعّل محليًا وفي متغيرات Production؛ راجع تقرير النشر لحالة النسخة.
 
 > تصحيح تفعيل 19 سبتمبر: استخدم [Shams Headless 1.2.1](../wordpress-plugin/shams-headless-1.2.1.zip)، وليس 1.2.0. عولج تكرار `Shams_Auth::register()`؛ [السبب والفحوص](../wordpress-plugin/shams-headless-1.2.1-release.md). ادعاء نجاح syntax للإصدار السابق كان غير صحيح بسبب exit code مضلل من PHP-WASM.
@@ -55,7 +57,7 @@ Preview: استخدم Test keys وTest IDs وWordPress staging؛ المشروع 
 ## ترتيب الرفع
 
 1. احتفظ بنسخة البلاجن النشط والواجهة الحالية وخطة rollback. لا توجد عملية نشر أو تفعيل ضمن هذا التنفيذ.
-2. ثبّت [Shams Headless 1.2.0](../wordpress-plugin/shams-headless-1.2.0.zip) في البيئة المقصودة قبل تفعيل Paymob. النسخة تضيف تنسيق الطلبات في قاعدة WordPress؛ الإصدارات 1.1.x لا تكفي لهذا المسار.
+2. ثبّت [Shams Headless 1.2.1](../wordpress-plugin/shams-headless-1.2.1.zip) في البيئة المقصودة قبل تفعيل Paymob. النسخة تضيف تنسيق الطلبات في قاعدة WordPress؛ الإصدارات 1.1.x لا تكفي لهذا المسار.
 3. Vercel: Framework = Next.js، جذر هذا المستودع، تثبيت من lockfile ومدير pnpm المحدد في package.json، Build = pnpm build، Output الافتراضي. استخدم Node المدعوم من المشروع وFluid compute؛ routes الدفع تضبط Node runtime وmaxDuration=180.
 4. أضف متغيرات البيئة بأسماء الجدول، ثم أنشئ deployment جديدًا لتطبيقها. لا تعدّل callbacks المشتركة مع Woo الحالي اعتباطيًا.
 5. اختبر وصول POST العام إلى `<NEXT_PUBLIC_APP_URL>/api/payments/paymob/webhook`. حماية Preview/Firewall يجب أن تسمح بالـ callback في بيئة اختبار مصرح بها؛ لا تعطل حماية المشروع كله. الطلب غير الموقع يجب أن يرفض.
@@ -69,7 +71,8 @@ Preview: استخدم Test keys وTest IDs وWordPress staging؛ المشروع 
 ## سلوك الكود
 
 - SDK مثبت على paymob-pixel 1.2.7 من CDN. الـ bundle يسجل window.Pixel ويستقبل elementId؛ لا named export ولا mount/render API كما افترض التنفيذ السابق.
-- أسماء paymentMethods تؤخذ من استجابة Intention للتكاملات المختارة. البنوك والمدد والرسوم يعرضها Pixel من Paymob؛ لا أقساط محسوبة بقسمة السعر ولا وعود «بدون فوائد».
+- أسماء paymentMethods تؤخذ من استجابة Intention للتكاملات المختارة. البنوك والمدد والرسوم يعرضها Pixel من Paymob؛ لا أقساط محسوبة بقسمة السعر ولا وعود «بدون فوائد». لو جاءت الاستجابة بلا أسماء قابلة للقراءة يُستخدم اسم مشتق من نوع الخيار (`card`/`installments`)؛ لو اختلف عن اسم Paymob الحقيقي يظهر تنبيه «payment controls have not loaded» بدل فورم فارغ صامت.
+- تحليل استجابة Intention متسامح: `id` رقم أو نص، `intention_order_id` رقم أو نص رقمي، و`payment_methods` كائنات أو قوائم ids؛ الشرط الصلب الوحيد `client_secret` نص غير فارغ. سجلان تشخيصيان بدون بيانات عميل أو مفاتيح: `[paymob-reject]` (حالة الرفض ورسالة Paymob مقتطعة 300 حرف) و`[paymob-intention-shape]` (أسماء مفاتيح الاستجابة فقط).
 - الهاتف إجباري للجميع. Paymob يطلب اسم العائلة وبريدًا صالحًا؛ يظهران مطلوبين لهذه الطريقة فقط. نقص البيانات يظهر أخطاء عند الضغط ولا يعطل التأكيد مسبقًا.
 - إنشاء Intention يتحقق من switches والطريقة والعنوان والسلة قبل أي order write. السعر من Woo ويُقارن بإجمالي السلة؛ اختلافه يوقف الدفع للمراجعة.
 - استُبدل الاعتماد على الذاكرة المحلية بclaim دائم عبر `/wp-json/wc/v3/shams-headless/payment-sessions`، محمي بصلاحية manage_woocommerce ومصادقة Woo REST. مفتاحه hash جلسة السلة، وبصمته بيانات الطلب؛ لا بيانات شخصية خام في option.
@@ -81,7 +84,9 @@ Preview: استخدم Test keys وTest IDs وWordPress staging؛ المشروع 
 
 لا تمسح claim أو تعيد محاولة دفع جديدة لمجرد timeout. العامل قد يكون أكمل إنشاء الطلب/Intention قبل انقطاع الرد. افحص Woo وPaymob أولًا وطابق order ID وtransaction؛ لا تسجل مفاتيح أو client_secret في تذكرة/شات.
 
-الحالات running العالقة، انتهاء Intention، أو تعديل سلة مرتبطة بدفع جارٍ تحتاج معالجة تشغيلية؛ لا يوجد زر تلقائي لإنشاء محاولة جديدة ولا job لحذف claims. لا تدّعِ أن التنسيق الحالي مدير شامل لاسترداد كل حالات checkout. قراءة الإيصال المؤكد تنهي جلسة السلة المدفوعة فقط إذا طابقت snapshot الطلب؛ لا تمسح تعديلات من تبويب آخر. إذا اختلفت السلة يحتفظ بها ويحتاج انتقالها لجلسة دفع جديدة مراجعة. دورة تجديد الجلسات واستعادتها تحتاج اختبار staging قبل اعتماد الإطلاق.
+الاستئناف على نفس الطلب (مطبق في الكود 19 سبتمبر 2026): أي فشل بعد إنشاء الطلب وفي مراحل التجهيز ينفذ `completeClaim` معوّض فيرتبط الـ claim بالطلب (`complete`) بدل البقاء `running` للأبد؛ الـ mutex الذري يبقى `running` طوال التجهيز نفسه فلا ينشأ intention موازٍ. بعدها أي طلب بنفس البصمة يستأنف **نفس الطلب**: سر مخزن صالح يُعاد استخدامه، وإلا إعادة تجهيز بحدود cooldown ‏20 ثانية (`_paymob_prep`) وسقف 5 محاولات وdedupe داخل الـ worker؛ لا يُنشأ طلب ثانٍ أبدًا. الجلسة العالقة بـ `payment_session_busy` تُفك عبر كوكي الملكية `shams-order` بعد التحقق من `order_key` وحالة pending/on-hold؛ بدون الكوكي أو مع عدم تطابقه تبقى fail-closed. الواجهة تعرض زر «Complete payment for Order #X» في الحالة غير المؤكدة فقط عندما يرسل السيرفر `orderId`، مع نص يؤكد أن لا طلب جديد سينشأ؛ وبعد reload يعمل زر Pay العادي عبر نفس مسار الاستئناف طالما طابقت البصمة.
+
+ما يبقى fail-closed أو يدويًا: تغيّر السلة/العنوان/الطريقة بعد بدء الدفع (`payment_session_changed`)، طلب خرج من pending/on-hold («له نتيجة بالفعل»)، hard-kill للـ worker قبل الـ catch، والجلسات العالقة قبل هذا الحل. لا يوجد job لحذف claims ولا مسح تلقائي؛ أي تدخل في خيارات `shams_payment_*` أو إلغاء طلبات عالقة قرار تشغيلي مصرح من المالك.
 
 إذا انقطع worker أثناء webhook قد يبقى mutex؛ بعد التأكد أنه لا توجد معالجة جارية، يمكن للمشغل المخول مراجعة option `shams_payment_` الصحيح وإتاحة إعادة callback وفق إجراء مراقب. لا حذف جماعي، ولا تغيّر order إلى paid من واجهة النجاح. الدفع/refund/reconciliation اليدوي يحتاج تصريح المالك.
 

@@ -6,7 +6,8 @@
 
 ```text
 أنت تعمل على Shams Stores headless storefront.
-اقرأ أولًا AGENTS.md ثم docs/START-HERE.md، وdocs/API-INTEGRATION.md
+اقرأ أولًا AGENTS.md ثم docs/QODER-HANDOFF-2026-09-19.md،
+وdocs/QODER-ISSUES.md وdocs/QODER-PLUGIN-GUIDE.md ثم docs/API-INTEGRATION.md
 وdocs/DEVELOPMENT-RUNBOOK.md وdocs/PAYMOB-VERCEL.md، ثم التقرير الحالي المرتبط بها.
 
 قبل التعديل افحص git status وgit diff للملفات ذات الصلة. توجد تعديلات
@@ -22,7 +23,7 @@
 
 مصدر Commerce UX في مستودع WordPress المنفصل؛ Shams Headless في
 wordpress-plugin/shams-headless داخل هذا المستودع. لا تخلط ملكية البلاجنين.
-المفضلة تتطلب 1.1.1 أو أحدث، والدفع الجديد يتطلب Shams Headless 1.2.0؛
+المفضلة تتطلب 1.1.1 أو أحدث، والدفع الجديد يتطلب Shams Headless 1.2.1؛
 Paymob داخل الموقع عبر Pixel مع فصل Test/Live، ولا hosted redirect افتراضي؛
 لا تدمج مخازن المفضلة ولا تفعّل بلاجن ولا تنشر ولا تنشئ طلبات دون تصريح.
 لا تعرض الأسرار أو محتويات env أو إعدادات Qoder الخاصة.
@@ -33,6 +34,12 @@ Paymob داخل الموقع عبر Pixel مع فصل Test/Live، ولا hosted 
 
 المهمة المطلوبة الآن: [اكتب المهمة وحدودها هنا]
 ```
+
+## المراجع الحالية
+
+- [الحالة الحالية والإنتاج](QODER-HANDOFF-2026-09-19.md)
+- [المشاكل وأسبابها ومعايير الإغلاق](QODER-ISSUES.md)
+- [تطوير وبناء واختبار البلاجن](QODER-PLUGIN-GUIDE.md)
 
 ## اختيار المهمة التالية
 
