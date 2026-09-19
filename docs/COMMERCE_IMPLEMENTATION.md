@@ -84,3 +84,8 @@ Store pickup remains unavailable because a public sanitized branch directory and
 - Local Next 16.3.3 documentation and [Next Image](https://nextjs.org/docs/app/api-reference/components/image): bounded public fetch TTL, no-store session data, remotePatterns and responsive sizes.
 - [TanStack Query infinite queries](https://tanstack.com/query/latest/docs/framework/react/guides/infinite-queries): existing React/Next-compatible dependency selected for pagination, deduplication and mutation state; no URL-state, carousel or search-index dependency added.
 - [Base UI Drawer](https://base-ui.com/react/components/drawer): reuse installed accessible primitives for focus management and mobile overlays.
+
+
+## Shams content integration — 2026-09-19
+
+See [implementation and release gates](HEADLESS-IMPLEMENTATION-2026-09-19.md) for the current content API integration, no-store batch enrichment, verified checkout validation, Shams Headless 1.1.1 wishlist namespace, and remaining localization/staging work. This update supersedes the old PDP warranty metadata mapping and hardcoded display assurances.

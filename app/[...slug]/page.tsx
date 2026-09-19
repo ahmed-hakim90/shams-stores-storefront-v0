@@ -1,3 +1,7 @@
+import { contentPage, siteContent } from '@/lib/commerce/live/shams-content'
+import { mapSiteContent, storefrontLink } from '@/lib/commerce/live/shams-contract'
+import { text } from '@/lib/commerce/live/normalize'
+import { ManagedContent } from '@/components/shams/live/managed-content'
 import { commerceProvider, serverProducts } from '@/lib/commerce/server'
 import { getProduct, terms } from '@/lib/commerce/live/catalog'
 import Link from 'next/link'
@@ -78,14 +82,21 @@ type PageProps = {
 
 export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params
+  if (commerceProvider() === 'woocommerce' && slug.length === 1 && ['about', 'contact', 'support', 'terms', 'privacy', 'shipping', 'returns', 'payment', 'warranty', 'faq', 'guides'].includes(slug[0])) {
+    const page = await contentPage(slug[0])
+    if (page) {
+      const seo = page.seo_overrides as Record<string, string> | null
+      return { title: seo?.title || text(page.title), description: seo?.description || text(page.content_html).slice(0, 160), alternates: { canonical: `/${slug[0]}` }, ...(seo?.og_image ? { openGraph: { images: [seo.og_image] } } : {}) }
+    }
+  }
   if (commerceProvider() === 'woocommerce' && slug[0] === 'p') {
     const product = await getProduct(slug[1])
     if (product)
       return {
-        title: product.name,
-        description: product.shortDescription?.slice(0, 160),
+        title: product.seoOverrides?.title || product.name,
+        description: product.seoOverrides?.description || product.shortDescription?.slice(0, 160),
         alternates: { canonical: `/p/${product.slug}` },
-        openGraph: { images: [product.image] },
+        openGraph: { images: [product.seoOverrides?.og_image || product.image] },
       }
   }
   if (
@@ -228,6 +239,15 @@ export default async function StorefrontRoute({
   const [section, value] = slug
   if (!section) notFound()
   if (commerceProvider() === 'woocommerce') {
+    if (slug.length === 1 && ['about', 'contact', 'support', 'terms', 'privacy', 'shipping', 'returns', 'payment', 'warranty', 'faq', 'guides'].includes(section)) {
+      const page = await contentPage(section)
+      if (page) return <ManagedContent title={text(page.title)} html={String(page.content_html)} />
+      if (['terms', 'privacy', 'shipping', 'returns', 'payment', 'warranty'].includes(section)) return <div className="shams-container py-12"><h1 className="text-2xl font-semibold">{section.charAt(0).toUpperCase() + section.slice(1)}</h1><p className="mt-4">This information is currently unavailable. Please contact Shams to confirm the details before ordering.</p><Link href="/support" className="mt-4 inline-flex min-h-11 items-center text-brand-ink underline">Contact support</Link></div>
+    }
+    if (section === 'branches') {
+      const shell = mapSiteContent(await siteContent())
+      if (shell.branches.length) return <div className="shams-container py-8"><h1 className="mb-6 text-3xl font-semibold">Visit Shams</h1><div className="grid gap-6 md:grid-cols-2">{shell.branches.map(b => <article key={b.name} dir="auto" className="shams-panel p-6"><h2 className="text-xl font-semibold">{b.name}</h2><p className="mt-2">{b.address}</p><p className="mt-2 whitespace-pre-line">{b.hours}</p>{b.phones.map(phone => <a key={phone} href={`tel:${phone.replace(/[^+0-9]/g, '')}`} className="mt-2 block text-brand-ink underline">{phone}</a>)}{b.map && <a href={b.map} className="mt-4 inline-flex min-h-11 items-center text-brand-ink underline">Open map</a>}</article>)}</div></div>
+    }
     const query = await searchParams
     if (section === 'p') {
       const product = await getProduct(value ?? '')

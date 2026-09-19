@@ -29,6 +29,26 @@ class Shams_Customer {
             ],
         ]);
 
+        register_rest_route('shams/v1', '/customer/wishlist', [
+            [
+                'methods' => 'GET',
+                'callback' => [__CLASS__, 'get_wishlist'],
+                'permission_callback' => [__CLASS__, 'auth'],
+            ],
+            [
+                'methods' => 'POST',
+                'callback' => [__CLASS__, 'add_to_wishlist'],
+                'permission_callback' => [__CLASS__, 'auth'],
+            ],
+        ]);
+
+        register_rest_route('shams/v1', '/customer/wishlist/(?P<product_id>\d+)', [
+            'methods' => 'DELETE',
+            'callback' => [__CLASS__, 'remove_from_wishlist'],
+            'permission_callback' => [__CLASS__, 'auth'],
+        ]);
+        // Legacy aliases only when Commerce UX does not own these paths.
+        if (!class_exists('Shams_CUX_REST')) {
         register_rest_route('shams/v1', '/wishlist', [
             [
                 'methods' => 'GET',
@@ -47,6 +67,7 @@ class Shams_Customer {
             'callback' => [__CLASS__, 'remove_from_wishlist'],
             'permission_callback' => [__CLASS__, 'auth'],
         ]);
+        }
     }
 
     public static function auth($request) {

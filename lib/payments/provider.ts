@@ -50,6 +50,10 @@ export type ParsedWebhook =
       success: boolean
       pending: boolean
       refunded: boolean
+      voided: boolean
+      authorized: boolean
+      captured: boolean
+      integrationId: number
       reason?: string
     }
   | { verified: false }

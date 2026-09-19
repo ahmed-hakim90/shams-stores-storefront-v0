@@ -86,7 +86,7 @@ export function parseTransactionCallback(
     payload && typeof payload === 'object'
       ? ((payload as Record<string, unknown>).obj as PaymobTransactionObj)
       : undefined
-  if (!obj || typeof obj !== 'object') return { verified: false }
+  if (!payload || typeof payload !== 'object' || (payload as Record<string, unknown>).type !== 'TRANSACTION' || !obj || typeof obj !== 'object') return { verified: false }
   if (!verifyCallbackHmac(obj, receivedHmac, secret)) return { verified: false }
   return {
     verified: true,
@@ -98,6 +98,10 @@ export function parseTransactionCallback(
     success: obj.success === true,
     pending: obj.pending === true,
     refunded: obj.is_refunded === true,
+    voided: obj.is_voided === true,
+    authorized: obj.is_auth === true,
+    captured: obj.is_capture === true,
+    integrationId: Number(obj.integration_id),
     reason: obj.error_occured
       ? 'Payment provider reported an error.'
       : undefined,

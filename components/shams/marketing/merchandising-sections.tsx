@@ -619,7 +619,7 @@ export function GearGuides() {
               </p>
             </div>
             <span className="mt-4 inline-flex items-center gap-1.5 text-xs font-semibold text-accent-foreground">
-              Read the guide
+              Explore this gear
               <ArrowRight className="size-3" />
             </span>
           </div>

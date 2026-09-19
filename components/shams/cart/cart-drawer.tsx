@@ -191,7 +191,8 @@ export function CartDrawer({ showTrigger = true }: { showTrigger?: boolean }) {
             <footer className="border-t p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
               {(() => {
                 const subtotal = cart?.subtotal ?? cartLines.reduce((s, l) => s + l.price * l.quantity, 0)
-                const threshold = theme.cart.freeShippingThreshold
+                const threshold: number = theme.cart.freeShippingThreshold
+                if (threshold <= 0) return null
                 const remaining = threshold - subtotal
                 const progress = Math.min(subtotal / threshold, 1)
                 return remaining > 0 ? (

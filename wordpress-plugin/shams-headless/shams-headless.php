@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Shams Stores Headless Control
  * Description: Full control panel for headless storefront — auth, customers, orders, products, settings
- * Version: 1.1.0
+ * Version: 1.2.0
  * Author: Shams Stores
  * Text Domain: shams-headless
  * Requires PHP: 8.0
@@ -19,7 +19,7 @@ if (version_compare(PHP_VERSION, '8.0', '<')) {
 }
 
 if (!defined('SHAMS_HEADLESS_VERSION')) {
-    define('SHAMS_HEADLESS_VERSION', '1.1.0');
+    define('SHAMS_HEADLESS_VERSION', '1.2.0');
 }
 if (!defined('SHAMS_HEADLESS_PATH')) {
     define('SHAMS_HEADLESS_PATH', plugin_dir_path(__FILE__));
@@ -30,6 +30,7 @@ if (!defined('SHAMS_HEADLESS_URL')) {
 
 $includes = [
     'class-token.php',
+    'class-payment-sessions.php',
     'class-auth.php',
     'class-customer.php',
     'class-products.php',
@@ -83,6 +84,7 @@ class Shams_Headless {
         }
 
         try {
+            Shams_Payment_Sessions::register();
             Shams_Auth::register();
             Shams_Customer::register();
             Shams_Products::register();

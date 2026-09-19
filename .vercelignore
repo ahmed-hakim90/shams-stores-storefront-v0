@@ -1,0 +1,13 @@
+# Runtime source only: keep local credentials, agent settings and artifacts out.
+.env*
+.qoder/
+.git/
+.next/
+node_modules/
+docs/
+artifacts/
+vibe_images/
+wordpress-plugin/
+tests/
+*.tsbuildinfo
+*.log

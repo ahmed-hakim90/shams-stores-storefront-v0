@@ -14,6 +14,7 @@ export function ShamsLogo({ className }: { className?: string }) {
         alt="Shams Stores — PRO photo & Audio equipments"
         width={300}
         height={84}
+        loading="eager"
         unoptimized
         className="block h-auto w-full"
       />

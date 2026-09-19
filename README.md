@@ -1,5 +1,7 @@
 # shams-stores-storefront-v0
 
+ابدأ من [تسليم المشروع الحالي](docs/START-HERE.md). لمساعدي البرمجة: [تعليمات العمل](AGENTS.md) و[نص بداية Qoder](docs/QODER-START.md).
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [v0](https://v0.app).
 
 ## Built with v0

@@ -1,3 +1,6 @@
+import { cookies } from 'next/headers'
+import { getCart } from '@/lib/commerce/live/cart'
+import { ownsOrder, paymentCartSnapshot } from '@/lib/payments/order-contract'
 import { CommerceFault, errorResponse } from '@/lib/commerce/live/errors'
 import { text } from '@/lib/commerce/live/normalize'
 import { getWooOrder, readOwnershipCookie } from '@/lib/payments/orders'
@@ -30,6 +33,8 @@ export async function GET(
     if (!order)
       throw new CommerceFault('NOT_FOUND', 'Order not found.', 404)
 
+    if (!ownsOrder(ownership, order)) throw new CommerceFault('UNAUTHORIZED', 'We could not verify this order on this device.', 403)
+
     const view: PaymentStatusView = {
       orderId: order.orderId,
       state: derivePaymentState(order.status, text(order.meta._payment_status)),
@@ -37,7 +42,7 @@ export async function GET(
       total: order.total,
       currency: order.currency,
       provider: text(order.meta.payment_provider) || 'paymob',
-      method: text(order.meta._payment_method) || undefined,
+      method: text(order.meta._shams_payment_method) || text(order.meta._payment_method) || undefined,
       transactionId: text(order.meta._paymob_transaction_id) || undefined,
       paidAt: text(order.meta._payment_date) || undefined,
       reason: text(order.meta._payment_failure_reason) || undefined,
@@ -48,6 +53,17 @@ export async function GET(
       })),
       billing: order.billing,
       shipping: order.shipping,
+    }
+    // Retire this browser's paid cart once, without changing the order or
+    // deleting items the customer may have added in another tab.
+    const jar = await cookies()
+    if (view.state === 'paid' && jar.get('shams-checkout-session')?.value === orderId && jar.get('shams-cart-token')?.value && typeof order.meta._shams_payment_cart_snapshot === 'string') {
+      try {
+        if (paymentCartSnapshot(await getCart()) === order.meta._shams_payment_cart_snapshot) {
+          jar.delete('shams-cart-token')
+          jar.delete('shams-checkout-session')
+        }
+      } catch { /* A receipt remains readable when the cart service is down. */ }
     }
     return Response.json(view, { headers: { 'Cache-Control': 'no-store' } })
   } catch (e) {

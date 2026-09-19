@@ -1,4 +1,5 @@
 import 'server-only'
+import { orderMeta } from './order-contract'
 import { cookies } from 'next/headers'
 import { request } from '../commerce/live/client'
 import { addressPayload, getCart } from '../commerce/live/cart'
@@ -51,12 +52,7 @@ function cookieOptions() {
 }
 
 async function readMeta(raw: unknown): Promise<Record<string, unknown>> {
-  return Object.fromEntries(
-    array(record(raw).meta_data).map((m) => [
-      text(record(m).key),
-      record(m).value,
-    ]),
-  )
+  return orderMeta(raw)
 }
 
 function normalizeWooOrder(raw: unknown): PendingOrder {
@@ -137,11 +133,11 @@ export async function updateWooOrder(
 export async function createPendingOrder(input: {
   address: unknown
   note?: unknown
+  cart?: Awaited<ReturnType<typeof getCart>>
 }): Promise<PendingOrder> {
   const address = addressPayload(input.address)
   if (
     !address.first_name ||
-    !address.last_name ||
     !address.phone ||
     !address.state ||
     !address.city ||
@@ -153,7 +149,7 @@ export async function createPendingOrder(input: {
       400,
     )
 
-  const cart = await getCart()
+  const cart = input.cart ?? await getCart()
   if (!cart.lines.length)
     throw new CommerceFault('VALIDATION_ERROR', 'Your cart is empty.', 400)
   if (cart.needsShipping && !cart.rates.some((r) => r.selected))
@@ -163,21 +159,23 @@ export async function createPendingOrder(input: {
       400,
     )
 
-  const selectedRate = cart.rates.find((r) => r.selected)
+  if (cart.errors.length) throw new CommerceFault('VALIDATION_ERROR', 'Review the errors in your cart before paying.', 400)
+  const selectedRates = cart.rates.filter((r) => r.selected)
   const body: Record<string, unknown> = {
     payment_method: 'paymob',
-    payment_method_title: 'Paymob (card)',
+    payment_method_title: 'Paymob',
     status: 'pending',
     set_paid: false,
     currency: 'EGP',
     billing: address,
     shipping: address,
     customer_note: text(input.note).slice(0, 500),
-    // Simple products only (variations are non-purchasable in this catalog).
-    // WooCommerce re-prices each line from its own catalog — no browser price.
-    line_items: cart.lines.map((l) => ({
-      product_id: numeric(l.productId),
-      quantity: l.quantity,
+    line_items: await Promise.all(cart.lines.map(async (l) => {
+      const product = record((await request(`/wc/store/v1/products/${l.productId}`)).data)
+      const isVariation = product.type === 'variation'
+      const parentId = numeric(product.parent)
+      if (isVariation && !parentId) throw new CommerceFault('VALIDATION_ERROR', 'Review this product option before paying.', 400)
+      return { product_id: isVariation ? parentId : numeric(l.productId), ...(isVariation ? { variation_id: numeric(l.productId) } : {}), quantity: l.quantity }
     })),
     meta_data: [
       { key: 'payment_provider', value: 'paymob' },
@@ -187,14 +185,13 @@ export async function createPendingOrder(input: {
   }
   if (cart.coupons.length)
     body.coupon_lines = cart.coupons.map((code) => ({ code }))
-  if (cart.needsShipping && selectedRate)
-    body.shipping_lines = [
-      {
-        method_id: selectedRate.id,
-        method_title: selectedRate.name,
-        total: selectedRate.price.toFixed(2),
-      },
-    ]
+  if (cart.needsShipping)
+    body.shipping_lines = selectedRates.map(rate => ({
+      method_id: rate.id.split(':')[0],
+      instance_id: Number(rate.id.split(':')[1]) || 0,
+      method_title: rate.name,
+      total: rate.price.toFixed(2),
+    }))
 
   const created = record(
     (
@@ -232,21 +229,6 @@ export async function createPendingOrder(input: {
       502,
     )
   return order
-}
-
-// Idempotent entry point used by the intention route. If this device already
-// created a pending order for the current checkout session, reuse it instead of
-// creating a duplicate. Double-submit / retry therefore yields ONE Woo order.
-export async function ensurePendingOrder(input: {
-  address: unknown
-  note?: unknown
-}): Promise<PendingOrder> {
-  const existingId = (await cookies()).get(sessionCookie)?.value
-  if (existingId && /^\d+$/.test(existingId)) {
-    const existing = await getWooOrder(existingId)
-    if (existing && existing.status === 'pending') return existing
-  }
-  return createPendingOrder(input)
 }
 
 export async function readOwnershipCookie(): Promise<{
@@ -294,3 +276,9 @@ export async function appendPaymentAttempt(
   })
 }
 
+
+export async function rememberOrder(order: PendingOrder) {
+  const jar = await cookies()
+  jar.set(orderCookie, JSON.stringify({ id: order.orderId, key: order.orderKey, email: order.email }), cookieOptions())
+  jar.set(sessionCookie, order.orderId, cookieOptions())
+}

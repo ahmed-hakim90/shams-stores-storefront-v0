@@ -14,17 +14,16 @@ export const theme = {
   announcement: {
     enabled: true,
     messages: [
-      'Free shipping on orders over 5,000 EGP',
-      '15% off cameras — code: SHAMS15',
-      'Installments without interest up to 12 months',
+      'Photography, cinema & creator gear',
+      'Explore cameras, lenses, audio and lighting',
     ],
     autoRotate: true,
     rotateInterval: 5000,
   },
 
   cart: {
-    freeShippingThreshold: 5000,
-    trustCopy: 'Secure checkout \u00b7 Free returns within 14 days',
+    freeShippingThreshold: 0,
+    trustCopy: 'Shipping and payment options are confirmed at checkout',
   },
 
   badges: {
@@ -35,8 +34,6 @@ export const theme = {
 
   trustBadges: [
     { icon: 'Lock', label: 'Secure checkout' },
-    { icon: 'RefreshCw', label: '14-day returns' },
-    { icon: 'ShieldCheck', label: 'Official warranty' },
   ],
 
   newsletter: {

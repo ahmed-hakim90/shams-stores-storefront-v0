@@ -1,3 +1,6 @@
+import { siteContent } from '@/lib/commerce/live/shams-content'
+import { mapSiteContent } from '@/lib/commerce/live/shams-contract'
+import { SiteContentProvider } from '@/components/shams/providers/site-content-provider'
 import { CommerceQueryProvider, CookieConsent } from '@/components/shams/shared'
 import { commerceProvider } from '@/lib/commerce/server'
 import { Analytics } from '@vercel/analytics/next'
@@ -70,12 +73,13 @@ export const viewport: Viewport = {
   themeColor: '#F47A20',
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
   const liveMode = commerceProvider() === 'woocommerce'
+  const shell = mapSiteContent(liveMode ? await siteContent() : null)
   const origin = process.env.NEXT_PUBLIC_APP_URL || 'https://www.shams-stores.com'
   const orgSchema = {
     '@context': 'https://schema.org',
@@ -84,60 +88,26 @@ export default function RootLayout({
     url: origin,
     logo: `${origin}/brand/shams-icon-192.png`,
     description: 'Photography, cinema and creator equipment in Egypt.',
-    address: {
-      '@type': 'PostalAddress',
-      streetAddress: 'Downtown Cairo',
-      addressLocality: 'Cairo',
-      addressCountry: 'EG',
-    },
-    contactPoint: {
-      '@type': 'ContactPoint',
-      telephone: '+20-100-000-0000',
-      contactType: 'customer service',
-      areaServed: 'EG',
-      availableLanguage: ['Arabic', 'English'],
-    },
-  }
-  const localSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'LocalBusiness',
-    name: 'Shams Stores',
-    image: `${origin}/brand/shams-icon-192.png`,
-    url: origin,
-    telephone: '+20-100-000-0000',
-    priceRange: '$$',
-    address: {
-      '@type': 'PostalAddress',
-      addressLocality: 'Cairo',
-      addressCountry: 'EG',
-    },
-    geo: {
-      '@type': 'GeoCoordinates',
-      latitude: 30.0444,
-      longitude: 31.2357,
-    },
+    ...(shell.branches[0]?.phones[0] ? { contactPoint: { '@type': 'ContactPoint', telephone: shell.branches[0].phones[0], contactType: 'customer service' } } : {}),
   }
   return (
     <html lang="en" className={`light ${inter.variable}`}>
       <body className="antialiased">
-        <a href="#main-content" className="sr-only focus:not-sr-only fixed left-2 top-2 z-[200] rounded-(--radius-control) bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground">
-          Skip to content
-        </a>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify([orgSchema, localSchema]).replace(/</g, '\\u003c'),
+            __html: JSON.stringify(orgSchema).replace(/</g, '\\u003c'),
           }}
         />
         <CommerceQueryProvider>
-          <AuthProvider>
+          <SiteContentProvider value={shell}><AuthProvider>
             <InteractionShell
               liveMode={liveMode}
               footer={liveMode ? <LiveFooter /> : undefined}
             >
               {children}
             </InteractionShell>
-          </AuthProvider>
+          </AuthProvider></SiteContentProvider>
         </CommerceQueryProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}
         <CookieConsent />

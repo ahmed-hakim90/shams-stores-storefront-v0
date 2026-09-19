@@ -1,3 +1,5 @@
+import { InstallmentNotice } from '@/components/shams/payments/installment-notice'
+import { ProductAssurances } from './product-assurances'
 import { ProductImage as Image } from './product-image'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
@@ -36,7 +38,7 @@ export function ProductCard({
   return (
     <article
       className={cn(
-        'group shams-panel shams-product-card min-w-0 overflow-hidden transition-[border-color,box-shadow] duration-standard ease-out-expo hover:border-foreground',
+        'group shams-panel shams-product-card min-w-0 overflow-hidden transition-[border-color,box-shadow] duration-standard ease-out-expo',
         horizontal
           ? 'relative grid min-h-[180px] grid-cols-[minmax(96px,34%)_minmax(0,1fr)] sm:min-h-[180px] sm:grid-cols-[180px_minmax(0,1fr)]'
           : 'flex flex-col',
@@ -183,6 +185,7 @@ export function ProductCard({
             installmentFrom={product.installmentFrom}
             size="sm"
           />
+          <InstallmentNotice eligible={product.purchasable !== false && product.price.amount > 0 && product.stock !== 'out_of_stock'} href={`${productHref}#installments`} />
           <div className="mt-2 flex min-w-0 flex-wrap items-center gap-1.5">
             {horizontal && (
               <>
@@ -217,6 +220,7 @@ export function ProductCard({
             )}
           </div>
         </div>
+        <ProductAssurances value={product.assurances} />
       </div>
     </article>
   )

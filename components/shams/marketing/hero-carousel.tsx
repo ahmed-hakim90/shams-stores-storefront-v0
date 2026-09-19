@@ -1,4 +1,4 @@
-import { terms, listProducts } from '@/lib/commerce/live/catalog'
+import { terms } from '@/lib/commerce/live/catalog'
 import { primaryCategories } from '@/lib/commerce/navigation'
 import { HeroCarouselClient } from './hero-carousel-client'
 
@@ -15,6 +15,10 @@ export type HeroSlide = {
   categoryName: string
   categoryDescription: string
   bannerImage: string
+  mobileBannerImage?: string
+  imageAlt?: string
+  ctaHref?: string
+  ctaLabel?: string
   productName: string
   productSlug: string
   productPrice: string
@@ -28,13 +32,6 @@ export async function HeroCarousel() {
 
   const slides: HeroSlide[] = await Promise.all(
     categories.map(async (cat): Promise<HeroSlide> => {
-      const products = await listProducts({
-        category: cat.slug,
-        pageSize: 1,
-        sort: 'best-selling',
-      }).catch(() => ({ items: [], total: 0, hasNextPage: false }))
-
-      const hero = products.items[0]
       const bannerImage = bannerImages[cat.slug] ?? '/images/hero/cameras.png'
 
       return {
@@ -43,11 +40,9 @@ export async function HeroCarousel() {
         categoryName: cat.name,
         categoryDescription: cat.description || `Explore our ${cat.name} collection`,
         bannerImage,
-        productName: hero ? `${hero.brand} ${hero.name}`.slice(0, 50) : cat.name,
-        productSlug: hero?.slug ?? '',
-        productPrice: hero
-          ? `${hero.price.amount.toLocaleString()}`
-          : '',
+        productName: cat.name,
+        productSlug: '',
+        productPrice: '',
       }
     }),
   )

@@ -15,6 +15,7 @@ export function PaymentResult({ orderId }: { orderId: string }) {
     refetchInterval: (query) => {
       const d = query.state.data
       if (d && (d.state === 'paid' || d.state === 'failed')) return false
+      if (query.state.dataUpdateCount >= 40 || query.state.errorUpdateCount >= 3) return false
       const polls = query.state.dataUpdateCount
       return polls < 5 ? 1000 : 3000
     },
@@ -51,7 +52,7 @@ export function PaymentResult({ orderId }: { orderId: string }) {
               {q.data?.method && (
                 <div className="flex justify-between">
                   <dt className="text-muted-foreground">Payment</dt>
-                  <dd className="capitalize">{q.data.method === 'card' ? 'Credit card' : q.data.method === 'cod' ? 'Cash on delivery' : q.data.method}</dd>
+                  <dd className="capitalize">{q.data.method === 'installments' ? 'Bank installments' : q.data.method === 'card' ? 'Credit card' : q.data.method === 'cod' ? 'Cash on delivery' : q.data.method}</dd>
                 </div>
               )}
               {q.data?.paidAt && (
@@ -142,7 +143,7 @@ export function PaymentResult({ orderId }: { orderId: string }) {
           </h1>
           <p className="mt-2 text-xs leading-5 text-danger">
             {q.data?.reason ??
-              'Your payment was not completed. No amount was captured.'}
+              'Payment was not confirmed. Check with your bank or Shams before retrying.'}
           </p>
           <div className="mt-5 flex flex-wrap justify-center gap-2">
             <Link

@@ -70,6 +70,12 @@ export function createPaymobClient(
       return {
         id: typeof data.id === 'string' ? data.id : '',
         client_secret: clientSecret,
+        pixelMethods: Array.isArray(data.payment_methods)
+          ? [...new Set(data.payment_methods.flatMap((m: unknown) => {
+              if (!m || typeof m !== 'object') return []
+              const method = m as Record<string, unknown>
+              return typeof method.name === 'string' && config.integrationIds.includes(Number(method.integration_id)) ? [method.name.toLowerCase()] : []
+            }))] : [],
         intention_order_id:
           typeof data.intention_order_id === 'number'
             ? data.intention_order_id

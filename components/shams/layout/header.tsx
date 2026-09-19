@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useSiteContent } from '../providers/site-content-provider'
 import { useState, useEffect, useRef } from 'react'
 import {
   Heart,
@@ -71,6 +72,7 @@ function IconAction({
 }
 
 export function Header() {
+  const phone = useSiteContent().branches[0]?.phones[0]
   const { openWishlist, openCart, cartCount, wishlistCount, compareItems } =
     useInteractions()
   const { user, logout } = useAuth()
@@ -135,10 +137,10 @@ export function Header() {
               <MapPin className="size-3" /> Branches
             </Link>
             <Link
-              href="/support"
+              href={phone ? `tel:${phone.replace(/[^+0-9]/g, '')}` : "/support"}
               className="inline-flex items-center gap-1 font-medium hover:underline"
             >
-              <Phone className="size-3" /> 212-444-6615
+              <Phone className="size-3" /> {phone || 'Contact Shams'}
             </Link>
             <span className="text-on-dark-subtle">|</span>
             <span>EGP · English</span>

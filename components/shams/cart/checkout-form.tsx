@@ -1,7 +1,8 @@
 'use client'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import { useQuery } from '@tanstack/react-query'
+import { checkoutErrors, requiredCheckoutFields as requiredFields } from '@/lib/commerce/checkout-validation'
+import { useCheckoutConfig } from '@/components/shams/payments/use-checkout-config'
 import { useInteractions, useAuth, type SavedAddress } from '@/components/shams/providers'
 import { BrowserCommerceError, commerceFetch } from '@/lib/commerce/browser'
 import type { Address, CheckoutResult } from '@/lib/commerce/types'
@@ -10,7 +11,7 @@ import { formatEgp } from '@/lib/commerce'
 import { PaymobPixel, preloadPaymobPixel } from '@/components/shams/payments'
 import { Plus, User, Lock, Eye, EyeOff, X, Mail, ArrowRight, Banknote, Building2, CreditCard, Calendar } from 'lucide-react'
 
-const CARD_METHOD = 'paymob-card'
+const isPaymob = (method: string) => method === 'paymob-card' || method === 'paymob-installments'
 const empty: Address = {
   firstName: '',
   lastName: '',
@@ -25,7 +26,6 @@ const empty: Address = {
 }
 
 type FieldErrors = Partial<Record<keyof Address | 'password' | 'confirmPassword', string>>
-const requiredFields: (keyof Address)[] = ['firstName', 'phone', 'address1', 'city', 'state']
 
 function addressToSaved(addr: Address, label: string): Omit<SavedAddress, 'id'> {
   return {
@@ -85,16 +85,7 @@ export function CheckoutForm() {
   const addressRef = useRef(address)
   addressRef.current = address
 
-  const config = useQuery({
-    queryKey: ['checkout-config'],
-    queryFn: () =>
-      commerceFetch<{
-        enabled: boolean
-        paymob: boolean
-        verifiedMethods: string[]
-        states: { code: string; name: string }[]
-      }>('/api/commerce/checkout'),
-  })
+  const config = useCheckoutConfig()
 
   const change = (key: keyof Address, value: string) => {
     setAddress((a) => ({ ...a, [key]: value }))
@@ -131,16 +122,16 @@ export function CheckoutForm() {
   }
 
   const validateAll = (): boolean => {
-    const errors: FieldErrors = {}
-    for (const key of requiredFields) {
-      if (!address[key].trim()) errors[key] = 'Required'
-    }
-    if (address.phone && !/^01[0-9]{9}$/.test(address.phone)) {
-      errors.phone = 'Invalid phone'
+    const errors = checkoutErrors(address)
+    if (isPaymob(method)) {
+      if (!address.lastName.trim()) errors.lastName = 'Required for online payment'
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(address.email.trim())) errors.email = 'Enter an email for your payment receipt'
     }
     setFieldErrors(errors)
     setTouched(new Set(Object.keys(address)))
-    return Object.keys(errors).length === 0
+    const first = Object.keys(errors)[0]
+    if (first) document.getElementById(`checkout-${first}`)?.focus()
+    return !first
   }
 
   const selectSavedAddress = (addrId: string) => {
@@ -155,7 +146,7 @@ export function CheckoutForm() {
   }
 
   const wooMethods = (cart?.paymentMethods ?? []).filter((x) =>
-    config.data?.verifiedMethods.includes(x),
+    !x.startsWith('paymob') && config.data?.verifiedMethods.includes(x),
   )
   const names = (id: string) =>
     id === 'cod'
@@ -176,7 +167,7 @@ export function CheckoutForm() {
           : CreditCard
 
   const inputClass = (key: keyof Address) =>
-    `mt-1 min-h-9 w-full rounded-(--radius-control) border bg-background px-2.5 text-sm font-normal transition-colors ${
+    `mt-1 min-h-9 w-full rounded-(--radius-control) border bg-white px-2.5 text-sm font-normal transition-colors ${
       fieldErrors[key] && touched.has(key)
         ? 'border-danger focus:border-danger'
         : 'focus:border-brand'
@@ -195,6 +186,9 @@ export function CheckoutForm() {
         {required && <span className="text-danger">*</span>}
       </span>
       <input
+        id={`checkout-${key}`}
+        aria-invalid={!!fieldErrors[key]}
+        aria-describedby={fieldErrors[key] ? `checkout-error-${key}` : undefined}
         required={required}
         type={type}
         autoComplete={autoComplete}
@@ -204,7 +198,7 @@ export function CheckoutForm() {
         className={inputClass(key)}
       />
       {fieldErrors[key] && touched.has(key) && (
-        <span className="mt-0.5 block text-[11px] text-danger">{fieldErrors[key]}</span>
+        <span id={`checkout-error-${key}`} role="alert" className="mt-0.5 block text-[11px] text-danger">{fieldErrors[key]}</span>
       )}
     </label>
   )
@@ -218,23 +212,14 @@ export function CheckoutForm() {
       await mutateCart({ action: 'address', address: addr })
       setSaved(true)
       if (doSaveAddr && user) {
-        addAddress(addressToSaved(addr, `${addr.address1}, ${addr.city}`))
+        await addAddress(addressToSaved(addr, `${addr.address1}, ${addr.city}`))
       }
+      return true
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Please check your address.')
+      return false
     }
   }, [mutateCart, user, addAddress])
-
-  useEffect(() => {
-    if (saved || pending) return
-    const addr = addressRef.current
-    const allFilled = requiredFields.every((k) => addr[k].trim())
-    if (!allFilled) return
-    const timer = setTimeout(() => {
-      submitAddress(addr, saveAddr)
-    }, 600)
-    return () => clearTimeout(timer)
-  }, [address.firstName, address.phone, address.address1, address.city, address.state, saved, pending, saveAddr, submitAddress])
 
   const handleFormSubmit = async () => {
     if (showRegister) {
@@ -252,7 +237,7 @@ export function CheckoutForm() {
       }
     }
     if (!validateAll()) return
-    await submitAddress(addressRef.current, saveAddr)
+    return submitAddress(addressRef.current, saveAddr)
   }
 
   const handleLogin = async () => {
@@ -272,17 +257,23 @@ export function CheckoutForm() {
   }
 
   const startPayment = async () => {
-    if (submitting.current) return
+    if (submitting.current || uncertain) return
+    if (!validateAll()) { setError('Please complete the highlighted fields.'); return }
+    if (cartPending) { setError('Delivery is updating. Please try again when it finishes.'); return }
+    if (!saved) { if (await handleFormSubmit()) setError('Review the delivery and payment options, then confirm your order.'); return }
+    if (!deliveryReady) { setError('Choose an available delivery option before confirming.'); return }
+    if (!method) { setError('Choose a payment method before confirming.'); return }
+    if (isPaymob(method) ? !config.data?.paymob : !config.data?.enabled) { setError('This payment method is currently unavailable. Choose another method or retry checkout options.'); return }
     submitting.current = true
     setPending(true)
     setError('')
     try {
-      if (method === CARD_METHOD) {
+      if (isPaymob(method)) {
         const result = await commerceFetch<PaymentIntentClient>(
           '/api/payments/intention',
           {
             method: 'POST',
-            body: JSON.stringify({ address }),
+            body: JSON.stringify({ address, paymentMethod: method }),
           },
         )
         setIntent(result)
@@ -318,6 +309,9 @@ export function CheckoutForm() {
       <div className="space-y-3">
         <PaymobPixel
           clientSecret={intent.clientSecret}
+          publicKey={intent.publicKey}
+          method={intent.method}
+          pixelMethods={intent.pixelMethods}
           amountLabel={formatEgp(intent.amountCents / 100)}
           onCompleted={() => window.location.assign('/order/success')}
           onError={(message) => setError(message)}
@@ -363,7 +357,7 @@ export function CheckoutForm() {
             <p role="alert" className="rounded-(--radius-control) bg-danger-muted p-2 text-[11px] text-danger">{loginError}</p>
           )}
           <label className="block text-xs font-medium">
-            Email or phone
+            Email
             <div className="relative mt-1">
               <Mail className="pointer-events-none absolute left-2 top-1/2 size-3 -translate-y-1/2 text-muted-foreground" />
               <input
@@ -371,7 +365,7 @@ export function CheckoutForm() {
                 value={loginId}
                 onChange={(e) => setLoginId(e.target.value)}
                 autoComplete="username"
-                placeholder="example@email.com or 01xxxxxxxxx"
+                placeholder="example@email.com"
                 className="min-h-9 w-full rounded-(--radius-control) border bg-background py-1.5 pr-2.5 pl-7 text-sm"
               />
             </div>
@@ -431,13 +425,16 @@ export function CheckoutForm() {
 
       <div className="grid gap-2 sm:grid-cols-2">
         {field('firstName', 'First name', 'text', 'given-name')}
-        {field('lastName', 'Last name', 'text', 'family-name', false)}
+        {field('lastName', 'Last name', 'text', 'family-name', isPaymob(method))}
         {field('phone', 'Phone', 'tel', 'tel')}
+        {(isPaymob(method) || showRegister) && field('email', 'Email', 'email', 'email', true)}
         <label className="text-xs font-medium">
           <span className="flex items-center gap-0.5">
             Governorate <span className="text-danger">*</span>
           </span>
           <select
+                id="checkout-state"
+                aria-invalid={!!fieldErrors.state}
             required
             value={address.state}
             onChange={(e) => change('state', e.target.value)}
@@ -483,17 +480,6 @@ export function CheckoutForm() {
 
       {!user && showRegister && (
         <div className="space-y-2 rounded-(--radius-control) border p-2.5">
-          <label className="block text-xs font-medium">
-            Email
-            <input
-              type="email"
-              value={address.email}
-              onChange={(e) => change('email', e.target.value)}
-              autoComplete="email"
-              placeholder="For your account"
-              className="mt-1 min-h-9 w-full rounded-(--radius-control) border bg-background px-2.5 text-sm font-normal"
-            />
-          </label>
           <div className="grid gap-2 sm:grid-cols-2">
             <label className="block text-xs font-medium">
               <span className="flex items-center gap-0.5"><Lock className="size-2.5" /> Password</span>
@@ -537,6 +523,7 @@ export function CheckoutForm() {
         </div>
       )}
 
+      {!saved && <button type="button" onClick={handleFormSubmit} disabled={cartPending} className="min-h-11 rounded-(--radius-control) border px-4 text-sm font-medium hover:bg-brand-muted">{cartPending ? 'Updating delivery…' : 'Update delivery options'}</button>}
       {cartPending && saved && (
         <p className="text-xs text-muted-foreground">Updating delivery…</p>
       )}
@@ -581,23 +568,17 @@ export function CheckoutForm() {
       <div className="space-y-2">
         <p className="text-xs font-medium">Payment method</p>
         <div className="flex flex-col gap-1.5 sm:flex-row sm:flex-wrap">
-          {config.data?.paymob && (
-            <label
-              className={`flex cursor-pointer items-center gap-2 rounded-(--radius-control) border px-3 py-2 text-xs transition-colors ${
-                method === CARD_METHOD ? 'border-brand bg-brand/5' : 'hover:border-brand'
-              }`}
-            >
-              <input
-                type="radio"
-                className="size-3.5 accent-brand"
-                name="payment"
-                checked={method === CARD_METHOD}
-                onChange={() => { setMethod(CARD_METHOD); preloadPaymobPixel() }}
-              />
-              <CreditCard className="size-4 shrink-0" />
-              <span>Card</span>
-            </label>
-          )}
+          {config.data?.paymobOptions?.map((option) => {
+            const Icon = option.kind === 'installments' ? Calendar : CreditCard
+            return (
+              <label key={option.id} className={`flex min-h-20 cursor-pointer items-start gap-3 rounded-(--radius-control) border p-3 text-sm transition-colors sm:flex-1 ${method === option.id ? 'border-brand bg-brand/5' : 'hover:border-brand'}`}>
+                <input type="radio" name="payment" className="mt-1 size-4 accent-brand" checked={method === option.id} onChange={() => { setMethod(option.id); preloadPaymobPixel() }} />
+                <Icon className="mt-0.5 size-5 shrink-0 text-brand-ink" />
+                <span><span className="block font-semibold">{option.title}</span><span className="mt-1 block text-xs leading-5 text-muted-foreground">{option.description}</span></span>
+              </label>
+            )
+          })}
+          {config.data?.paymobUnavailable && <p role="status" className="text-xs text-muted-foreground">Online payment options could not load. Refresh checkout options or contact Shams.</p>}
           {config.data?.enabled && wooMethods.map((id) => {
             const Icon = paymentIcon(id)
             return (
@@ -665,20 +646,13 @@ export function CheckoutForm() {
       )}
 
       <button
-        disabled={
-          uncertain ||
-          !method ||
-          !deliveryReady ||
-          pending ||
-          cartPending ||
-          (method === CARD_METHOD ? !config.data?.paymob : !config.data?.enabled)
-        }
+        disabled={uncertain || pending}
         onClick={startPayment}
         className="min-h-11 w-full rounded-(--radius-control) bg-brand px-6 text-sm font-semibold text-brand-foreground disabled:bg-muted disabled:text-muted-foreground"
       >
         {pending
           ? 'Preparing…'
-          : method === CARD_METHOD
+          : isPaymob(method)
             ? `Pay ${formatEgp(cart?.total ?? 0)}`
             : `Place order · ${formatEgp(cart?.total ?? 0)}`}
       </button>

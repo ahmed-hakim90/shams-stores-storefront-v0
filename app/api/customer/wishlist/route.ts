@@ -13,23 +13,23 @@ export async function GET(request: NextRequest) {
       .replace(/\/wc\/v3$/, '')
       .replace(/([^:]\/)\/+/g, '$1')
 
-    const res = await fetch(`${wpRoot}/shams/v1/wishlist`, {
+    const res = await fetch(`${wpRoot}/shams/v1/customer/wishlist`, {
+      cache: 'no-store',
+      signal: AbortSignal.timeout(15000),
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
     })
 
-    if (!res.ok) {
-      return NextResponse.json({ product_ids: [] })
-    }
+    if (!res.ok) return NextResponse.json({ error: 'Saved products are temporarily unavailable.' }, { status: res.status === 401 ? 401 : 502 })
 
     const data = await res.json()
     const productIds = (data.products || []).map((id: number | string) => String(id))
     return NextResponse.json({ product_ids: productIds })
   } catch (error) {
     console.error('[customer] wishlist list error', error)
-    return NextResponse.json({ product_ids: [] })
+    return NextResponse.json({ error: 'Saved products are temporarily unavailable.' }, { status: 502 })
   }
 }
 
@@ -55,8 +55,10 @@ export async function POST(request: NextRequest) {
       .replace(/\/wc\/v3$/, '')
       .replace(/([^:]\/)\/+/g, '$1')
 
-    const res = await fetch(`${wpRoot}/shams/v1/wishlist`, {
+    const res = await fetch(`${wpRoot}/shams/v1/customer/wishlist`, {
       method: 'POST',
+      cache: 'no-store',
+      signal: AbortSignal.timeout(15000),
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',

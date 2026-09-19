@@ -48,7 +48,7 @@ export function ProductGallery({
     >
       <div
         ref={mainRef}
-        className="relative aspect-square overflow-hidden rounded-(--radius-editorial) border bg-surface-raised"
+        className="relative aspect-[4/3] sm:aspect-square overflow-hidden rounded-(--radius-editorial) border bg-surface-raised"
         onMouseEnter={() => setHoverZoom(true)}
         onMouseLeave={() => setHoverZoom(false)}
         onMouseMove={handleMouseMove}

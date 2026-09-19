@@ -1,5 +1,7 @@
 'use client'
 import Link from 'next/link'
+import { InstallmentNotice } from '@/components/shams/payments/installment-notice'
+import { ProductAssurances } from '@/components/shams/product/product-assurances'
 import { useEffect, useRef, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import type { ProductDetail, BranchAvailability, ProductSummary } from '@/lib/commerce/types'
@@ -16,14 +18,12 @@ import {
   CompareAction,
   ProductBadge,
   RatingStars,
-  ReviewsSection,
   RecentlyViewed,
   ProductBundleAddonCard,
   RecordViewed,
 } from '@/components/shams/product'
 import { Reveal } from '@/components/shams/shared'
-import DOMPurify from 'dompurify'
-import { Lock, RefreshCw, ShieldCheck } from 'lucide-react'
+import { SafeRichText } from '@/components/shams/shared/safe-rich-text'
 import { useInteractions } from '@/components/shams/providers'
 export function LiveProductDetail({ product }: { product: ProductDetail }) {
   const [quantity, setQuantity] = useState(1)
@@ -104,6 +104,12 @@ export function LiveProductDetail({ product }: { product: ProductDetail }) {
       />
       <Reveal as="fade-up">
         <div className="grid items-start gap-8 lg:grid-cols-2 lg:gap-12">
+          <div className="space-y-2 lg:hidden">
+            <h1 className="text-xl font-semibold">{product.name}</h1>
+            <PriceDisplay price={selectedVariant?.price ?? product.price} />
+            <InstallmentNotice eligible={(selectedVariant?.price.amount ?? product.price.amount) > 0 && (selectedVariant?.stock.status ?? product.stock) !== 'out_of_stock' && product.purchasable !== false} href="#installments" />
+            <StockStatus status={selectedVariant?.stock.status ?? product.stock} />
+          </div>
           <ProductGallery images={gallery} name={product.name} />
           <section className="min-w-0">
             {product.brand && (
@@ -121,7 +127,7 @@ export function LiveProductDetail({ product }: { product: ProductDetail }) {
                 )}
               </div>
             )}
-            <h1 className="mt-3 text-2xl font-semibold leading-tight tracking-tight sm:text-4xl">
+            <h1 className="hidden lg:block mt-3 text-2xl font-semibold leading-tight tracking-tight sm:text-4xl">
               {product.name}
             </h1>
             <div className="mt-3 flex flex-wrap items-center gap-1.5">
@@ -135,12 +141,7 @@ export function LiveProductDetail({ product }: { product: ProductDetail }) {
               )}
             </div>
             {product.shortDescription && (
-              <div
-                className="shams-description mt-4 text-sm leading-relaxed text-muted-foreground"
-                dangerouslySetInnerHTML={{
-                  __html: DOMPurify.sanitize(product.shortDescription),
-                }}
-              />
+              <SafeRichText className="shams-description mt-4 text-sm leading-relaxed text-muted-foreground" html={product.shortDescription} />
             )}
             {product.reviewCount > 0 && (
               <RatingStars
@@ -214,22 +215,8 @@ export function LiveProductDetail({ product }: { product: ProductDetail }) {
                 className="mt-4 min-h-12 w-full rounded-(--radius-control)"
               />
             </div>
-            <div className="mt-4 grid grid-cols-3 gap-2 border-t border-border/60 pt-4">
-              {[
-                { icon: 'Lock', label: 'Secure checkout' },
-                { icon: 'RefreshCw', label: '14-day returns' },
-                { icon: 'ShieldCheck', label: 'Official warranty' },
-              ].map((badge) => (
-                <div key={badge.label} className="flex flex-col items-center gap-1 text-center">
-                  <span className="flex size-8 items-center justify-center rounded-full bg-brand-muted text-brand-ink">
-                    {badge.icon === 'Lock' && <Lock className="size-3.5" />}
-                    {badge.icon === 'RefreshCw' && <RefreshCw className="size-3.5" />}
-                    {badge.icon === 'ShieldCheck' && <ShieldCheck className="size-3.5" />}
-                  </span>
-                  <span className="text-[11px] leading-tight text-muted-foreground">{badge.label}</span>
-                </div>
-              ))}
-            </div>
+            <InstallmentNotice detailed eligible={(selectedVariant?.price.amount ?? product.price.amount) > 0 && (selectedVariant?.stock.status ?? product.stock) !== 'out_of_stock' && product.purchasable !== false} />
+            <div className="mt-4"><ProductAssurances value={product.assurances} /></div>
             {product.stock === 'out_of_stock' && (
               <p className="mt-3 text-sm text-muted-foreground">
                 This item is currently out of stock. Explore related gear below or
@@ -323,8 +310,10 @@ export function LiveProductDetail({ product }: { product: ProductDetail }) {
         </nav>
       </Reveal>
       <div className="mt-8 space-y-14">
+        {!!product.decisionFields?.length && <section className="border-t pt-8"><h2 className="mb-4 text-2xl font-semibold">Product details</h2><dl className="grid gap-4 sm:grid-cols-2">{product.decisionFields.map(field => <div key={field.label}><dt className="text-sm font-medium">{field.label}</dt><dd dir="auto" className="mt-1 whitespace-pre-line text-sm text-muted-foreground">{field.value}</dd></div>)}</dl></section>}
+        {!!product.resourceLinks?.length && <nav aria-label="Product resources" className="flex flex-wrap gap-4">{product.resourceLinks.map(link => <a key={link.href} href={link.href} className="text-brand-ink underline underline-offset-4">{link.label}</a>)}</nav>}
         {product.relationships.map((group, i) => (
-          <Reveal as="fade-up" delay={i * 60} key={group.type}>
+          <Reveal as="fade-up" delay={i * 60} key={`${group.type}-${group.source}`}>
             <section
               id={i === 0 ? 'related-gear' : undefined}
               className="border-t pt-8"
@@ -335,7 +324,10 @@ export function LiveProductDetail({ product }: { product: ProductDetail }) {
               ) : (
                 <div className="grid gap-4 md:grid-cols-2">
                   {group.products.slice(0, 6).map((p) => (
-                    <ProductCard key={p.id} product={p} view="compact-related" />
+                    <div key={p.id}>
+                      <ProductCard product={p} view="compact-related" />
+                      {group.compatibility?.[p.id] && <p dir="auto" className="mt-2 text-sm text-muted-foreground"><span className="font-medium text-foreground">{group.compatibility[p.id].level === 'exact' ? 'Exact match' : group.compatibility[p.id].level === 'compatible' ? 'Compatible' : group.compatibility[p.id].level === 'recommended' ? 'Recommended' : 'Check compatibility'}</span>{group.compatibility[p.id].note && ` — ${group.compatibility[p.id].note}`}</p>}
+                    </div>
                   ))}
                 </div>
               )}
@@ -349,12 +341,7 @@ export function LiveProductDetail({ product }: { product: ProductDetail }) {
               className="grid gap-5 border-t pt-8 lg:grid-cols-[240px_1fr]"
             >
               <h2 className="mb-4 text-2xl font-semibold">Overview</h2>
-              <div
-                className="shams-description max-w-4xl break-words text-sm leading-7 text-muted-foreground"
-                dangerouslySetInnerHTML={{
-                  __html: DOMPurify.sanitize(product.description),
-                }}
-              />
+              <SafeRichText className="shams-description max-w-4xl break-words text-sm leading-7 text-muted-foreground" html={product.description} />
             </section>
           </Reveal>
         )}
@@ -380,7 +367,7 @@ export function LiveProductDetail({ product }: { product: ProductDetail }) {
           </Reveal>
         )}
       </div>
-      <ReviewsSection productName={product.name} />
+      {product.reviews !== undefined && <section className="mt-12 border-t pt-8"><h2 className="text-2xl font-semibold">Customer reviews</h2>{product.reviews.length ? product.reviews.map(review => <article key={review.id} className="mt-4 rounded-(--radius-card) border p-4"><p className="font-medium">{review.author} · {review.rating}/5</p><p dir="auto" className="mt-2 whitespace-pre-line text-sm text-muted-foreground">{review.content}</p></article>) : <p className="mt-3 text-muted-foreground">No reviews yet.</p>}</section>}
       <RecentlyViewed currentSlug={product.slug} />
       {sticky && (
         <div

@@ -3,6 +3,7 @@
 
 export interface PaymobServerConfig {
   baseUrl: string
+  publicKey?: string
   secretKey: string
   hmacSecret: string
   integrationIds: number[]
@@ -49,6 +50,7 @@ export interface CreateIntentionRequest {
 export interface CreateIntentionResponse {
   id: string
   client_secret: string
+  pixelMethods?: string[]
   intention_order_id?: number
   status?: string
 }
@@ -58,6 +60,9 @@ export interface CreateIntentionResponse {
 export interface PaymentIntentClient {
   orderId: string
   clientSecret: string
+  publicKey: string
+  method: 'card' | 'installments'
+  pixelMethods: string[]
   amountCents: number
   currency: string
 }

@@ -132,7 +132,7 @@ export const getCreatorJourneys = cache(async () => {
 export const getSetupDiscovery = cache(async () => {
   const anchor = await getSpotlight().catch(() => null)
   if (!anchor) return null
-  const detail = await getProduct(anchor.slug).catch(() => null)
+  const detail = await getProduct(anchor.slug, 'relationships').catch(() => null)
   const products = setupProducts(anchor, detail?.relationships ?? [])
   return products.length ? { anchor, products } : null
 })
@@ -148,7 +148,7 @@ export const getBundleStory = cache(async () => {
   })
   const summary = page.items[0]
   if (!summary) return null
-  return getProduct(summary.slug)
+  return getProduct(summary.slug, 'summary')
 })
 
 export const getBrandCampaign = cache(async () => {

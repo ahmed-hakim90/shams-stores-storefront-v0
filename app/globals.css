@@ -758,7 +758,8 @@
   background: var(--surface);
   transition: border-color var(--motion-standard) var(--ease-out), box-shadow var(--motion-standard) var(--ease-out);
 }
-.shams-product-card:hover {
+.shams-product-card:hover,
+.shams-product-card:focus-within {
   border-color: var(--brand-hover);
   box-shadow: 0 6px 20px rgba(236, 147, 14, 0.15);
 }
@@ -774,6 +775,11 @@
   transition: opacity var(--motion-reveal) var(--ease-out-quad),
               transform var(--motion-reveal) var(--ease-out-quad);
   pointer-events: none;
+}
+.group:focus-within .shams-card-actions {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
 }
 @media (hover: hover) {
   .group:hover .shams-card-actions {

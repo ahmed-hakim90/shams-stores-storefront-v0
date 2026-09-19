@@ -21,9 +21,12 @@ import {
   mapDetail,
   mapVariant,
   mapTerm,
+  safeImage,
   mapAvailability,
-  compatibleProductIds,
+  specifications,
 } from './normalize'
+import { enrichProducts, shamsContent } from './shams-content'
+import { mergeAssurances, storefrontLink } from './shams-contract'
 import { CommerceFault } from './errors'
 
 const summaryFields =
@@ -101,9 +104,14 @@ export const terms = cache(async (kind: 'categories' | 'brands' | 'tags') => {
       }),
     ),
   )
-  return [...array(first.data), ...rest.flatMap((r) => array(r.data))]
-    .map(mapTerm)
-    .filter((x) => x.slug && x.count > 0)
+  const mapped = [...array(first.data), ...rest.flatMap((r) => array(r.data))].map(mapTerm).filter(x => x.slug && x.count > 0)
+  if (kind === 'tags') return mapped
+  const taxonomy = kind === 'categories' ? 'product_cat' : 'product_brand'
+  const initial = await shamsContent(`catalog/terms?taxonomy=${taxonomy}&per_page=100&page=1`)
+  if (!initial) return mapped
+  const extra = await Promise.all(Array.from({ length: Math.min(10, Math.max(1, numeric(initial.total_pages, 1))) - 1 }, (_, i) => shamsContent(`catalog/terms?taxonomy=${taxonomy}&per_page=100&page=${i + 2}`)))
+  const images = new Map([initial, ...extra].flatMap(page => array(page?.items)).map(item => [String(record(item).id), text(record(item).image)]))
+  return mapped.map(term => ({ ...term, image: safeImage(images.get(term.id)) || term.image }))
 })
 async function paramsFor(q: CatalogQuery) {
   const p = new URLSearchParams({ catalog_visibility: 'visible' })
@@ -253,7 +261,7 @@ export const listProducts = cache(
       next = offset + res.data.length,
       hasNextPage = next < upstreamTotal && res.data.length > 0
     return {
-      items,
+      items: await enrichProducts(items),
       total,
       hasNextPage,
       nextCursor: hasNextPage
@@ -271,23 +279,29 @@ export async function byIds(ids: string[]) {
     `/wc/store/v1/products?include=${clean.join(',')}&per_page=100&orderby=include&_fields=${summaryFields}`,
     { ttl: 60 },
   )
-  return array(r.data).flatMap((x) => {
+  return enrichProducts(array(r.data).flatMap((x) => {
     try {
       return [mapSummary(x)]
     } catch {
       return []
     }
-  })
+  }))
 }
 export const getProduct = cache(
-  async (slug: string): Promise<ProductDetail | null> => {
+  async (slug: string, mode: 'full' | 'relationships' | 'summary' = 'full'): Promise<ProductDetail | null> => {
     const r = await request(
         `/wc/store/v1/products?slug=${encodeURIComponent(slug)}&per_page=1`,
         { ttl: 120 },
       ),
       raw = array(r.data)[0]
     if (!raw) return null
+    if (mode === 'summary') return mapDetail(raw, {})
     const id = numeric(record(raw).id)
+    const reviewsRequest = mode === 'full'
+      ? shamsContent(`products/${id}/reviews?per_page=10`)
+      : Promise.resolve(null)
+    const contentRequest = shamsContent(`products/${id}/content`)
+    const accessoriesRequest = shamsContent(`products/${id}/accessories?limit=12`)
     const enrichment = await request(`/wc/v3/products/${id}`, {
       private: true,
       ttl: 300,
@@ -301,7 +315,7 @@ export const getProduct = cache(
     })
     const productType = text(record(raw).type)
     let variants: ProductVariant[] = []
-    if (productType === 'variable') {
+    if (mode === 'full' && productType === 'variable') {
       const varRes = await request(
         `/wc/store/v1/products/${id}/variations?per_page=100`,
         { ttl: 120 },
@@ -334,18 +348,6 @@ export const getProduct = cache(
       excluded = new Set(ids(meta._shams_compat_manual_exclusions))
     const groups = [
       {
-        type: 'compatible' as const,
-        title: 'Selected compatible gear',
-        source: 'manual',
-        ids: compatibleProductIds(enrichment.data),
-      },
-      {
-        type: 'accessories' as const,
-        title: 'Recommended accessories',
-        source: 'woocommerce-cross-sell',
-        ids: ids(e.cross_sell_ids),
-      },
-      {
         type: 'alternatives' as const,
         title: 'Explore alternatives',
         source: 'woocommerce-upsell',
@@ -373,7 +375,32 @@ export const getProduct = cache(
       )
     ).filter((g) => g.products.length)
 
-    try {
+    const [content, matches] = await Promise.all([
+      contentRequest,
+      accessoriesRequest,
+    ])
+    if (content) {
+      detail = mergeAssurances(detail, content)
+      detail.warranty = detail.assurances?.warrantyText || undefined
+      const fields = record(content.fields)
+      const labels: Record<string, string> = { model: 'Model', mount: 'Mount', sensor: 'Sensor', resolution: 'Resolution', connectivity: 'Connectivity', in_the_box: 'In the box', compatibility_note: 'Compatibility', installment_note: 'Installments', return_restrictions: 'Return conditions', preorder_terms: 'Preorder terms', decision_summary_en: 'Product overview', decision_summary_ar: 'ملخص المنتج' }
+      detail.decisionFields = Object.entries(labels).flatMap(([key, label]) => text(fields[key]) ? [{ label, value: text(fields[key]) }] : [])
+      detail.resourceLinks = [['manual_url', 'Product manual'], ['firmware_url', 'Firmware']].flatMap(([key, label]) => { const href = storefrontLink(fields[key]); return href ? [{ label, href }] : [] })
+      detail.seoOverrides = Object.fromEntries(Object.entries(record(content.seo_overrides)).filter((entry): entry is [string, string] => typeof entry[1] === 'string'))
+      for (const [key, title] of [['lens_options', 'Lens options'], ['kit_options', 'Kit options']]) {
+        const linked = array(record(content.linked_products)[key]).map(p => String(record(p).id)).filter(x => x !== String(id))
+        const products = await byIds(linked).catch(() => [])
+        if (products.length) detail.relationships.push({ type: 'related', title, source: key, products })
+      }
+    }
+    if (matches) {
+      const recommendations = array(matches.items)
+      const products = await byIds(recommendations.map(x => String(record(record(x).product).id)).filter(x => x !== String(id))).catch(() => [])
+      const compatibility = Object.fromEntries(recommendations.map(item => { const r = record(item), c = record(r.compatibility); return [String(record(r.product).id), { level: text(c.level), note: text(c.note), source: text(c.source) }] }))
+      if (products.length) detail.relationships.unshift({ type: 'compatible', title: 'Accessories Compatible', source: 'shams-compatibility-engine', products, compatibility })
+    }
+
+    if (mode === 'full') try {
       const rawBundles = await bundlesForProduct(String(id))
       if (rawBundles.length) {
         detail.bundles = rawBundles
@@ -401,9 +428,32 @@ export const getProduct = cache(
       // Bundles API may be unavailable — that's fine
     }
 
+    const reviews = await reviewsRequest
+    detail.reviews = reviews ? array(reviews.reviews).map(raw => { const r = record(raw); return { id: text(r.id), author: text(r.author), rating: numeric(r.rating), content: text(r.content) } }).filter(r => r.id && r.rating >= 1 && r.rating <= 5) : undefined
     return detail
   },
 )
+// Verify public visibility before reading private REST metadata. Comparison needs
+// specifications only, not reviews, variations, recommendations or bundles.
+export async function comparisonSpecifications(ids: string[]) {
+  const clean = [...new Set(ids)].filter(id => /^\d+$/.test(id)).slice(0, 4)
+  if (!clean.length) return {}
+  const visible = await request(
+    `/wc/store/v1/products?include=${clean.join(',')}&per_page=4&_fields=id`,
+    { ttl: 60 },
+  )
+  const publicIds = array(visible.data).map(item => String(record(item).id))
+    .filter(id => clean.includes(id))
+  if (!publicIds.length) return {}
+  const result = await request(
+    `/wc/v3/products?include=${publicIds.join(',')}&per_page=4&status=publish&_fields=id,attributes,meta_data`,
+    { private: true, ttl: 300 },
+  )
+  return Object.fromEntries(array(result.data)
+    .filter(item => publicIds.includes(String(record(item).id)))
+    .map(item => [String(record(item).id), specifications(record(item)).filter(s => s.comparable)]))
+}
+
 export async function facets(q: CatalogQuery): Promise<FacetResult> {
   const collect = async (query: CatalogQuery) => {
     const p = await paramsFor(query)

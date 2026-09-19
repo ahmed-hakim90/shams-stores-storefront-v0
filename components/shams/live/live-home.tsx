@@ -95,11 +95,9 @@ export function LiveHome() {
     <>
       <main className="merch-home pb-[calc(2rem+var(--mobile-bottom-nav-height))] sm:pb-0">
         <SectionErrorBoundary label="LiveHero">
-          <Reveal as="fade-up">
-            <Suspense fallback={<SectionSkeleton />}>
-              <LiveHero />
-            </Suspense>
-          </Reveal>
+          <Suspense fallback={<SectionSkeleton />}>
+            <LiveHero />
+          </Suspense>
         </SectionErrorBoundary>
         <SectionErrorBoundary label="CategoryMosaic">
           <Reveal as="fade-up" delay={40}>

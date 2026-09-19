@@ -59,6 +59,7 @@ export function derivePaymentState(
   wooStatus: string,
   paymentStatus: string,
 ): PaymentState {
+  if (wooStatus === 'refunded') return 'unknown'
   if (
     paymentStatus === 'paid' ||
     wooStatus === 'processing' ||

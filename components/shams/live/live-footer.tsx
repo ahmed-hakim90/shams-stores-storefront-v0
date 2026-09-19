@@ -1,3 +1,5 @@
+import { siteContent } from '@/lib/commerce/live/shams-content'
+import { mapSiteContent } from '@/lib/commerce/live/shams-contract'
 import Link from 'next/link'
 import { MapPin, Phone } from 'lucide-react'
 import { primaryCategories } from '@/lib/commerce/navigation'
@@ -5,6 +7,7 @@ import { terms } from '@/lib/commerce/live/catalog'
 import { ShamsLogo } from '@/components/shams/shared'
 
 export async function LiveFooter() {
+  const shell = mapSiteContent(await siteContent())
   const categories = primaryCategories(
     await terms('categories').catch(() => []),
     8,
@@ -55,6 +58,14 @@ export async function LiveFooter() {
       ],
     },
   ]
+  for (const [location, title] of [['shams-footer-help', 'Here to help'], ['shams-footer-policies', 'Policies']]) {
+    const links = shell.menus[location]?.filter(item => item.parent === 0).map(item => [item.label, item.href])
+    if (links?.length) {
+      const existing = groups.find(group => group.title === title)
+      if (existing) existing.links = links
+      else groups.push({ title, links })
+    }
+  }
   return (
     <footer className="mt-8 bg-surface-dark pb-24 text-on-dark md:pb-0">
       <div className="shams-container py-8 sm:py-10">
@@ -69,27 +80,10 @@ export async function LiveFooter() {
             </Link>
             <p className="mt-3 text-xs leading-5 text-on-dark-muted">
               Egypt&apos;s specialist for photography, cinema and creator gear.
-              Authorized products and nationwide delivery.
+
             </p>
 
-            <div className="mt-4 space-y-2">
-              <a
-                href="tel:+201011331666"
-                className="flex items-center gap-2 text-sm font-semibold text-on-dark transition-colors hover:text-brand-hover"
-              >
-                <Phone className="size-3.5 text-brand" />
-                +201011331666
-              </a>
-              <p className="flex items-center gap-2 text-sm text-on-dark-muted transition-colors hover:text-brand-hover">
-                <MapPin className="size-3.5 text-brand" />
-                · Downtown Branch: 5 Sherif Street – Downtown – Cairo 
-              </p>
-              <p className="flex items-center gap-2 text-sm text-on-dark-muted transition-colors hover:text-brand-hover">
-                <MapPin className="size-3.5 text-brand" />
-                · Heliopolis Branch: 24 Omar Ibn 
-                El-Khattab St. – Ismailia Square – Cairo 
-              </p>
-            </div>
+            <div className="mt-4 space-y-3">{shell.branches.map(branch => <div key={branch.name} dir="auto"><p className="font-medium">{branch.name}</p><p className="text-xs text-on-dark-muted">{branch.address}</p>{branch.phones.map(phone => <a key={phone} href={`tel:${phone.replace(/[^+0-9]/g, '')}`} className="block min-h-9 text-sm hover:underline">{phone}</a>)}</div>)}{!shell.branches.length && <Link href="/contact" className="text-sm hover:underline">Contact Shams</Link>}</div>
 
             <div className="mt-4 flex items-center gap-3">
               <a
@@ -123,25 +117,7 @@ export async function LiveFooter() {
               </a>
             </div>
 
-            <div className="mt-6 rounded-(--radius-card) border border-on-dark-border bg-white/5 p-4">
-              <h3 className="text-sm font-semibold tracking-tight text-on-dark">Stay in the loop</h3>
-              <p className="mt-1 text-xs leading-relaxed text-on-dark-muted">New arrivals, exclusive offers, and creator tips.</p>
-              <form className="mt-3 flex gap-2" action="#">
-                <input
-                  type="email"
-                  required
-                  placeholder="your@email.com"
-                  aria-label="Email address"
-                  className="h-10 min-w-0 flex-1 rounded-(--radius-control) border border-transparent bg-surface-raised px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-brand focus:outline-none"
-                />
-                <button
-                  type="button"
-                  className="h-10 shrink-0 rounded-(--radius-control) bg-brand px-4 text-xs font-semibold text-brand-foreground transition-colors hover:bg-brand-hover"
-                >
-                  Subscribe
-                </button>
-              </form>
-            </div>
+
           </div>
 
           {groups.map((group) => (

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useSiteContent } from '../providers/site-content-provider'
 import { Bell, Check, LoaderCircle, ShoppingCart } from 'lucide-react'
 import { useInteractions } from '@/components/shams/providers'
 import { cn } from '@/lib/utils'
@@ -20,6 +21,7 @@ export function AddToCartButton({
   disabled?: boolean
   variant?: SelectedVariant | null
 }) {
+  const labels = useSiteContent().labels
   const { name: productName, stock } = product
   const [added, setAdded] = useState(false)
   const [pending, setPending] = useState(false)
@@ -43,7 +45,7 @@ export function AddToCartButton({
                 ? 'Adding…'
                 : added
                   ? 'Added ✓'
-                  : 'Add to cart'
+                  : labels.add || 'Add to cart'
 
   const Icon = pending
     ? LoaderCircle

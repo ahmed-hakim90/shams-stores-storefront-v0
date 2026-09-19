@@ -22,9 +22,9 @@ export const homeCollections: PageExperienceConfig[] = [
   {
     id: 'trending',
     kind: 'best-sellers',
-    title: 'Trending gear',
+    title: 'Best-selling gear',
     eyebrow: 'Popular right now',
-    description: 'The gear Egyptian creators are adding to cart most this week.',
+    description: 'Explore best-selling gear from the Shams catalogue.',
     href: '/trending',
     query: { pageSize: 20, sort: 'best-selling' },
     presentation: 'rail',

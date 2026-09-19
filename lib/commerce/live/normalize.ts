@@ -281,7 +281,7 @@ export function mapDetail(
   return {
     ...base,
     installmentFrom,
-    official: meta._shams_official === 'yes' || undefined,
+    official: meta._shams_authorized === 'yes' || undefined,
     description:
       typeof (raw.description ?? r.description) === 'string'
         ? String(raw.description ?? r.description)
@@ -301,12 +301,7 @@ export function mapDetail(
       })
       .filter((x) => x.url),
     specifications: specifications(raw),
-    warranty:
-      meta._shams_product_warranty === 'yes'
-        ? 'Warranty included'
-        : meta._shams_product_warranty === 'no'
-          ? undefined
-          : text(meta._shams_product_warranty) || undefined,
+    warranty: text(meta._shams_warranty) || undefined,
     variants,
     relationships: [],
     categories: array(r.categories).map(mapTerm),

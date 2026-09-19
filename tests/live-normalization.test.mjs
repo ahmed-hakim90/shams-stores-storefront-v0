@@ -126,8 +126,10 @@ test('descriptions become plain text and warranty boolean flags do not leak', ()
     mapDetail(product, {
       meta_data: [{ key: '_shams_product_warranty', value: 'yes' }],
     }).warranty,
-    'Warranty included',
+    undefined,
   )
+  assert.equal(mapDetail(product, { meta_data: [{ key: '_shams_warranty', value: 'ضمان سنتين' }, { key: '_shams_authorized', value: 'yes' }] }).warranty, 'ضمان سنتين')
+  assert.equal(mapDetail(product, { meta_data: [{ key: '_shams_authorized', value: 'yes' }] }).official, true)
   const specs = specifications({
     meta_data: [
       {

@@ -6,17 +6,22 @@ import {
 import { request } from '@/lib/commerce/live/client'
 import { array, record, text } from '@/lib/commerce/live/normalize'
 import { errorResponse } from '@/lib/commerce/live/errors'
-import { paymobEnabled } from '@/lib/payments/paymob/config'
+import { paymobOptions } from '@/lib/payments/paymob/settings'
 export async function GET() {
   try {
     const r = await request('/wc/v3/data/countries/EG', {
       private: true,
       ttl: 86400,
     })
+    let options: Awaited<ReturnType<typeof paymobOptions>> = []
+    let paymobUnavailable = false
+    try { options = await paymobOptions() } catch { paymobUnavailable = true }
     return Response.json(
       {
         enabled: checkoutEnabled(),
-        paymob: paymobEnabled(),
+        paymob: options.length > 0,
+        paymobOptions: options.map(({ integrationIds: _, ...option }) => option),
+        paymobUnavailable,
         verifiedMethods: (process.env.COMMERCE_VERIFIED_PAYMENT_METHODS ?? '')
           .split(',')
           .filter(Boolean),

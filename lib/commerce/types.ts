@@ -29,6 +29,13 @@ export interface Money {
   currency: 'EGP'
 }
 
+export interface ProductAssurances {
+  authorized: boolean | null
+  warrantyText: string
+  agent: { enabled: boolean; label: string } | null
+  warrantyBadge: { enabled: boolean; label: string } | null
+}
+
 export interface Product {
   id: string
   slug: string
@@ -58,6 +65,7 @@ export interface Product {
   /** Monthly installment starting figure in EGP, if offered. */
   installmentFrom?: number
   official?: boolean
+  assurances?: ProductAssurances
   branches?: string[]
 }
 
@@ -337,6 +345,10 @@ export interface ProductDetail extends ProductSummary {
   gallery: ProductImage[]
   specifications: ProductSpecification[]
   warranty?: string
+  reviews?: { id: string; author: string; rating: number; content: string }[]
+  seoOverrides?: Record<string, string>
+  decisionFields?: { label: string; value: string }[]
+  resourceLinks?: { label: string; href: string }[]
   variants: ProductVariant[]
   relationships: RelationshipGroup[]
   categories: TaxonomyTerm[]
@@ -368,6 +380,7 @@ export interface RelationshipGroup {
   type: 'related' | 'accessories' | 'alternatives' | 'compatible'
   title: string
   source: string
+  compatibility?: Record<string, { level: string; note: string; source: string }>
   products: ProductSummary[]
 }
 export interface FilterOption {

@@ -3,8 +3,8 @@ Contributors: shamsstores
 Tags: woocommerce, headless, rest-api, auth, cors
 Requires at least: 5.8
 Tested up to: 6.7
-Requires PHP: 7.4
-Stable tag: 1.0.1
+Requires PHP: 8.0
+Stable tag: 1.2.0
 License: GPLv2 or later
 
 Full control panel for headless WooCommerce storefront — auth, customers, orders, products, CORS, and admin settings.
@@ -40,9 +40,9 @@ Shams Headless Control connects your WordPress + WooCommerce backend to a headle
 * `DELETE /wp-json/shams/v1/addresses/{id}` — Delete address
 
 **Wishlist:**
-* `GET /wp-json/shams/v1/wishlist` — Get saved products
-* `POST /wp-json/shams/v1/wishlist` — Add to wishlist
-* `DELETE /wp-json/shams/v1/wishlist/{id}` — Remove from wishlist
+* `GET /wp-json/shams/v1/customer/wishlist` — Get saved products
+* `POST /wp-json/shams/v1/customer/wishlist` — Add to wishlist
+* `DELETE /wp-json/shams/v1/customer/wishlist/{id}` — Remove from wishlist
 
 **Orders:**
 * `GET /wp-json/shams/v1/orders` — List customer orders
@@ -86,3 +86,7 @@ Shams Headless Control connects your WordPress + WooCommerce backend to a headle
 * Product meta management
 * CORS control
 * Admin settings panel
+
+== 1.1.1 ==
+
+Customer wishlist has a dedicated /shams/v1/customer/wishlist namespace with the same Bearer authentication and existing shams_wishlist storage. Legacy aliases are registered only when Commerce UX does not own the shared route. No data migration or deletion. Update this plugin before deploying the matching headless frontend.

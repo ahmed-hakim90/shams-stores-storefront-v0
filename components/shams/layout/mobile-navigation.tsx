@@ -171,7 +171,7 @@ export function MobileBottomNav() {
           const baseClass =
             'relative flex flex-col items-center justify-center gap-1 text-muted-foreground transition-[color,scale] duration-instant motion-reduce:transition-none active:scale-[0.94]'
           const activeClass = active
-            ? 'text-foreground after:absolute after:bottom-0 after:left-1/2 after:h-0.5 after:w-6 after:-translate-x-1/2 after:bg-brand'
+            ? 'text-brand-ink bg-brand-muted'
             : ''
           return label === 'Search' ? (
             <button

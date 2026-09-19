@@ -18,8 +18,10 @@ export async function DELETE(
       .replace(/\/wc\/v3$/, '')
       .replace(/([^:]\/)\/+/g, '$1')
 
-    const res = await fetch(`${wpRoot}/shams/v1/wishlist/${id}`, {
+    const res = await fetch(`${wpRoot}/shams/v1/customer/wishlist/${id}`, {
       method: 'DELETE',
+      cache: 'no-store',
+      signal: AbortSignal.timeout(15000),
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',

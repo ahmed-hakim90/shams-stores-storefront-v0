@@ -9,7 +9,8 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "test": "node --experimental-strip-types --test tests/*.test.mjs",
-    "commerce:check": "node --experimental-strip-types scripts/check-commerce.mjs"
+    "commerce:check": "node --experimental-strip-types scripts/check-commerce.mjs",
+    "payments:check": "node scripts/check-paymob.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",
