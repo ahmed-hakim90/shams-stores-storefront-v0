@@ -1,4 +1,6 @@
 'use client'
+
+import { BankTransferDetails } from '@/components/shams/payments/bank-transfer-details'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { checkoutErrors, requiredCheckoutFields as requiredFields } from '@/lib/commerce/checkout-validation'
@@ -316,7 +318,9 @@ export function CheckoutForm() {
           onCompleted={() => window.location.assign('/order/success')}
           onError={(message) => setError(message)}
         />
-        {error && (
+        {method === 'bacs' && config.data?.enabled && wooMethods.includes('bacs') && <BankTransferDetails />}
+
+      {error && (
           <p
             role="alert"
             className="rounded-(--radius-control) bg-danger-muted p-3 text-sm text-danger"
@@ -607,6 +611,8 @@ export function CheckoutForm() {
           )}
         </div>
       </div>
+
+      {method === 'bacs' && config.data?.enabled && wooMethods.includes('bacs') && <BankTransferDetails />}
 
       {error && (
         <div className="space-y-2">

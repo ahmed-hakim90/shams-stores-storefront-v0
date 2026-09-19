@@ -4,7 +4,7 @@ Tags: woocommerce, headless, rest-api, auth, cors
 Requires at least: 5.8
 Tested up to: 6.7
 Requires PHP: 8.0
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 License: GPLv2 or later
 
 Full control panel for headless WooCommerce storefront — auth, customers, orders, products, CORS, and admin settings.
@@ -70,6 +70,10 @@ Shams Headless Control connects your WordPress + WooCommerce backend to a headle
 5. Configure other settings as needed
 
 == Changelog ==
+
+= 1.2.1 =
+* Fix activation fatal error caused by duplicate Shams_Auth::register methods.
+* Keep REST URLs unchanged; route registration and customer registration now use distinct callbacks.
 
 = 1.0.1 =
 * Fixed PHP 8.0+ nullsafe operator syntax for PHP 7.4 compatibility

@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Shams Stores Headless Control
  * Description: Full control panel for headless storefront — auth, customers, orders, products, settings
- * Version: 1.2.0
+ * Version: 1.2.1
  * Author: Shams Stores
  * Text Domain: shams-headless
  * Requires PHP: 8.0
@@ -19,7 +19,7 @@ if (version_compare(PHP_VERSION, '8.0', '<')) {
 }
 
 if (!defined('SHAMS_HEADLESS_VERSION')) {
-    define('SHAMS_HEADLESS_VERSION', '1.2.0');
+    define('SHAMS_HEADLESS_VERSION', '1.2.1');
 }
 if (!defined('SHAMS_HEADLESS_PATH')) {
     define('SHAMS_HEADLESS_PATH', plugin_dir_path(__FILE__));

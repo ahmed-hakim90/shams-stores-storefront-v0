@@ -111,3 +111,20 @@ test('only public content routes receive a cache TTL; account and payment paths 
     assert.equal(reader.contentTtl(path), undefined)
   }
 })
+
+import * as jsxRuntime from 'react/jsx-runtime'
+import { renderToStaticMarkup } from 'react-dom/server'
+test('assurance UI shows explicit product text without flags, hides defaults and escapes content', () => {
+  const source = readFileSync(new URL('../components/shams/product/product-assurances.tsx', import.meta.url), 'utf8')
+  const compiled = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, jsx: ts.JsxEmit.ReactJSX } }).outputText
+  const m = { exports: {} }
+  new Function('require','module','exports',compiled)(name => { if(name === 'react/jsx-runtime') return jsxRuntime; throw Error(name) },m,m.exports)
+  const render = raw => renderToStaticMarkup(jsxRuntime.jsx(m.exports.ProductAssurances,{value:mapAssurances(raw)}))
+  assert.equal(render({agent:{enabled:false,label:'Official'},warranty_badge:{enabled:false,label:'Warranty included'}}),'')
+  const html=render({agent:{enabled:false,custom_label:' وكيل معتمد '},warranty_badge:{enabled:false,custom_label:'ضمان سنة'}})
+  assert.match(html,/وكيل معتمد/); assert.match(html,/ضمان سنة/); assert.match(html,/dir="auto"/)
+  assert.match(render({warranty_text:'ضمان مكتوب'}),/ضمان مكتوب/)
+  assert.equal(render({agent:{enabled:false,custom_label:'  '}}),'')
+  assert.match(render({agent:{custom_label:'<script>alert(1)</script>'}}),/&lt;script&gt;/)
+  assert.equal((render({agent:{custom_label:'ضمان'},warranty_badge:{custom_label:'ضمان'}}).match(/>ضمان</g)||[]).length,1)
+})

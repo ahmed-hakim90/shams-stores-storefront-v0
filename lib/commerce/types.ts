@@ -32,8 +32,8 @@ export interface Money {
 export interface ProductAssurances {
   authorized: boolean | null
   warrantyText: string
-  agent: { enabled: boolean; label: string } | null
-  warrantyBadge: { enabled: boolean; label: string } | null
+  agent: { enabled: boolean; label: string; customLabel?: string } | null
+  warrantyBadge: { enabled: boolean; label: string; customLabel?: string } | null
 }
 
 export interface Product {

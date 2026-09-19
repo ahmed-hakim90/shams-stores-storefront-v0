@@ -188,7 +188,8 @@ export async function createPendingOrder(input: {
   if (cart.needsShipping)
     body.shipping_lines = selectedRates.map(rate => ({
       method_id: rate.id.split(':')[0],
-      instance_id: Number(rate.id.split(':')[1]) || 0,
+      // Woo REST order schema requires a string, unlike Store API rate IDs.
+      instance_id: rate.id.split(':')[1] || '0',
       method_title: rate.name,
       total: rate.price.toFixed(2),
     }))

@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { commerceFetch } from '@/lib/commerce/browser'
 export interface CheckoutConfig {
   enabled: boolean
+  installmentAvailable?: boolean
   paymob: boolean
   paymobOptions: { id: string; kind: string; title: string; description: string }[]
   paymobUnavailable: boolean

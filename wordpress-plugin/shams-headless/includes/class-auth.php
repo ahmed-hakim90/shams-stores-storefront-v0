@@ -15,7 +15,7 @@ class Shams_Auth {
 
         register_rest_route('shams/v1', '/register', [
             'methods' => 'POST',
-            'callback' => [__CLASS__, 'register'],
+            'callback' => [__CLASS__, 'register_customer'],
             'permission_callback' => '__return_true',
         ]);
 
@@ -98,7 +98,7 @@ class Shams_Auth {
         return $users[0] ?? null;
     }
 
-    public static function register($request) {
+    public static function register_customer($request) {
         if (!get_option('shams_headless_allow_registration', true)) {
             return new WP_Error('registration_disabled', 'Registration is currently disabled', ['status' => 403]);
         }

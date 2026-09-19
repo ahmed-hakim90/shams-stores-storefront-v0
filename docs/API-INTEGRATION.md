@@ -34,12 +34,12 @@ WooCommerce هو مصدر السعر والمخزون والمنتج والمع�
 assurances: {
   authorized: boolean | null,
   warranty_text: string,
-  agent: null | { enabled: boolean; label: string },
-  warranty_badge: null | { enabled: boolean; label: string }
+  agent: null | { enabled: boolean; label: string; custom_label?: string },
+  warranty_badge: null | { enabled: boolean; label: string; custom_label?: string }
 }
 ```
 
-`null` يعني غير متاح/غير معلوم، وليس false. اعرض الشارة فقط إن كانت مفعلة ولها label، مع إزالة التكرار. label قد تعني «ضمان الوكيل»؛ ليست بالضرورة اسم شركة وكيل. لا تحول boolean إلى مدة ضمان.
+`null` يعني غير متاح/غير معلوم، وليس false. حسب طلب المالك الأحدث: اعرض custom_label المتعبّي لكل منتج حتى لو enabled=false، ولا تستخدم label الافتراضي إلا مع enabled=true. الضمان يستخدم custom_label ثم warranty_text ثم الشارة المفعّلة، مع إزالة التكرار. يتطلب custom_label بلاجن Commerce UX 0.8.2؛ النسخة القديمة لا تميز النص الخاص عن الافتراضي. كارت المنتج ونتائج البحث والبحث السريع يستخدمون نفس المكوّن. label قد تعني «ضمان الوكيل»؛ ليست بالضرورة اسم شركة وكيل. لا تحول boolean إلى مدة ضمان.
 
 مفاتيح المصدر: `_shams_authorized`، `_shams_warranty`، `_shams_market_agent`، `_shams_market_agent_label`، `_shams_product_warranty` مع إعدادات مالك البطاقات. `_shams_official` ليس بديلًا معتمدًا. fields تُعاد دون بادئة `_shams_`؛ لا تعرض جميع الحقول اعتباطيًا، استخدم whitelist الحالية.
 
@@ -85,3 +85,7 @@ Content API 0.8.0 لا يوفّر schema إعدادات حقول checkout. ال�
 ### Active homepage hero (2026-09-19)
 
 The owner selected the original category HeroCarousel with the existing local `/images/hero/` banners. LiveHero no longer calls ManagedHero or selects WordPress hero_carousel/shoppable_hero content. Category names/descriptions/links still come from the existing cached catalog taxonomy; no additional product requests are introduced. WordPress site-content remains in use elsewhere for the site shell. The managed campaign adapter is available but is not the active homepage hero.
+
+
+## Bank transfer details
+When BACS is selected, BankTransferDetails loads /api/commerce/bank-transfer. The server reads site-content.bank_transfer (Commerce UX 0.8.3), only with checkout and bacs enabled. The component displays source instructions and account name/bank/number/IBAN/sort code/BIC with copy controls, preserving zeros. No hardcoded merchant accounts or fabricated InstaPay address. Missing plugin/data yields an explicit unavailable message. Tests cover mapping, copy success/denial, loading and errors.

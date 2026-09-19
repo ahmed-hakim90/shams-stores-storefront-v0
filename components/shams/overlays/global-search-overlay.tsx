@@ -1,4 +1,6 @@
 'use client'
+
+import { ProductAssurances } from '@/components/shams/product/product-assurances'
 import { useEffect, useRef, useState } from 'react'
 import { Dialog } from '@base-ui/react/dialog'
 import { useQuery } from '@tanstack/react-query'
@@ -278,6 +280,7 @@ export function GlobalSearchOverlay() {
                       <span className="mt-1 block text-sm font-medium">
                         {item.label}
                       </span>
+                      <ProductAssurances value={item.product?.assurances} />
                     </span>
                     {item.product && (
                       <span className="shrink-0 text-xs font-semibold">

@@ -108,6 +108,12 @@ test('product installment notice is hidden for loading, failed, disabled and una
  assert.match(render({href:'/p/camera#installments'}),/href="\/p\/camera#installments"/)
  assert.match(render({detailed:true}),/Your bank determines eligibility/)
  assert.doesNotMatch(render({detailed:true}),/0%|interest.free|EGP/)
+ query={data:{paymob:false,installmentAvailable:true,paymobOptions:[]}}
+ assert.match(render({href:'/p/camera#installments'}),/Explore bank installments/)
+ assert.match(render({detailed:true}),/online installment payment is not enabled yet/)
+ assert.doesNotMatch(render({detailed:true}),/Select Bank installments at checkout/)
+ query={data:{paymob:true,installmentAvailable:false,paymobOptions:[{kind:'installments'}]}}
+ assert.equal(render({}), '')
 })
 
 test('paid cart snapshot matches reordered lines but preserves additions and quantity changes',()=>{
@@ -115,4 +121,25 @@ test('paid cart snapshot matches reordered lines but preserves additions and qua
  assert.equal(paymentCartSnapshot(cart),paymentCartSnapshot({...cart,lines:[...cart.lines].reverse()}))
  assert.notEqual(paymentCartSnapshot(cart),paymentCartSnapshot({...cart,lines:[...cart.lines,{id:'c',productId:'3',quantity:1}]}))
  assert.notEqual(paymentCartSnapshot(cart),paymentCartSnapshot({...cart,total:120}))
+})
+
+test('pending order shipping payload uses Woo REST string instance IDs and trusted rate totals', async () => {
+ const normalization=await import('../lib/commerce/live/normalize.ts')
+ let posted
+ const orders=moduleAt('../lib/payments/orders.ts', {
+  'server-only':{}, './order-contract':{orderMeta}, 'next/headers':{cookies:async()=>({set(){}})},
+  '../commerce/live/client':{request:async(path,options)=>{
+   if(path.startsWith('/wc/store/v1/products/')) return {data:{type:'simple'}}
+   assert.equal(path,'/wc/v3/orders'); posted=options.body
+   for(const line of posted.shipping_lines) assert.equal(typeof line.instance_id,'string')
+   return {data:{id:100,order_key:'fixture-key',total:'185.00',currency:'EGP'}}
+  }},
+  '../commerce/live/cart':{addressPayload:()=>({first_name:'Test',phone:'01000000000',state:'C',city:'Cairo',address_1:'Test'})},
+  '../commerce/live/errors':{CommerceFault:Fault}, '../commerce/live/normalize':normalization,
+  './paymob/provider':{toAmountCents:n=>Math.round(n*100)},
+ })
+ for(const [id,instance] of [['flat_rate:12','12'],['custom_shipping','0']]) {
+  await orders.createPendingOrder({address:{},cart:{lines:[{productId:'1',quantity:1}],needsShipping:true,rates:[{id,name:'Cairo',price:85,selected:true},{id:'flat_rate:99',price:999,selected:false}],coupons:[],errors:[]}})
+  assert.deepEqual(posted.shipping_lines,[{method_id:id.split(':')[0],instance_id:instance,method_title:'Cairo',total:'85.00'}])
+ }
 })

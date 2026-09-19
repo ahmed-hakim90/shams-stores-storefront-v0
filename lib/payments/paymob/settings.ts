@@ -6,6 +6,14 @@ import { paymobEnabled } from './config'
 
 export async function paymobOptions() {
   if (!paymobEnabled()) return []
+  return availablePaymobOptions()
+}
+
+export function installmentDisplayEnabled() {
+  return process.env.COMMERCE_PROVIDER === 'woocommerce' && process.env.PAYMOB_INSTALLMENT_DISPLAY_ENABLED === 'true'
+}
+
+export async function availablePaymobOptions() {
   const source = process.env.PAYMOB_METHOD_SOURCE || 'woocommerce'
   if (source === 'environment') return makeOptions(
     integrationIds(process.env.PAYMOB_INTEGRATION_ID),

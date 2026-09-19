@@ -10,7 +10,7 @@ export function mapAssurances(value: unknown): ProductAssurances {
   const badge = (raw: unknown) => {
     if (!raw || typeof raw !== 'object') return null
     const b = obj(raw)
-    return { enabled: b.enabled === true, label: str(b.label) }
+    return { enabled: b.enabled === true, label: str(b.label), customLabel: str(b.custom_label) }
   }
   return {
     authorized: typeof v.authorized === 'boolean' ? v.authorized : null,
