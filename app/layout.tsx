@@ -9,6 +9,8 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import { InteractionShell, AuthProvider } from '@/components/shams/providers'
 import { LiveFooter } from '@/components/shams/live'
+import { openaiPixelScript, allPixelScripts, hasAnyExtraPixel } from '@/lib/tracking'
+import { OpprefCapture } from '@/components/shams/shared/oppref-capture'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -111,6 +113,9 @@ export default async function RootLayout({
         </CommerceQueryProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}
         <CookieConsent />
+        <OpprefCapture />
+        <script dangerouslySetInnerHTML={{ __html: openaiPixelScript }} />
+        {hasAnyExtraPixel && <script dangerouslySetInnerHTML={{ __html: allPixelScripts }} />}
       </body>
     </html>
   )

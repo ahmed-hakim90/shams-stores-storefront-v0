@@ -25,12 +25,24 @@ import {
 import { Reveal } from '@/components/shams/shared'
 import { SafeRichText } from '@/components/shams/shared/safe-rich-text'
 import { useInteractions } from '@/components/shams/providers'
+import { measureOaiq, trackViewContent } from '@/lib/tracking'
 export function LiveProductDetail({ product }: { product: ProductDetail }) {
   const [quantity, setQuantity] = useState(1)
   const [selectedVariant, setSelectedVariant] = useState<SelectedVariant | null>(null)
   const purchase = useRef<HTMLDivElement>(null),
     [sticky, setSticky] = useState(false)
   const { setStickyPurchaseVisible } = useInteractions()
+  useEffect(() => {
+    const params = {
+      content_name: product.name,
+      content_ids: [product.id],
+      content_type: 'product',
+      value: product.price.amount,
+      currency: 'EGP',
+    }
+    measureOaiq('view_content', params)
+    trackViewContent({ id: product.id, name: product.name, price: product.price.amount })
+  }, [product.id, product.name, product.price.amount])
   useEffect(() => {
     const el = purchase.current
     if (!el) return

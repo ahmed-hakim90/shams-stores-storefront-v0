@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { useInteractions } from '@/components/shams/providers'
 import { ProductImage } from '@/components/shams/product'
-import { CartLineOptions } from './cart-line-options'
+import { CartLineItem } from './cart-line-item'
 import { formatEgp } from '@/lib/commerce'
 import { CheckoutForm } from './checkout-form'
 export function CartPageContent({ checkout = false }: { checkout?: boolean }) {
@@ -68,59 +68,13 @@ export function CartPageContent({ checkout = false }: { checkout?: boolean }) {
             ) : (
               <div className="space-y-4">
                 {cartLines.map((line) => (
-                  <article
+                  <CartLineItem
                     key={line.id}
-                    className="flex gap-3 rounded-(--radius-card) border bg-card p-4 sm:gap-5"
-                  >
-                    <div className="relative size-20 shrink-0 sm:size-24 bg-surface-raised">
-                      <ProductImage
-                        src={line.productImage || '/placeholder.svg'}
-                        alt={line.productName}
-                        fill
-                        sizes="96px"
-                        className="object-contain p-2"
-                      />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <h2 className="text-sm font-semibold">
-                        {line.productName}
-                      </h2>
-                      <CartLineOptions options={line.selectedOptions} />
-                      <p className="mt-2 font-semibold">
-                        {formatEgp(line.total ?? line.quantity * line.price)}
-                      </p>
-                      <div className="mt-3 flex flex-wrap items-center gap-3">
-                        <div className="flex items-center gap-1">
-                          <button
-                            disabled={cartPending || line.quantity <= 1}
-                            onClick={() => updateCartLineQuantity(line.id, line.quantity - 1)}
-                            aria-label="Decrease quantity"
-                            className="flex size-9 items-center justify-center rounded-(--radius-control) border text-sm transition-colors hover:border-foreground hover:text-foreground disabled:opacity-40"
-                          >
-                            −
-                          </button>
-                          <span className="w-9 text-center text-sm font-medium tabular-nums">
-                            {line.quantity}
-                          </span>
-                          <button
-                            disabled={cartPending || line.quantity >= 99}
-                            onClick={() => updateCartLineQuantity(line.id, line.quantity + 1)}
-                            aria-label="Increase quantity"
-                            className="flex size-9 items-center justify-center rounded-(--radius-control) border text-sm transition-colors hover:border-foreground hover:text-foreground disabled:opacity-40"
-                          >
-                            +
-                          </button>
-                        </div>
-                        <button
-                          disabled={cartPending}
-                          onClick={() => removeCartLine(line.id)}
-                          className="min-h-11 text-xs text-muted-foreground underline"
-                        >
-                          Remove
-                        </button>
-                      </div>
-                    </div>
-                  </article>
+                    line={line}
+                    pending={cartPending}
+                    onRemove={removeCartLine}
+                    onUpdateQuantity={updateCartLineQuantity}
+                  />
                 ))}
               </div>
             )}

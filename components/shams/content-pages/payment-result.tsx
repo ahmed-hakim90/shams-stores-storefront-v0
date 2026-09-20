@@ -1,10 +1,12 @@
 'use client'
 import Link from 'next/link'
+import { useEffect, useRef } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { commerceFetch } from '@/lib/commerce/browser'
 import { formatEgp } from '@/lib/commerce'
 import type { PaymentStatusView } from '@/lib/payments/paymob/types'
 import { Package, MapPin } from 'lucide-react'
+import { measureOaiq, getOppref, trackPurchase } from '@/lib/tracking'
 
 export function PaymentResult({ orderId }: { orderId: string }) {
   const q = useQuery({
@@ -22,6 +24,40 @@ export function PaymentResult({ orderId }: { orderId: string }) {
   })
 
   const state = q.data?.state
+  const fired = useRef(false)
+  useEffect(() => {
+    if (state === 'paid' && q.data && !fired.current) {
+      fired.current = true
+      measureOaiq('order_created', {
+        type: 'contents',
+        value: q.data.total,
+        currency: 'EGP',
+        contents: q.data.items.map((item) => ({
+          id: item.name,
+          quantity: item.quantity,
+        })),
+        num_items: q.data.items.length,
+        oppref: getOppref(),
+      })
+      trackPurchase({
+        orderId: q.data.orderId,
+        total: q.data.total,
+        items: q.data.items.map((item) => ({ name: item.name, quantity: item.quantity, total: item.total })),
+      })
+      void fetch('/api/openai/capi', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          orderId: q.data.orderId,
+          total: q.data.total,
+          items: q.data.items.map((item) => ({
+            id: item.name,
+            quantity: item.quantity,
+          })),
+        }),
+      }).catch(() => {})
+    }
+  }, [state, q.data])
   return (
     <main className="shams-container max-w-2xl py-6 pb-[calc(2rem+var(--mobile-bottom-nav-height))] sm:py-8">
       {q.isLoading || (!state && !q.isError) ? (

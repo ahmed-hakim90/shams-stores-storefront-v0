@@ -1,39 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { wooConfig } from '@/lib/commerce/woocommerce'
+import { wpFetch, wpErrorResponse, WpClientError } from '@/lib/wp-client'
+import { AUTH_COOKIE } from '@/lib/constants/config'
 
 export async function GET(request: NextRequest) {
   try {
-    const token = request.cookies.get('shams-auth-token')?.value
+    const token = request.cookies.get(AUTH_COOKIE)?.value
     if (!token) {
       return NextResponse.json({ user: null })
     }
 
-    const config = wooConfig(process.env)
-    const wpRoot = config.endpoint.replace(/\/wc\/v3$/, '').replace(/([^:]\/)\/+/g, '$1')
-
-    const userRes = await fetch(`${wpRoot}/shams/v1/me`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    })
-
-    if (!userRes.ok) {
-      const response = NextResponse.json({ user: null })
-      response.cookies.set('shams-auth-token', '', { maxAge: 0, path: '/' })
-      return response
-    }
-
-    const data = await userRes.json()
+    const { data } = await wpFetch('/shams/v1/me', { token })
     return NextResponse.json(data)
   } catch (error) {
-    console.error('[auth] me error', error)
-    return NextResponse.json({ user: null })
+    if (error instanceof WpClientError) {
+      const response = NextResponse.json({ user: null })
+      response.cookies.set(AUTH_COOKIE, '', { maxAge: 0, path: '/' })
+      return response
+    }
+    return wpErrorResponse(error, 'auth/me')
   }
 }
 
 export async function DELETE(request: NextRequest) {
   const response = NextResponse.json({ success: true })
-  response.cookies.set('shams-auth-token', '', { maxAge: 0, path: '/' })
+  response.cookies.set(AUTH_COOKIE, '', { maxAge: 0, path: '/' })
   return response
 }

@@ -1,93 +1,12 @@
 'use client'
 import Link from 'next/link'
-import { useEffect, useRef, useState } from 'react'
 import { Dialog } from '@base-ui/react/dialog'
 import { ShoppingCart, X, Lock, CheckCircle } from 'lucide-react'
 import { useInteractions } from '@/components/shams/providers'
-import { ProductImage } from '@/components/shams/product'
 import { useCountPulse } from '@/components/shams/shared'
-import { CartLineOptions } from './cart-line-options'
+import { CartLineItem } from './cart-line-item'
 import { formatEgp } from '@/lib/commerce'
 import { theme } from '@/lib/theme'
-
-type CartLineData = ReturnType<typeof useInteractions>['cartLines'][number]
-
-function CartLine({
-  l,
-  cartPending,
-  removeCartLine,
-  updateCartLineQuantity,
-}: {
-  l: CartLineData
-  cartPending: boolean
-  removeCartLine: (id: string) => void
-  updateCartLineQuantity: (id: string, quantity: number) => void
-}) {
-  const [leaving, setLeaving] = useState(false)
-  const timer = useRef<ReturnType<typeof setTimeout>>(null)
-  useEffect(() => () => clearTimeout(timer.current ?? undefined), [])
-  const remove = () => {
-    if (
-      leaving ||
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    ) {
-      removeCartLine(l.id)
-      return
-    }
-    setLeaving(true)
-    timer.current = setTimeout(() => removeCartLine(l.id), 220)
-  }
-  return (
-    <div className="cart-line-wrap" data-leaving={leaving || undefined}>
-      <article className="flex gap-3 border-b py-4">
-        <div className="relative size-20 shrink-0 bg-surface-raised">
-          <ProductImage
-            src={l.productImage || '/placeholder.svg'}
-            alt={l.productName}
-            fill
-            sizes="80px"
-            className="object-contain p-2"
-          />
-        </div>
-        <div className="min-w-0">
-          <h3 className="text-sm font-medium">{l.productName}</h3>
-          <CartLineOptions options={l.selectedOptions} />
-          <p className="mt-2 text-sm font-semibold">
-            {formatEgp(l.total ?? l.price * l.quantity)}
-          </p>
-          <div className="mt-1 flex items-center gap-1">
-            <button
-              disabled={cartPending || l.quantity <= 1}
-              onClick={() => updateCartLineQuantity(l.id, l.quantity - 1)}
-              aria-label="Decrease quantity"
-              className="flex size-7 items-center justify-center rounded-(--radius-control) border text-sm transition-colors hover:border-foreground hover:text-foreground disabled:opacity-40"
-            >
-              −
-            </button>
-            <span className="w-7 text-center text-xs font-medium tabular-nums">
-              {l.quantity}
-            </span>
-            <button
-              disabled={cartPending || l.quantity >= 99}
-              onClick={() => updateCartLineQuantity(l.id, l.quantity + 1)}
-              aria-label="Increase quantity"
-              className="flex size-7 items-center justify-center rounded-(--radius-control) border text-sm transition-colors hover:border-foreground hover:text-foreground disabled:opacity-40"
-            >
-              +
-            </button>
-          </div>
-          <button
-            disabled={cartPending || leaving}
-            onClick={remove}
-            className="min-h-11 text-xs text-muted-foreground underline"
-          >
-            Remove
-          </button>
-        </div>
-      </article>
-    </div>
-  )
-}
 
 export function CartDrawer({ showTrigger = true }: { showTrigger?: boolean }) {
   const {
@@ -166,12 +85,13 @@ export function CartDrawer({ showTrigger = true }: { showTrigger?: boolean }) {
               </div>
             ) : cartLines.length ? (
               cartLines.map((l) => (
-                <CartLine
+                <CartLineItem
                   key={l.id}
-                  l={l}
-                  cartPending={cartPending}
-                  removeCartLine={removeCartLine}
-                  updateCartLineQuantity={updateCartLineQuantity}
+                  line={l}
+                  compact
+                  pending={cartPending}
+                  onRemove={removeCartLine}
+                  onUpdateQuantity={updateCartLineQuantity}
                 />
               ))
             ) : (

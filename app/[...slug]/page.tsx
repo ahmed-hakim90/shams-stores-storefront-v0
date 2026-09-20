@@ -1,11 +1,10 @@
-import { contentPage, siteContent } from '@/lib/commerce/live/shams-content'
-import { mapSiteContent, storefrontLink } from '@/lib/commerce/live/shams-contract'
+import { contentPage } from '@/lib/commerce/live/shams-content'
 import { text } from '@/lib/commerce/live/normalize'
 import { ManagedContent } from '@/components/shams/live/managed-content'
 import { commerceProvider, serverProducts } from '@/lib/commerce/server'
 import { getProduct, terms } from '@/lib/commerce/live/catalog'
 import Link from 'next/link'
-import { notFound, redirect } from 'next/navigation'
+import { notFound } from 'next/navigation'
 import { connection } from 'next/server'
 import { commerce } from '@/lib/commerce'
 import {
@@ -32,8 +31,17 @@ import {
   PaymentPage,
   WarrantyPage,
   GuidesPage,
+  ProductDetailPage,
+  LiveBranchesPage,
+  LiveBrandsIndexPage,
+  LiveCategoriesIndexPage,
+  LiveManagedPage,
+  LiveTagPage,
+  LiveTermPage,
+  MockCatalogRoute,
+  WorkflowIndexPage,
 } from '@/components/shams/content-pages'
-import { LiveCatalogPage, LiveProductDetail } from '@/components/shams/live'
+import { LiveCatalogPage } from '@/components/shams/live'
 import { SavedProducts, ProductDetail } from '@/components/shams/product'
 import { CatalogPage } from '@/components/shams/catalog'
 import { AccountDashboard } from '@/components/shams/account'
@@ -229,172 +237,29 @@ export async function generateMetadata({ params }: PageProps) {
   }
 }
 
+const LIVE_CMS_SECTIONS = ['about', 'contact', 'support', 'terms', 'privacy', 'shipping', 'returns', 'payment', 'warranty', 'faq', 'guides']
+
 export default async function StorefrontRoute({
   params,
   searchParams,
 }: PageProps) {
-  // Render query-aware hubs at request time; catalog fetches retain their own TTL.
   await connection()
   const { slug } = await params
   const [section, value] = slug
   if (!section) notFound()
+
   if (commerceProvider() === 'woocommerce') {
-    if (slug.length === 1 && ['about', 'contact', 'support', 'terms', 'privacy', 'shipping', 'returns', 'payment', 'warranty', 'faq', 'guides'].includes(section)) {
-      const page = await contentPage(section)
-      if (page) return <ManagedContent title={text(page.title)} html={String(page.content_html)} />
-      if (['terms', 'privacy', 'shipping', 'returns', 'payment', 'warranty'].includes(section)) return <div className="shams-container py-12"><h1 className="text-2xl font-semibold">{section.charAt(0).toUpperCase() + section.slice(1)}</h1><p className="mt-4">This information is currently unavailable. Please contact Shams to confirm the details before ordering.</p><Link href="/support" className="mt-4 inline-flex min-h-11 items-center text-brand-ink underline">Contact support</Link></div>
+    if (slug.length === 1 && LIVE_CMS_SECTIONS.includes(section)) {
+      return <LiveManagedPage slug={section} />
     }
-    if (section === 'branches') {
-      const shell = mapSiteContent(await siteContent())
-      if (shell.branches.length) return <div className="shams-container py-8"><h1 className="mb-6 text-3xl font-semibold">Visit Shams</h1><div className="grid gap-6 md:grid-cols-2">{shell.branches.map(b => <article key={b.name} dir="auto" className="shams-panel p-6"><h2 className="text-xl font-semibold">{b.name}</h2><p className="mt-2">{b.address}</p><p className="mt-2 whitespace-pre-line">{b.hours}</p>{b.phones.map(phone => <a key={phone} href={`tel:${phone.replace(/[^+0-9]/g, '')}`} className="mt-2 block text-brand-ink underline">{phone}</a>)}{b.map && <a href={b.map} className="mt-4 inline-flex min-h-11 items-center text-brand-ink underline">Open map</a>}</article>)}</div></div>
-    }
+    if (section === 'branches') return <LiveBranchesPage />
     const query = await searchParams
-    if (section === 'p') {
-      const product = await getProduct(value ?? '')
-      if (!product) notFound()
-      const origin =
-        process.env.NEXT_PUBLIC_APP_URL || 'https://www.shams-stores.com'
-      const structured = {
-        '@context': 'https://schema.org',
-        '@type': 'Product',
-        name: product.name,
-        image: product.gallery.map((i) => i.url),
-        sku: product.sku,
-        brand: product.brand
-          ? { '@type': 'Brand', name: product.brand }
-          : undefined,
-        offers:
-          product.price.amount > 0
-            ? {
-                '@type': 'Offer',
-                url: `${origin}/p/${product.slug}`,
-                priceCurrency: 'EGP',
-                price: product.price.amount,
-                availability:
-                  product.stock === 'unknown'
-                    ? undefined
-                    : product.stock === 'in_stock' ||
-                        product.stock === 'low_stock'
-                      ? 'https://schema.org/InStock'
-                      : product.stock === 'preorder'
-                        ? 'https://schema.org/BackOrder'
-                        : 'https://schema.org/OutOfStock',
-              }
-            : undefined,
-        aggregateRating:
-          product.reviewCount > 0
-            ? {
-                '@type': 'AggregateRating',
-                ratingValue: product.rating,
-                reviewCount: product.reviewCount,
-              }
-            : undefined,
-      }
-      return (
-        <>
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{
-              __html: JSON.stringify([
-                structured,
-                {
-                  '@context': 'https://schema.org',
-                  '@type': 'BreadcrumbList',
-                  itemListElement: [
-                    {
-                      '@type': 'ListItem',
-                      position: 1,
-                      name: 'Home',
-                      item: origin,
-                    },
-                    {
-                      '@type': 'ListItem',
-                      position: 2,
-                      name: 'Shop',
-                      item: origin + '/shop',
-                    },
-                    {
-                      '@type': 'ListItem',
-                      position: 3,
-                      name: product.name,
-                      item: origin + '/p/' + product.slug,
-                    },
-                  ],
-                },
-              ]).replace(/</g, '\\u003c'),
-            }}
-          />
-          <LiveProductDetail product={product} />
-        </>
-      )
-    }
+    if (section === 'p') return <ProductDetailPage slug={value ?? ''} />
     if (['c', 'b', 'brands'].includes(section) && value) {
-      const kind = section === 'c' ? 'categories' : 'brands'
-      const term = (await terms(kind)).find((t) => t.slug === value)
-      if (!term) notFound()
-      return (
-        <LiveCatalogPage
-          query={{
-            ...query,
-            [kind === 'categories' ? 'category' : 'brand']: query[kind === 'categories' ? 'category' : 'brand'] ?? term.slug,
-          }}
-          title={term.name}
-          description={
-            term.description || `Explore ${term.name} at Shams Stores.`
-          }
-          hub={{ kind: kind === 'categories' ? 'category' : 'brand', term }}
-        />
-      )
+      return <LiveTermPage section={section} slug={value} query={query} />
     }
-    if (section === 'categories') {
-      const allCats = await terms('categories')
-      const allBrands = await terms('brands')
-      const roots = allCats.filter((t) => !t.parentId)
-      const enriched = roots.map((root) => {
-        const children = allCats.filter((t) => t.parentId === root.id)
-        const topBrands = allBrands
-          .filter((b) => b.count > 0)
-          .sort((a, b) => b.count - a.count)
-          .slice(0, 5)
-        return {
-          id: root.id,
-          slug: root.slug as import('@/lib/commerce/types').Category['slug'],
-          name: root.name,
-          tagline: root.description || '',
-          image: root.image,
-          itemCount: root.count,
-          productCount: root.count,
-          columns: children.length
-            ? [
-                {
-                  heading: 'Subcategories',
-                  links: children.map((c) => ({
-                    label: c.name,
-                    href: `/c/${c.slug}`,
-                  })),
-                },
-                {
-                  heading: 'Top brands',
-                  links: topBrands.map((b) => ({
-                    label: b.name,
-                    href: `/b/${b.slug}`,
-                  })),
-                },
-              ]
-            : [],
-        }
-      })
-      return <CategoriesIndexPage categories={enriched} />
-    }
-    if (section === 'brands') {
-      const ts = await terms('brands')
-      return (
-        <main className="shams-container max-w-[1400px] py-10 pb-[calc(2.5rem+var(--mobile-bottom-nav-height))] sm:pb-10">
-          <h1 className="mb-6 text-3xl font-semibold">Shop by brand</h1>
-          <TaxonomyCards terms={ts} kind="brand" />
-        </main>
-      )
-    }
+    if (section === 'categories') return <LiveCategoriesIndexPage />
+    if (section === 'brands') return <LiveBrandsIndexPage />
     if (section === 'wishlist') return <SavedProducts mode="wishlist" />
     if (section === 'track-order') return <TrackOrderForm />
     if (section === 'orders') return <OrderStatus />
@@ -423,7 +288,6 @@ export default async function StorefrontRoute({
       return <AccountDashboard section={accountSection} />
     }
     if (section === 'support') return <HelpCenterPage />
-    if (section === 'branches') return <BranchesPageV2 />
     if (section === 'contact') return <ContactPageV2 />
     if (section === 'about') return <AboutPageV2 />
     if (section === 'terms') return <TermsPageV2 />
@@ -435,18 +299,7 @@ export default async function StorefrontRoute({
     if (section === 'payment') return <PaymentPage />
     if (section === 'warranty') return <WarrantyPage />
     if (section === 'guides') return <GuidesPage />
-    if (section === 'w') {
-      const tags = await terms('tags')
-      const selected = tags.find((t) => t.slug === value)
-      if (!selected) redirect('/categories')
-      return (
-        <LiveCatalogPage
-          query={{ ...query, tag: selected.slug }}
-          title={selected.name}
-          discovery={false}
-        />
-      )
-    }
+    if (section === 'w') return <LiveTagPage slug={value ?? ''} query={query} />
     if (section === 'bundles')
       return (
         <LiveCatalogPage
@@ -458,6 +311,7 @@ export default async function StorefrontRoute({
       )
     notFound()
   }
+
   if (section === 'cart') return <CartPage />
   if (section === 'checkout') return <CheckoutPage />
   if (section === 'bundles') return <BundlePage />
@@ -469,23 +323,7 @@ export default async function StorefrontRoute({
     }))
     return <CategoriesIndexPage categories={enriched} />
   }
-  if (section === 'w' && !value) {
-    const useCases = commerce.useCases.list()
-    return (
-      <main className="shams-container max-w-[1400px] py-10 pb-[calc(2.5rem+var(--mobile-bottom-nav-height))] sm:pb-10">
-        <h1 className="mb-2 text-3xl font-semibold">Shop by workflow</h1>
-        <p className="mb-8 text-muted-foreground">Gear curated for how you create.</p>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {useCases.map((u) => (
-            <Link key={u.slug} href={`/w/${u.slug}`} className="rounded-(--radius-card) border bg-card p-6 transition-colors hover:border-foreground">
-              <p className="font-semibold">{u.name}</p>
-              <p className="mt-1 text-sm text-muted-foreground">{u.description}</p>
-            </Link>
-          ))}
-        </div>
-      </main>
-    )
-  }
+  if (section === 'w' && !value) return <WorkflowIndexPage />
   if (section === 'w' && value) {
     const experience = commerce.useCases.bySlug(value)
     if (experience)
@@ -516,66 +354,5 @@ export default async function StorefrontRoute({
     if (!product) notFound()
     return <ProductDetail product={product} />
   }
-  const isSearch = section === 'search'
-  const category =
-    section === 'c' ? commerce.categories.bySlug(value ?? '') : undefined
-  const useCase =
-    section === 'w' ? commerce.useCases.bySlug(value ?? '') : undefined
-  const brand =
-    section === 'brands' || section === 'b'
-      ? commerce.brands.bySlug(value ?? '')
-      : undefined
-  const isCollection =
-    section === 'deals' || section === 'new' || section === 'trending' || section === 'best-sellers'
-  const hasValidRoute =
-    isSearch || isCollection || Boolean(category || useCase || brand)
-  if (!hasValidRoute) notFound()
-  const products = isSearch
-    ? commerce.search(value ?? '')
-    : section === 'deals'
-      ? commerce.products.deals()
-      : section === 'new'
-        ? commerce.products.featured()
-        : section === 'trending' || section === 'best-sellers'
-          ? commerce.products.trending()
-          : category
-            ? commerce.products.byCategory(category.slug)
-            : useCase
-              ? commerce.products.byUseCase(useCase.slug)
-              : brand
-                ? commerce.products
-                    .list()
-                    .filter(
-                      (product) =>
-                        product.brand.toLowerCase() ===
-                        brand.name.toLowerCase(),
-                    )
-                : []
-  const title = isSearch
-    ? `Search results`
-    : (category?.name ??
-      useCase?.name ??
-      brand?.name ??
-      (section === 'deals'
-        ? 'Deals worth catching'
-        : section === 'new'
-          ? 'New arrivals'
-          : section === 'best-sellers'
-            ? 'Best sellers'
-            : 'Trending gear'))
-  const description = isSearch
-    ? `Explore products, brands and categories related to “${value ?? ''}”.`
-    : (category?.tagline ??
-      useCase?.description ??
-      brand?.tagline ??
-      'Expertly selected photography, cinema and creator gear, ready to ship across Egypt.')
-  return (
-    <CatalogPage
-      category={category}
-      products={products}
-      title={title}
-      description={description}
-      query={isSearch ? value : undefined}
-    />
-  )
+  return <MockCatalogRoute section={section} value={value} />
 }

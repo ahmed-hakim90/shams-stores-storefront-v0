@@ -23,6 +23,11 @@ export type UseCaseSlug =
   | 'studio'
   | 'travel'
 
+/**
+ * @deprecated Use ProductPrice instead. Money uses major units (EGP) which can
+ * cause precision issues. ProductPrice uses minor units (piastres) with explicit
+ * decimal precision. Use formatPrice() or priceToMajor() for display.
+ */
 export interface Money {
   /** Amount in EGP (major units). */
   amount: number

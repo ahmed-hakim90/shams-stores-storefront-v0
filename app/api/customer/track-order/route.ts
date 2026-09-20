@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { wooConfig } from '@/lib/commerce/woocommerce'
+import { wpFetch, wpErrorResponse, WpClientError } from '@/lib/wp-client'
 
 export async function GET(request: NextRequest) {
   try {
@@ -14,31 +14,14 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const config = wooConfig(process.env)
-    const wpRoot = config.endpoint
-      .replace(/\/wc\/v3$/, '')
-      .replace(/([^:]\/)\/+/g, '$1')
-
-    const res = await fetch(
-      `${wpRoot}/shams/v1/track-order?order_id=${encodeURIComponent(orderId)}&phone=${encodeURIComponent(phone)}`,
-      { headers: { 'Content-Type': 'application/json' } },
+    const { data } = await wpFetch(
+      `/shams/v1/track-order?order_id=${encodeURIComponent(orderId)}&phone=${encodeURIComponent(phone)}`,
     )
-
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}))
-      return NextResponse.json(
-        { error: data.error || 'Order not found' },
-        { status: res.status },
-      )
-    }
-
-    const data = await res.json()
     return NextResponse.json(data)
   } catch (error) {
-    console.error('[customer] track-order error', error)
-    return NextResponse.json(
-      { error: 'Failed to look up this order' },
-      { status: 500 },
-    )
+    if (error instanceof WpClientError) {
+      return NextResponse.json({ error: error.message }, { status: error.status })
+    }
+    return wpErrorResponse(error, 'customer/track-order')
   }
 }

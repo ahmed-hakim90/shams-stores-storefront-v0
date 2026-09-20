@@ -19,6 +19,7 @@ import {
   MobileFilterDrawer,
 } from './catalog-filters'
 import { commerceFetch } from '@/lib/commerce/browser'
+import { Select } from '@/components/ui/select'
 import type {
   CatalogPage,
   FacetResult,
@@ -197,7 +198,7 @@ export function ShopFeed({
         </p>
         <label className="flex items-center gap-1.5 text-xs">
           <span className="sr-only sm:not-sr-only">Sort</span>
-          <select
+          <Select
             value={p.get('sort') ?? 'newest'}
             onChange={(e) => change('sort', e.target.value)}
             className="h-8 max-w-[150px] border border-border bg-surface-raised px-2 text-xs"
@@ -207,7 +208,7 @@ export function ShopFeed({
             <option value="price-asc">Price: low to high</option>
             <option value="price-desc">Price: high to low</option>
             <option value="best-selling">Best selling</option>
-          </select>
+          </Select>
         </label>
       </div>
       <div className="shams-catalog-layout">

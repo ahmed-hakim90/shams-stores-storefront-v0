@@ -7,6 +7,7 @@ import { ChevronDown, SlidersHorizontal, X } from 'lucide-react'
 import type { Category, Product } from '@/lib/commerce'
 import { ProductCard } from '@/components/shams/product'
 import { Button } from '@/components/ui/button'
+import { Select } from '@/components/ui/select'
 import { MobileListingHeader } from './mobile-listing-header'
 
 const filterMap: Record<string, string[]> = {
@@ -35,7 +36,7 @@ export function CatalogPage({ category, products, title, description, query }: {
   ) ?? []
 
   const categoryChips = category && <div className="shams-chips-row pb-1"><Link href={`/c/${category.slug}`} className="shrink-0 border border-brand bg-brand/5 px-2.5 py-1 text-[11px] font-medium text-brand-ink">All {category.name}</Link>{(subcategoryColumn?.links ?? category.columns[0]?.links ?? []).slice(0, 5).map((link) => <Link key={link.href + link.label} href={link.href} className="shrink-0 border border-border px-2.5 py-1 text-[11px] text-muted-foreground hover:border-foreground hover:text-brand-ink">{link.label}</Link>)}</div>
-  const listingToolbar = <div className="flex items-center justify-between gap-2"><Button variant="outline" className="h-8 gap-1.5 text-xs lg:hidden" onClick={() => setFiltersOpen(true)}><SlidersHorizontal className="size-3.5" />Filters{activeFilters.length > 0 && ` (${activeFilters.length})`}</Button><div className="hidden items-center gap-1.5 text-[11px] text-muted-foreground lg:flex"><SlidersHorizontal className="size-3" /> Refine</div><label className="flex h-8 items-center gap-1.5 text-[11px] text-muted-foreground">Sort<select value={sort} onChange={(event) => setSort(event.target.value)} className="h-8 border border-border bg-background px-2 text-xs font-medium text-foreground outline-none focus:border-brand"><option>Featured</option><option>Best Selling</option><option>Newest</option><option>Price: Low to High</option><option>Price: High to Low</option><option>Top Rated</option></select></label></div>
+  const listingToolbar = <div className="flex items-center justify-between gap-2"><Button variant="outline" className="h-8 gap-1.5 text-xs lg:hidden" onClick={() => setFiltersOpen(true)}><SlidersHorizontal className="size-3.5" />Filters{activeFilters.length > 0 && ` (${activeFilters.length})`}</Button><div className="hidden items-center gap-1.5 text-[11px] text-muted-foreground lg:flex"><SlidersHorizontal className="size-3" /> Refine</div><label className="flex h-8 items-center gap-1.5 text-[11px] text-muted-foreground">Sort<Select value={sort} onChange={(event) => setSort(event.target.value)} className="h-8 border border-border bg-background px-2 text-xs font-medium text-foreground outline-none focus:border-brand"><option>Featured</option><option>Best Selling</option><option>Newest</option><option>Price: Low to High</option><option>Price: High to Low</option><option>Top Rated</option></Select></label></div>
 
   return <main className="mobile-storefront-page mx-auto max-w-[1440px] px-4 py-4 pb-[calc(2rem+var(--mobile-bottom-nav-height))] sm:py-10 sm:pb-10">
     <MobileListingHeader title={title} description={description} count={products.length} query={query} chips={categoryChips} toolbar={listingToolbar} />

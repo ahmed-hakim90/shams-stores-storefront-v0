@@ -1,6 +1,7 @@
 'use client'
 
 import { createContext, useContext, useEffect, useState, useCallback } from 'react'
+import { commerceFetch, BrowserCommerceError } from '@/lib/commerce/browser'
 
 export type SavedAddress = {
   id: string
@@ -51,8 +52,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch('/api/auth/me')
-      .then((res) => res.json())
+    commerceFetch<{ user: AuthUser }>('/api/auth/me')
       .then((data) => {
         if (data.user) setUser(data.user)
       })
@@ -62,38 +62,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = useCallback(async (identifier: string, password: string) => {
     try {
-      const res = await fetch('/api/auth/login', {
+      const data = await commerceFetch<{ user: AuthUser }>('/api/auth/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ identifier, password }),
       })
-      const data = await res.json()
-      if (!res.ok) {
-        return { success: false, error: data.error || 'Invalid email/phone or password' }
-      }
       setUser(data.user)
       return { success: true }
-    } catch {
-      return { success: false, error: 'Login failed. Please try again.' }
+    } catch (error) {
+      const message = error instanceof BrowserCommerceError ? error.message : 'Login failed. Please try again.'
+      return { success: false, error: message }
     }
   }, [])
 
   const register = useCallback(
     async (data: { name: string; email: string; phone: string; password: string }) => {
       try {
-        const res = await fetch('/api/auth/register', {
+        const result = await commerceFetch<{ user: AuthUser }>('/api/auth/register', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data),
         })
-        const result = await res.json()
-        if (!res.ok) {
-          return { success: false, error: result.error || 'Registration failed' }
-        }
         setUser(result.user)
         return { success: true }
-      } catch {
-        return { success: false, error: 'Registration failed. Please try again.' }
+      } catch (error) {
+        const message = error instanceof BrowserCommerceError ? error.message : 'Registration failed. Please try again.'
+        return { success: false, error: message }
       }
     },
     [],
@@ -101,7 +93,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = useCallback(async () => {
     try {
-      await fetch('/api/auth/me', { method: 'DELETE' })
+      await commerceFetch('/api/auth/me', { method: 'DELETE' })
     } catch {}
     setUser(null)
   }, [])
@@ -110,18 +102,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     async (address: Omit<SavedAddress, 'id'>) => {
       if (!user) return { success: false, error: 'Not signed in' }
       try {
-        const res = await fetch('/api/customer/addresses', {
+        const data = await commerceFetch<{ address: SavedAddress; id: string }>('/api/customer/addresses', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(address),
         })
-        const data = await res.json()
-        if (!res.ok) return { success: false, error: data.error || 'Failed to add address' }
         const newAddress: SavedAddress = { ...address, id: data.address?.id || data.id || `addr-${Date.now()}` }
         setUser({ ...user, addresses: [...user.addresses, newAddress] })
         return { success: true }
-      } catch {
-        return { success: false, error: 'Failed to add address' }
+      } catch (error) {
+        const message = error instanceof BrowserCommerceError ? error.message : 'Failed to add address'
+        return { success: false, error: message }
       }
     },
     [user],
@@ -131,20 +121,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     async (id: string, patch: Partial<SavedAddress>) => {
       if (!user) return { success: false, error: 'Not signed in' }
       try {
-        const res = await fetch(`/api/customer/addresses/${id}`, {
+        await commerceFetch(`/api/customer/addresses/${id}`, {
           method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(patch),
         })
-        const data = await res.json()
-        if (!res.ok) return { success: false, error: data.error || 'Failed to update address' }
         setUser({
           ...user,
           addresses: user.addresses.map((a) => (a.id === id ? { ...a, ...patch } : a)),
         })
         return { success: true }
-      } catch {
-        return { success: false, error: 'Failed to update address' }
+      } catch (error) {
+        const message = error instanceof BrowserCommerceError ? error.message : 'Failed to update address'
+        return { success: false, error: message }
       }
     },
     [user],
@@ -154,17 +142,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     async (id: string) => {
       if (!user) return { success: false, error: 'Not signed in' }
       try {
-        const res = await fetch(`/api/customer/addresses/${id}`, {
+        await commerceFetch(`/api/customer/addresses/${id}`, {
           method: 'DELETE',
         })
-        if (!res.ok) {
-          const data = await res.json().catch(() => ({}))
-          return { success: false, error: data.error || 'Failed to delete address' }
-        }
         setUser({ ...user, addresses: user.addresses.filter((a) => a.id !== id) })
         return { success: true }
-      } catch {
-        return { success: false, error: 'Failed to delete address' }
+      } catch (error) {
+        const message = error instanceof BrowserCommerceError ? error.message : 'Failed to delete address'
+        return { success: false, error: message }
       }
     },
     [user],
@@ -174,22 +159,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     async (id: string) => {
       if (!user) return { success: false, error: 'Not signed in' }
       try {
-        const res = await fetch(`/api/customer/addresses/${id}`, {
+        await commerceFetch(`/api/customer/addresses/${id}`, {
           method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ is_default: true }),
         })
-        if (!res.ok) {
-          const data = await res.json().catch(() => ({}))
-          return { success: false, error: data.error || 'Failed to set default address' }
-        }
         setUser({
           ...user,
           addresses: user.addresses.map((a) => ({ ...a, isDefault: a.id === id })),
         })
         return { success: true }
-      } catch {
-        return { success: false, error: 'Failed to set default address' }
+      } catch (error) {
+        const message = error instanceof BrowserCommerceError ? error.message : 'Failed to set default address'
+        return { success: false, error: message }
       }
     },
     [user],
@@ -206,13 +187,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (data.email) body.email = data.email
         if (data.phone) body.phone = data.phone
 
-        const res = await fetch('/api/auth/profile', {
+        await commerceFetch('/api/auth/profile', {
           method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(body),
         })
-        const result = await res.json()
-        if (!res.ok) return { success: false, error: result.error || 'Failed to update profile' }
 
         setUser({
           ...user,
@@ -221,8 +199,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           phone: data.phone ?? user.phone,
         })
         return { success: true }
-      } catch {
-        return { success: false, error: 'Failed to update profile' }
+      } catch (error) {
+        const message = error instanceof BrowserCommerceError ? error.message : 'Failed to update profile'
+        return { success: false, error: message }
       }
     },
     [user],
@@ -231,16 +210,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const changePassword = useCallback(
     async (currentPassword: string, newPassword: string) => {
       try {
-        const res = await fetch('/api/auth/password', {
+        await commerceFetch('/api/auth/password', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ current_password: currentPassword, new_password: newPassword }),
         })
-        const data = await res.json()
-        if (!res.ok) return { success: false, error: data.error || 'Failed to change password' }
         return { success: true }
-      } catch {
-        return { success: false, error: 'Failed to change password' }
+      } catch (error) {
+        const message = error instanceof BrowserCommerceError ? error.message : 'Failed to change password'
+        return { success: false, error: message }
       }
     },
     [],

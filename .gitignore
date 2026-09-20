@@ -17,3 +17,5 @@ node_modules
 
 # Qoder local config
 .qoder/
+.vercel
+.env*

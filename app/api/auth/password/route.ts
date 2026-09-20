@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { wooConfig } from '@/lib/commerce/woocommerce'
+import { wpFetch, wpAuth, wpCookieOptions, wpErrorResponse, validatePassword, WpClientError } from '@/lib/wp-client'
+import { AUTH_COOKIE } from '@/lib/constants/config'
 
 export async function POST(request: NextRequest) {
-  try {
-    const token = request.cookies.get('shams-auth-token')?.value
-    if (!token) {
-      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
-    }
+  const auth = wpAuth(request)
+  if ('error' in auth) return auth.error
 
+  try {
     const body = await request.json()
     const { current_password, new_password } = body
 
@@ -18,53 +17,27 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    if (new_password.length < 6) {
-      return NextResponse.json(
-        { error: 'New password must be at least 6 characters' },
-        { status: 400 },
-      )
+    const pw = validatePassword(new_password)
+    if ('error' in pw) {
+      return NextResponse.json({ error: pw.error }, { status: 400 })
     }
 
-    const config = wooConfig(process.env)
-    const wpRoot = config.endpoint
-      .replace(/\/wc\/v3$/, '')
-      .replace(/([^:]\/)\/+/g, '$1')
-
-    const res = await fetch(`${wpRoot}/shams/v1/change-password`, {
+    const { data } = await wpFetch('/shams/v1/change-password', {
       method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ current_password, new_password }),
+      body: { current_password, new_password },
+      token: auth.token,
     })
 
-    if (!res.ok) {
-      const error = await res.json().catch(() => ({}))
-      return NextResponse.json(
-        { error: error.message || 'Failed to change password' },
-        { status: res.status },
-      )
-    }
-
-    const data = await res.json()
-
     const response = NextResponse.json({ success: true })
-    if (data.token) {
-      response.cookies.set('shams-auth-token', data.token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        maxAge: 60 * 60 * 24 * 7,
-        path: '/',
-      })
+    const token = (data as { token?: string })?.token
+    if (token) {
+      response.cookies.set(AUTH_COOKIE, token, wpCookieOptions())
     }
     return response
   } catch (error) {
-    console.error('[auth] password change error', error)
-    return NextResponse.json(
-      { error: 'Failed to change password' },
-      { status: 500 },
-    )
+    if (error instanceof WpClientError) {
+      return NextResponse.json({ error: error.message }, { status: error.status })
+    }
+    return wpErrorResponse(error, 'auth/password')
   }
 }

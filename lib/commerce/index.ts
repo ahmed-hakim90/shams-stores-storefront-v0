@@ -18,6 +18,7 @@ import type {
   CatalogQuery,
   Money,
   Product,
+  ProductPrice,
   ProductRelationshipType,
   StockStatus,
   UseCaseSlug,
@@ -287,6 +288,17 @@ export function formatMoney(money: Money): string {
 
 export function formatEgp(amount: number): string {
   return egpFormatter.format(amount)
+}
+
+export function formatPrice(price: Money | ProductPrice): string {
+  return formatEgp(priceToMajor(price))
+}
+
+export function priceToMajor(price: Money | ProductPrice): number {
+  if ('minorUnit' in price) {
+    return price.amount / 10 ** price.minorUnit
+  }
+  return price.amount
 }
 
 export function discountPercent(

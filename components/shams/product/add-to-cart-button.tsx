@@ -7,6 +7,7 @@ import { useInteractions } from '@/components/shams/providers'
 import { cn } from '@/lib/utils'
 import type { Product } from '@/lib/commerce'
 import type { SelectedVariant } from './variant-selector'
+import { measureOaiq, trackAddToCart } from '@/lib/tracking'
 
 export function AddToCartButton({
   product,
@@ -71,6 +72,14 @@ export function AddToCartButton({
           setPending(false)
           return
         }
+        measureOaiq('add_to_cart', {
+          content_ids: [product.id],
+          content_name: product.name,
+          content_type: 'product',
+          value: product.price.amount * quantity,
+          currency: 'EGP',
+        })
+        trackAddToCart({ id: product.id, name: product.name, price: product.price.amount }, quantity)
         setAdded(true)
         window.setTimeout(() => {
           setPending(false)
